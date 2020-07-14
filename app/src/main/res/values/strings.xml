@@ -1,0 +1,60 @@
+<resources>
+    <string name="app_name">Soso Taxi Driver</string>
+    <string name="title_activity_main">Soso Taxi</string>
+    <string name="title_activity_login">Soso Taxi</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Home</string>
+    <string name="btn_login_skip">跳过</string>
+    <string name="title_enter_phone">输入手机号</string>
+    <string name="hint_enter_phone">该手机号仅用于联系您</string>
+    <string name="placeholder_enter_phone">请输入手机号</string>
+    <string name="btn_continue">继续</string>
+    <string name="placeholder_area_code">+86 ▼</string>
+    <string name="placeholder_search_area_code">点击此处搜索</string>
+    <string name="title_select_area_code">选择区号</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="btn_confirm">确认</string>
+    <string name="feedback_create_password">密码长度为8-16位\n至少包含字母、数字、标点符号其中两种</string>
+    <string name="placeholder_enter_password">请输入密码</string>
+    <string name="placeholder_enter_password_again">请再次输入密码</string>
+    <string name="hint_create_password">您可以通过手机号及该密码登陆搜搜网约车</string>
+    <string name="title_create_password">创建密码</string>
+    <string name="hint_enter_password">使用密码登陆搜搜网约车</string>
+    <string name="title_enter_password">输入密码</string>
+    <string name="feedback_enter_password">密码为8至16位字符</string>
+    <string name="hint_enter_verification_code">验证码已发送至</string>
+    <string name="title_enter_verification_code">输入验证码</string>
+    <string name="feedback_enter_verification_code">6位数字验证码</string>
+    <string name="btn_verification_code_resend">重新发送</string>
+    <string name="regex_password">^(?![0-9]+$)(?![a-z]+$)(?![A-Z]+$)(?!([^(0-9a-zA-Z)]|[\\(\\)])+$)([^(0-9a-zA-Z)]|[\\(\\)]|[a-z]|[A-Z]|[0-9]){8,16}$</string>
+    <string name="error_password_different">两次输入不一致</string>
+    <string name="error_password_not_match">密码不符合要求</string>
+    <string name="error_password_incorret">密码错误</string>
+    <string name="error_verification_code">验证码错误</string>
+    <string name="error_register_failed">注册失败</string>
+
+
+    <string name="menu_order_label">我的订单</string>
+    <string name="menu_wallet_label">我的钱包</string>
+
+    <string name="check_time_by_order">按时间查看订单</string>
+    <string name="check_right_now">查看当前状况</string>
+    <string name="wallet_payment_setting">"支付设置     "</string>
+    <string name="payment_setting_label">支付方式</string>
+    <string name="payment_btn_label">充值</string>
+    <string name="assert_textView_label">余额（元）</string>
+    <string name="charge_money_label">我的充值</string>
+    <string name="coupon_label">优惠券</string>
+    <string name="edit_personal_data_label">"编辑资料      "</string>
+    <string name="edit_done_label">"完成       "</string>
+
+    <string name="industry_choice_label">行业</string>
+    <string name="hint_verification_code_sent">验证码已发送</string>
+</resources>

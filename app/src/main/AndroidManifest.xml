@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.sosotaxi.driver">
+    <!-- 访问网络，进行地图相关业务数据请求，包括地图数据，路线规划，POI检索等 -->
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- 获取网络状态，根据网络状态切换进行数据请求网络转换 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- 这个权限用于进行网络定位 -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- 这个权限用于访问GPS定位 -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <application
+        android:name=".application.MapApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".ui.order.OrderActivity"></activity>
+        <activity android:name=".ui.navigation.NavigationActivity" />
+        <activity
+            android:name=".ui.userInformation.personData.IndustryChosenActivity"
+            android:label="@string/industry_choice_label"
+            android:parentActivityName=".ui.userInformation.personData.EditPersonalDataActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.userInformation.personData.EditPersonalDataActivity"
+            android:label="@string/edit_personal_data_label"
+            android:parentActivityName=".ui.userInformation.personData.PersonalDataActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.userInformation.personData.PersonalDataActivity"
+            android:parentActivityName=".ui.main.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.userInformation.wallet.ChargeMoneyActivity"
+            android:label="@string/charge_money_label"
+            android:parentActivityName=".ui.userInformation.wallet.WalletActivity" />
+        <activity
+            android:name=".ui.userInformation.wallet.PaymentSettingActivity"
+            android:label="@string/payment_setting_label"
+            android:parentActivityName=".ui.userInformation.wallet.WalletActivity" />
+        <activity
+            android:name=".ui.userInformation.wallet.WalletActivity"
+            android:label="@string/menu_wallet_label"
+            android:parentActivityName=".ui.main.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.userInformation.order.OrderActivity"
+            android:label="@string/menu_order_label"
+            android:parentActivityName=".ui.main.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.main.MainActivity"
+            android:label="@string/title_activity_main"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.login.LoginActivity"
+            android:label="@string/title_activity_login"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ui.login.SelectAreaCodeActivity"
+            android:label="@string/title_select_area_code"
+            android:parentActivityName=".ui.login.LoginActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <meta-data
+            android:name="com.baidu.lbsapi.API_KEY"
+            android:value="RmmZVO6jFDooPymSqVdIeRUNpNgAMAza" />
+
+        <service
+            android:name="com.baidu.location.f"
+            android:enabled="true"
+            android:process=":remote" />
+    </application>
+
+</manifest>
