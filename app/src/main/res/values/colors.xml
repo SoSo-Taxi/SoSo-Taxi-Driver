@@ -10,4 +10,10 @@
     <color name="colorDisabledButton">#CCCCCC</color>
     <color name="colorLoginTitle">#4A4A4A</color>
     <color name="colorLoginHint">#999999</color>
+    <color name="colorButtonSuccessful">#5AB13B</color>
+    <color name="colorDriverOrderTitle">#424242</color>
+    <color name="colorDriverOrderHint">#D1D1D1</color>
+    <color name="colorDriverOrderNumber">#404040</color>
+    <color name="colorDriverOrderAddress">#6C6C6C</color>
+    <color name="colorDriverTimeRequirement">#999999</color>
 </resources>

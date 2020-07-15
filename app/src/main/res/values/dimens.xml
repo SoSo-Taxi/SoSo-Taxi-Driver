@@ -6,6 +6,7 @@
     <dimen name="nav_header_height">230dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
 
+    <!-- 登陆界面 -->
     <dimen name="login_horizontal_margin">20dp</dimen>
     <dimen name="login_vertical_margin">25dp</dimen>
     <dimen name="login_title_spacing">25dp</dimen>
@@ -19,6 +20,24 @@
     <dimen name="login_edit_text_height">30dp</dimen>
     <dimen name="text_margin">16dp</dimen>
 
+    <!-- 订单界面 -->
+    <dimen name="driver_order_vertical_margin">28dp</dimen>
+    <dimen name="driver_order_horizontal_margin">20dp</dimen>
+    <dimen name="driver_order_title_hint_spacing">15dp</dimen>
+    <dimen name="driver_order_time_requirement_vertical_margin">12dp</dimen>
+    <dimen name="driver_order_navigation_button_spacing">10dp</dimen>
+    <dimen name="driver_order_navigation_button_horizontal_margin">40dp</dimen>
+    <dimen name="driver_order_detail_card_horizontal_spacing">12dp</dimen>
+    <dimen name="driver_order_detail_card_vertical_spacing">12dp</dimen>
+    <dimen name="driver_order_detail_card_horizontal_margin">20dp</dimen>
+    <dimen name="driver_order_detail_card_vertical_margin">20dp</dimen>
+    <dimen name="driver_order_detail_card_number_address_spacing">14dp</dimen>
+    <dimen name="driver_order_detail_card_address_width">170dp</dimen>
+    <dimen name="driver_order_detail_card_address_sms_spacing">30dp</dimen>
+    <dimen name="driver_order_detail_card_sms_phone_spacing">30dp</dimen>
+    <dimen name="driver_order_detail_card_icon_size">30dp</dimen>
+    <dimen name="driver_order_button_vertical_margin">28dp</dimen>
+    <dimen name="driver_order_button_height">72dp</dimen>
 
     <dimen name="nav_vip_textView">70dp</dimen>
     <dimen name="head_photo_width">55dp</dimen>

@@ -68,4 +68,59 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="DriverOrder">
+
+    </style>
+
+    <style name="DriverOrder.Title">
+        <item name="android:textSize">28sp</item>
+        <item name="android:textColor">@color/colorDriverOrderTitle</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="DriverOrder.Destination">
+        <item name="android:textSize">28sp</item>
+        <item name="android:textColor">@color/colorAccent</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="DriverOrder.Hint">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/colorDriverOrderHint</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="DriverOrder.TimeRequirement">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/colorDriverOrderTitle</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="DriverOrder.Time">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/colorAccent</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="DriverOrder.Number">
+        <item name="android:textSize">28sp</item>
+        <item name="android:textColor">@color/colorDriverOrderNumber</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="DriverOrder.NumberHint">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/colorDriverOrderAddress</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="DriverOrder.Address">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/colorDriverOrderAddress</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:drawablePadding">4dp</item>
+        <item name="android:padding">2dp</item>
+    </style>
 </resources>

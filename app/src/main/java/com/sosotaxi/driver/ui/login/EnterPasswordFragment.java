@@ -143,7 +143,7 @@ public class EnterPasswordFragment extends Fragment {
             }else{
                 // 验证失败清空密码并提示密码错误
                 mEditTextEnterPassword.setText("");
-                mEditTextEnterPassword.setError(getString(R.string.error_password_incorret));
+                mEditTextEnterPassword.setError(getString(R.string.error_password_incorrect));
             }
             return true;
         }

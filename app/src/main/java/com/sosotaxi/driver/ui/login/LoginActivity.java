@@ -128,7 +128,7 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(intent);
             }else{
                 // 验证失败提示密码错误
-                Toast.makeText(getApplicationContext(), R.string.error_password_incorret, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), R.string.error_password_incorrect, Toast.LENGTH_SHORT).show();
 
                 // 跳转登陆界面
                 FragmentManager fragmentManager=getSupportFragmentManager();
