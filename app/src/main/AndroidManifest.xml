@@ -15,7 +15,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.order.OrderActivity"></activity>
+        <activity android:name=".ui.driverOrder.DriverOrderActivity"
+            android:label="接乘客"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".ui.navigation.NavigationActivity" />
         <activity
             android:name=".ui.userInformation.personData.IndustryChosenActivity"
@@ -57,11 +65,7 @@
             android:name=".ui.login.LoginActivity"
             android:label="@string/title_activity_login"
             android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".ui.login.SelectAreaCodeActivity"
@@ -71,7 +75,7 @@
 
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
-            android:value="RmmZVO6jFDooPymSqVdIeRUNpNgAMAza" />
+            android:value="Gs4EvNp06B8e92k0loeDUD1S3ROdz0tO" />
 
         <service
             android:name="com.baidu.location.f"

@@ -62,9 +62,9 @@ public class EnterPhoneFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         //获取控件
-        mEditTextPhone=getView().findViewById(R.id.editTextEnterPhone);
-        mButtonContinue=getView().findViewById(R.id.buttonContinue);
-        mTextViewAreaCode=getView().findViewById(R.id.textViewAreaCode);
+        mEditTextPhone=getActivity().findViewById(R.id.editTextEnterPhone);
+        mButtonContinue=getActivity().findViewById(R.id.buttonContinue);
+        mTextViewAreaCode=getActivity().findViewById(R.id.textViewAreaCode);
 
         //设置继续按钮点击事件
         mButtonContinue.setOnClickListener(new View.OnClickListener() {
