@@ -10,6 +10,7 @@
     <string name="action_settings">Settings</string>
 
     <string name="menu_home">Home</string>
+    <string name="menu_first_page">首页</string>
     <string name="btn_login_skip">跳过</string>
     <string name="title_enter_phone">输入手机号</string>
     <string name="hint_enter_phone">该手机号仅用于联系您</string>
@@ -60,7 +61,6 @@
     <string name="edit_done_label">"完成       "</string>
 
     <string name="industry_choice_label">行业</string>
-    <string name="btn_arrive_starting_point">到达上车地点</string>
     <string name="btn_successful">确认成功</string>
 
 </resources>
