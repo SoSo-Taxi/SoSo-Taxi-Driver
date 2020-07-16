@@ -1,14 +1,166 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.driverOrder.PickUpPassengerFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardViewDriverPickUpPassenger"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-</FrameLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/textViewDriverPickUpPassengerTimeRequirementPlease"
+                style="@style/DriverOrder.TimeRequirement"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/driver_order_horizontal_margin"
+                android:layout_marginTop="@dimen/driver_order_time_requirement_vertical_margin"
+                android:layout_marginBottom="@dimen/driver_order_time_requirement_vertical_margin"
+                android:text="@string/hint_driver_order_wait_passenger"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+    <com.baidu.mapapi.map.MapView
+        android:id="@+id/baiduMapViewDriverPickUpPassenger"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clickable="true"
+        app:layout_constraintBottom_toTopOf="@+id/slideButtonArriveStartingPoint"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardViewDriverPickUpPassenger" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardViewDriverArriveStartingPointDetail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/driver_order_detail_card_horizontal_spacing"
+        android:layout_marginEnd="@dimen/driver_order_detail_card_horizontal_spacing"
+        android:layout_marginBottom="@dimen/driver_order_detail_card_vertical_spacing"
+        app:layout_constraintBottom_toTopOf="@id/slideButtonPickUpPassenger"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/linearLayoutArriveStartingPointNumber"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/driver_order_detail_card_horizontal_margin"
+                android:layout_marginTop="@dimen/driver_order_detail_card_vertical_margin"
+                android:layout_marginBottom="@dimen/driver_order_detail_card_vertical_margin"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/textViewDriverPickUpPassengerNumber"
+                    style="@style/DriverOrder.Number"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="1235" />
+
+                <TextView
+                    android:id="@+id/textViewDriverPickUpPassengerNumberHint"
+                    style="@style/DriverOrder.NumberHint"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/hint_driver_order_number" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linearLayoutArriveStartingPointFromTo"
+                android:layout_width="@dimen/driver_order_detail_card_address_width"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/driver_order_detail_card_number_address_spacing"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/linearLayoutArriveStartingPointNumber"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/textViewDriverPickUpPassengerDetailFrom"
+                    style="@style/DriverOrder.Address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/dot_green"
+                    android:ellipsize="end"
+                    android:maxWidth="@dimen/driver_order_detail_card_address_width"
+                    android:singleLine="true"
+                    android:text="奥体中心" />
+
+                <TextView
+                    android:id="@+id/textViewDriverPickUpPassengerDetailTo"
+                    style="@style/DriverOrder.Address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/dot_orange"
+                    android:ellipsize="end"
+                    android:maxWidth="@dimen/driver_order_detail_card_address_width"
+                    android:singleLine="true"
+                    android:text="天安门广场" />
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/buttonDriverPickUpPassengerText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/driver_order_detail_card_address_sms_spacing"
+                android:background="@drawable/ic_text"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/linearLayoutArriveStartingPointFromTo"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/buttonDriverPickUpPassengerPhone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/driver_order_detail_card_sms_phone_spacing"
+                android:layout_marginEnd="@dimen/driver_order_detail_card_horizontal_margin"
+                android:background="@drawable/ic_phone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/buttonDriverPickUpPassengerText"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <com.sosotaxi.driver.ui.widget.SlideButton
+        android:id="@+id/slideButtonPickUpPassenger"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/driver_order_button_height"
+        app:background_drawable="@drawable/btn_background"
+        app:background_text="@string/btn_driver_order_pick_up_passenger"
+        app:background_text_color="@color/colorBackground"
+        app:background_text_complete="@string/btn_driver_order_successful"
+        app:background_text_size="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:overlay_drawable="@drawable/btn_background_overlay"
+        app:overlay_drawable_complete="@drawable/btn_background_overlay_complete"
+        app:reset_not_full="true"
+        app:secondary_color="@color/colorButtonSuccessful" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,2 +1,4 @@
+include ':NaviTts'
+include ':onsdk_all'
 include ':app'
 rootProject.name = "Soso Taxi Driver"

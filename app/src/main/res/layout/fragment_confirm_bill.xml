@@ -1,14 +1,183 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorBackground"
     tools:context=".ui.driverOrder.ConfirmBillFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayoutDriverOrderBillAmount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/driver_order_bill_title_vertical_margin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-</FrameLayout>
+        <TextView
+            android:id="@+id/textViewDriverOrderBillAmount"
+            style="@style/DriverOrder.BillAmount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="108.00"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textViewDriverOrderBillUnit"
+            style="@style/DriverOrder.BillUnit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/driver_order_bill_amount_unit_spacing"
+            android:text="元"
+            app:layout_constraintBaseline_toBaselineOf="@+id/textViewDriverOrderBillAmount"
+            app:layout_constraintStart_toEndOf="@+id/textViewDriverOrderBillAmount"
+            tools:layout_editor_absoluteY="26dp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/textViewDriverOrderBillHint"
+        style="@style/DriverOrder.BillHint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/driver_order_bill_hint_vertical_margin"
+        android:text="若行程产生附加费，请添加"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayoutDriverOrderBillAmount" />
+
+    <View
+        android:id="@+id/divider2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="@dimen/driver_order_bill_item_horizontal_margin"
+        android:layout_marginEnd="@dimen/driver_order_bill_item_horizontal_margin"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayoutDriverOrderBillRoadToll"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayoutDriverOrderBillRoadToll"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/driver_order_bill_hint_vertical_margin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewDriverOrderBillHint">
+
+        <TextView
+            android:id="@+id/textViewDriverOrderBillItemRoadTollTitle"
+            style="@style/DriverOrder.BillItemTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/driver_order_bill_item_horizontal_margin"
+            android:layout_marginTop="@dimen/driver_order_bill_item_vertical_margin"
+            android:layout_marginBottom="@dimen/driver_order_bill_item_vertical_margin"
+            android:text="过路费"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/editTextDriverOrderBillItemRoadToll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/driver_order_bill_amount_unit_spacing"
+            android:background="@android:drawable/screen_background_light_transparent"
+            android:cursorVisible="false"
+            android:hint="请输入金额"
+            android:inputType="numberDecimal"
+            android:textAlignment="textEnd"
+            app:layout_constraintBottom_toBottomOf="@+id/textViewDriverOrderBillItemRoadTollUnit"
+            app:layout_constraintEnd_toStartOf="@+id/textViewDriverOrderBillItemRoadTollUnit" />
+
+        <TextView
+            android:id="@+id/textViewDriverOrderBillItemRoadTollUnit"
+            style="@style/DriverOrder.BillItemTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/driver_order_bill_item_vertical_margin"
+            android:layout_marginEnd="@dimen/driver_order_bill_item_horizontal_margin"
+            android:layout_marginBottom="@dimen/driver_order_bill_item_vertical_margin"
+            android:text="元"
+            app:layout_constraintBottom_toTopOf="@+id/textViewDriverOrderBillItemParkingRateUnit"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayoutDriverOrderBillItemParkingRate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayoutDriverOrderBillRoadToll">
+
+        <TextView
+            android:id="@+id/textViewDriverOrderBillItemParkingRateTitle"
+            style="@style/DriverOrder.BillItemTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/driver_order_bill_item_horizontal_margin"
+            android:layout_marginTop="@dimen/driver_order_bill_item_vertical_margin"
+            android:layout_marginBottom="@dimen/driver_order_bill_item_vertical_margin"
+            android:text="停车费"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/editTextTextDriverOrderBillItemParkingRate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/driver_order_bill_amount_unit_spacing"
+            android:background="@android:drawable/screen_background_light_transparent"
+            android:cursorVisible="false"
+            android:hint="请输入金额"
+            android:inputType="numberDecimal"
+            android:textAlignment="textEnd"
+            app:layout_constraintBottom_toBottomOf="@+id/textViewDriverOrderBillItemParkingRateUnit"
+            app:layout_constraintEnd_toStartOf="@+id/textViewDriverOrderBillItemParkingRateUnit" />
+
+        <TextView
+            android:id="@+id/textViewDriverOrderBillItemParkingRateUnit"
+            style="@style/DriverOrder.BillItemTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/driver_order_bill_item_vertical_margin"
+            android:layout_marginEnd="@dimen/driver_order_bill_item_horizontal_margin"
+            android:layout_marginBottom="@dimen/driver_order_bill_item_vertical_margin"
+            android:text="元"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.sosotaxi.driver.ui.widget.SlideButton
+        android:id="@+id/slideButtonConfirmBill"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/driver_order_button_height"
+        app:background_drawable="@drawable/btn_background"
+        app:background_text="@string/btn_driver_order_confirm_bill"
+        app:background_text_color="@color/colorBackground"
+        app:background_text_complete="@string/btn_driver_order_successful"
+        app:background_text_size="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:overlay_drawable="@drawable/btn_background_overlay"
+        app:overlay_drawable_complete="@drawable/btn_background_overlay_complete"
+        app:reset_not_full="true"
+        app:secondary_color="@color/colorButtonSuccessful" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

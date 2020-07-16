@@ -123,4 +123,42 @@
         <item name="android:drawablePadding">4dp</item>
         <item name="android:padding">2dp</item>
     </style>
+
+    <style name="DriverOrder.CardTitle">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/colorDriverOrderTitle</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="DriverOrder.CardDestination">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/colorAccent</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="DriverOrder.BillAmount">
+        <item name="android:textSize">40sp</item>
+        <item name="android:textColor">@color/colorDriverOrderTitle</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="DriverOrder.BillUnit">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/colorDriverOrderTitle</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="DriverOrder.BillHint">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/colorDriverOrderHint</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+    <style name="DriverOrder.BillItemTitle">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/colorDriverOrderTitle</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+    <style name="DriverOrder.BillItemHint">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/colorDriverOrderHint</item>
+        <item name="android:textStyle">normal</item>
+    </style>
 </resources>

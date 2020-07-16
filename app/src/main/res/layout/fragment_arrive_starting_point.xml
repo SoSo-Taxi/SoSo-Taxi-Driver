@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:clickable="true"
     tools:context=".ui.driverOrder.ArriveStartingPointFragment">
 
     <androidx.cardview.widget.CardView
@@ -22,7 +23,7 @@
                 android:id="@+id/constraintLayout9"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintEnd_toStartOf="@+id/constraintLayout5"
+                app:layout_constraintEnd_toStartOf="@+id/constraintLayoutArriveStartingPointNavigation"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
@@ -33,7 +34,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/driver_order_horizontal_margin"
                     android:layout_marginTop="@dimen/driver_order_vertical_margin"
-                    android:text="去"
+                    android:text="@string/title_driver_order_to"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -43,6 +44,9 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="奥体中心"
+                    android:ellipsize="end"
+                    android:maxWidth="@dimen/driver_order_destination_width"
+                    android:singleLine="true"
                     app:layout_constraintBottom_toBottomOf="@+id/textViewDriverOrderArriveStartingPointTo"
                     app:layout_constraintStart_toEndOf="@+id/textViewDriverOrderArriveStartingPointTo" />
 
@@ -79,7 +83,7 @@
                     android:layout_marginStart="@dimen/driver_order_horizontal_margin"
                     android:layout_marginTop="@dimen/driver_order_time_requirement_vertical_margin"
                     android:layout_marginBottom="@dimen/driver_order_time_requirement_vertical_margin"
-                    android:text="请在"
+                    android:text="@string/hint_driver_order_please"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -98,22 +102,23 @@
                     style="@style/DriverOrder.TimeRequirement"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="内到达乘客上车点"
+                    android:text="@string/hint_driver_order_time_requirement"
                     app:layout_constraintBottom_toBottomOf="@id/textViewDriverOrderArriveStartingPointTime"
                     app:layout_constraintStart_toEndOf="@id/textViewDriverOrderArriveStartingPointTime" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/constraintLayout5"
+                android:id="@+id/constraintLayoutArriveStartingPointNavigation"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:clickable="true"
                 app:layout_constraintBottom_toBottomOf="@+id/constraintLayout9"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/constraintLayout9">
 
                 <ImageButton
-                    android:id="@+id/buttonDriverOrderArriveStartingPointNavigation"
+                    android:id="@+id/imageButtonDriverOrderArriveStartingPointNavigation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/driver_order_horizontal_margin"
@@ -126,7 +131,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/textViewDriverOrderNavigation"
+                    android:id="@+id/textViewDriverOrderArriveStartingPointNavigation"
                     style="@style/DriverOrder.TimeRequirement"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -135,10 +140,11 @@
                     android:layout_marginEnd="@dimen/driver_order_navigation_button_horizontal_margin"
                     android:layout_weight="1"
                     android:gravity="center_horizontal"
-                    android:text="导航"
+                    android:text="@string/btn_driver_order_navigation"
+                    android:clickable="true"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/buttonDriverOrderArriveStartingPointNavigation" />
+                    app:layout_constraintTop_toBottomOf="@+id/imageButtonDriverOrderArriveStartingPointNavigation" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -193,12 +199,12 @@
                     style="@style/DriverOrder.NumberHint"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="尾号" />
+                    android:text="@string/hint_driver_order_number" />
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/linearLayoutArriveStartingPointFromTo"
-                android:layout_width="0dp"
+                android:layout_width="@dimen/driver_order_detail_card_address_width"
                 android:layout_height="match_parent"
                 android:layout_marginStart="@dimen/driver_order_detail_card_number_address_spacing"
                 android:orientation="vertical"
@@ -215,10 +221,10 @@
                     android:ellipsize="end"
                     android:maxWidth="@dimen/driver_order_detail_card_address_width"
                     android:singleLine="true"
-                    android:text="北展路奥体中心东北3-2路" />
+                    android:text="奥体中心" />
 
                 <TextView
-                    android:id="@+id/textViewDriverOrderArriveStartingPointDetailFromTo"
+                    android:id="@+id/textViewDriverOrderArriveStartingPointDetailTo"
                     style="@style/DriverOrder.Address"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -226,7 +232,7 @@
                     android:ellipsize="end"
                     android:maxWidth="@dimen/driver_order_detail_card_address_width"
                     android:singleLine="true"
-                    android:text="安贞门站西" />
+                    android:text="天安门广场" />
             </LinearLayout>
 
             <ImageButton
@@ -260,9 +266,9 @@
         android:layout_width="0dp"
         android:layout_height="@dimen/driver_order_button_height"
         app:background_drawable="@drawable/btn_background"
-        app:background_text="@string/btn_arrive_starting_point"
+        app:background_text="@string/btn_driver_order_arrive_starting_point"
         app:background_text_color="@color/colorBackground"
-        app:background_text_complete="@string/btn_successful"
+        app:background_text_complete="@string/btn_driver_order_successful"
         app:background_text_size="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -271,6 +277,6 @@
         app:overlay_drawable="@drawable/btn_background_overlay"
         app:overlay_drawable_complete="@drawable/btn_background_overlay_complete"
         app:reset_not_full="true"
-        app:secondary_color="@color/colorButtonSuccessful"></com.sosotaxi.driver.ui.widget.SlideButton>
+        app:secondary_color="@color/colorButtonSuccessful" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
