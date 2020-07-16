@@ -14,7 +14,7 @@ public class ProgressRunnable implements Runnable{
     private CircleProgressBar mCircleProgressBar;
 
 
-    public ProgressRunnable(CircleProgressBar circleProgressBar){
+    public ProgressRunnable(CircleProgressBar circleProgressBar) {
         this.mCircleProgressBar = circleProgressBar;
     }
 
@@ -33,21 +33,19 @@ public class ProgressRunnable implements Runnable{
 
     @Override
     public void run() {
-        while(mCurrentProgress < mTotalProgress){
-            if(!mStop){
-                mCurrentProgress += 1;
-                mCircleProgressBar.setProgress(mCurrentProgress);
-                try {
-                    Thread.sleep(5);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }else {
+        while (!mStop) {
+            if (mCurrentProgress >= mTotalProgress) {
                 mCurrentProgress = 0;
-                mCircleProgressBar.setProgress(mCurrentProgress);
-                break;
+            }
+            mCurrentProgress += 1;
+            mCircleProgressBar.setProgress(mCurrentProgress);
+            try {
+                Thread.sleep(20);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
-        mStop = true;
+        mCurrentProgress = 0;
+        mCircleProgressBar.setProgress(mCurrentProgress);
     }
 }

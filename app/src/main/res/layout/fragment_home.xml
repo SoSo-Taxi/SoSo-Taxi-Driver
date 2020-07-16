@@ -251,7 +251,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     cp:radius="65dp"
-                    cp:ringColor="#FC9153"
+                    cp:ringColor="#FFE62A3E"
                     cp:strokeWidth="10dp"
                     cp:textColor="#0000ff" />
 
@@ -279,6 +279,31 @@
                     android:textColor="@android:color/background_light"
                     android:textSize="18sp"
                     android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/end_work_textView"
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:layout_marginTop="37dp"
+                    android:layout_marginEnd="16dp"
+                    android:alpha="0.3"
+                    android:background="@drawable/round_endwork_textview"
+                    android:gravity="center"
+                    android:text="@string/end_work_text"
+                    android:textColor="@android:color/background_light"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Button
+                    android:id="@+id/test_order_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="46dp"
+                    android:text="addorder"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>

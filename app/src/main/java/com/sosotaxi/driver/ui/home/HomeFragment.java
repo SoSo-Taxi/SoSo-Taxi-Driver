@@ -1,13 +1,14 @@
 /**
  * @Author 屠天宇
  * @CreateTime 2020/7/14
- * @UpdateTime 2020/7/15
+ * @UpdateTime 2020/7/16
  */
 package com.sosotaxi.driver.ui.home;
 
 import androidx.lifecycle.ViewModelProviders;
 
 import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -20,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -42,11 +44,15 @@ import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.search.geocode.GeoCoder;
 import com.sosotaxi.driver.R;
+
 import com.sosotaxi.driver.adapter.UndoneOrderRecycleViewAdapter;
 import com.sosotaxi.driver.common.CircleProgressBar;
 import com.sosotaxi.driver.common.ProgressRunnable;
 
 import java.net.SocketTimeoutException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class HomeFragment extends Fragment{
 
@@ -67,14 +73,20 @@ public class HomeFragment extends Fragment{
     private UndoneOrderRecycleViewAdapter mUndoneOrderRecycleViewAdapter;
 
     //模拟的出发地和目的地
-    private String[] startingPoints = {"出发点1","出发点2","出发点3","出发点4"};
-    private String[] destinations = {"目的地1","目的地2","目的地3","目的地4"};
+    private List<String> startingPoints = new ArrayList<String>(Arrays.asList("出发点1", "出发点2", "出发点3", "出发点4"));
+    private List<String> destinations = new ArrayList<String>(Arrays.asList("目的地1","目的地2","目的地3","目的地4"));
 
     //听单动态效果
     private CircleProgressBar mCircleProgressBar;
     private TextView mStartOrderTextView;
     private Thread mDrawingCircleThread;
     private ProgressRunnable mProgressRunnable;
+
+    private TextView mEndWorkTextView;
+
+    //模拟增加订单
+    private Button testBtn;
+    private List<String> testOrder = new ArrayList<String>();
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -85,6 +97,26 @@ public class HomeFragment extends Fragment{
         mAccountTextView = root.findViewById(R.id.firstpage_account_textView);
         mReceivingOrderQuantityTextView = root.findViewById(R.id.firstpage_orderquantity_textView);
 
+        testBtn = root.findViewById(R.id.test_order_btn);
+        testBtn.setOnClickListener(new View.OnClickListener() {
+            int index = 5;
+            @Override
+            public void onClick(View v) {
+                testOrder.add("order"+index);
+                startingPoints.add("出发点"+index);
+                destinations.add("目的地"+index);
+                index++;
+                mUndoneOrderRecycleViewAdapter = new UndoneOrderRecycleViewAdapter(getContext(),startingPoints,destinations);
+                mUndoneOrderRecycleViewAdapter.adapterListener = new AdapterListener() {
+                    @Override
+                    public void setListener() {
+                        setHearingOrderStartState();
+                    }
+                };
+                mUndoneOrderRecycleView.setAdapter(mUndoneOrderRecycleViewAdapter);
+                mUndoneOrderQuantityTextView.setText(String.valueOf(mUndoneOrderRecycleViewAdapter.getItemCount()));
+            }
+        });
 
         mOnlineTimeTextView = root.findViewById(R.id.firstpage_onlinetime_textView);
 
@@ -94,33 +126,50 @@ public class HomeFragment extends Fragment{
         mUndoneOrderRecycleView.setLayoutManager(new LinearLayoutManager(getContext()));
 //        mUndoneOrderRecycleViewAdapter = new UndoneOrderRecycleViewAdapter(getContext());
         mUndoneOrderRecycleViewAdapter = new UndoneOrderRecycleViewAdapter(getContext(),startingPoints,destinations);
+        mUndoneOrderRecycleViewAdapter.adapterListener = new AdapterListener() {
+            @Override
+            public void setListener() {
+                setHearingOrderStartState();
+            }
+        };
         mUndoneOrderRecycleView.setAdapter(mUndoneOrderRecycleViewAdapter);
 
         mUndoneOrderQuantityTextView.setText(String.valueOf(mUndoneOrderRecycleViewAdapter.getItemCount()));
 
+        mEndWorkTextView = root.findViewById(R.id.end_work_textView);
+
+        setEndWorkTextViewVisible(false);
         mCircleProgressBar = root.findViewById(R.id.circle_progress_bar);
         mStartOrderTextView = root.findViewById(R.id.start_order_textView);
         mProgressRunnable = new ProgressRunnable(mCircleProgressBar);
         mDrawingCircleThread = new Thread(mProgressRunnable);
-        mStartOrderTextView.setOnTouchListener(new View.OnTouchListener() {
+
+        mStartOrderTextView.setOnClickListener(new View.OnClickListener() {
+            boolean toggle = true;
+            Thread thread = new Thread(new testRunnable());
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()){
-                    case MotionEvent.ACTION_DOWN:
-                        mDrawingCircleThread.start();
-                        break;
-                    case  MotionEvent.ACTION_UP:
-                        if (mProgressRunnable.isStop()){
-                            Toast.makeText(getActivity().getApplicationContext(),"转到接单界面",Toast.LENGTH_LONG).show();
-                            mProgressRunnable.setCurrentProgress(0);
-                        }else {
-                            mProgressRunnable.setStop(true);
-                        }
-                        mProgressRunnable = new ProgressRunnable(mCircleProgressBar);
-                        mDrawingCircleThread = new Thread(mProgressRunnable);
-                        break;
+            public void onClick(View v) {
+                if(toggle || mStartOrderTextView.getText() == "开始听单"){
+                    mStartOrderTextView.setText("听单中");
+                    if (thread.getState() != Thread.State.RUNNABLE){
+                        thread.start();
+                    }
+                    setEndWorkTextViewVisible(true);
+                    mDrawingCircleThread.start();
+                    toggle = false;
+                }else {
+                    setHearingOrderStartState();
+                    toggle = true;
                 }
-                return true;
+            }
+        });
+
+        //收车后续操作待定
+        mEndWorkTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setHearingOrderStartState();
+                Toast.makeText(getActivity().getApplicationContext(),"收车",Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -128,7 +177,21 @@ public class HomeFragment extends Fragment{
     }
 
 
+    private void setHearingOrderStartState(){
+        mStartOrderTextView.setText("开始听单");
+        setEndWorkTextViewVisible(false);
+        mProgressRunnable.setStop(true);
+        mProgressRunnable = new ProgressRunnable(mCircleProgressBar);
+        mDrawingCircleThread = new Thread(mProgressRunnable);
+    }
 
+    private void setEndWorkTextViewVisible(boolean toggle){
+        if (toggle){
+            mEndWorkTextView.setVisibility(View.VISIBLE);
+        }else {
+            mEndWorkTextView.setVisibility(View.INVISIBLE);
+        }
+    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -138,4 +201,18 @@ public class HomeFragment extends Fragment{
         // TODO: Use the ViewModel
     }
 
+    class testRunnable implements Runnable{
+
+        int length = testOrder.size();
+        @Override
+        public void run() {
+            while (true){
+                if (testOrder.size() != length){
+                    length = testOrder.size();
+                    System.out.println("接单"+length);
+
+                }
+            }
+        }
+    }
 }
