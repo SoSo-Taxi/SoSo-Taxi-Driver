@@ -17,6 +17,8 @@ public class Constant {
      */
     public static final int SELECT_AREA_CODE_REQUEST=0;
 
+    public static final int AUTH_BASE_REQUEST=1;
+
     /**
      * 区号EXTRA
      */
@@ -54,4 +56,7 @@ public class Constant {
     public static final String USERNAME="com.sosotaxi.username";
 
     public static final String PASSWORD="com.sosotaxi.password";
+
+    public static final String APP_FOLDER_NAME="SoSoTaxiDriver";
+
 }

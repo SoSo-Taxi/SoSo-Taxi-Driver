@@ -55,7 +55,7 @@ public class LoginActivity extends AppCompatActivity {
             // 跳转登陆界面
             FragmentManager fragmentManager=getSupportFragmentManager();
             FragmentTransaction fragmentTransaction=fragmentManager.beginTransaction();
-            fragmentTransaction.add(R.id.fragmentLogin,new EnterPhoneFragment(),null);
+            fragmentTransaction.add(R.id.frameLayoutLogin,new EnterPhoneFragment(),null);
             fragmentTransaction.commit();
         }
 
@@ -133,7 +133,7 @@ public class LoginActivity extends AppCompatActivity {
                 // 跳转登陆界面
                 FragmentManager fragmentManager=getSupportFragmentManager();
                 FragmentTransaction fragmentTransaction=fragmentManager.beginTransaction();
-                fragmentTransaction.add(R.id.fragmentLogin,new EnterPhoneFragment(),null);
+                fragmentTransaction.add(R.id.frameLayoutLogin,new EnterPhoneFragment(),null);
                 fragmentTransaction.commit();
             }
             return true;

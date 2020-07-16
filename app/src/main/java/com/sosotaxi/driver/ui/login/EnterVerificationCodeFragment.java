@@ -152,7 +152,7 @@ public class EnterVerificationCodeFragment extends Fragment {
                             boolean isCorrect =verificationCode.equals("123456");
 
                             FragmentManager fragmentManager=getActivity().getSupportFragmentManager();
-                            Fragment currentFragment=fragmentManager.findFragmentById(R.id.fragmentLogin);
+                            Fragment currentFragment=fragmentManager.findFragmentById(R.id.frameLayoutLogin);
 
                             if(isCorrect){
                                 // 验证码正确跳转创建密码界面
@@ -167,7 +167,7 @@ public class EnterVerificationCodeFragment extends Fragment {
                                                 R.animator.fragment_slide_left_exit,
                                                 R.animator.fragment_slide_right_enter,
                                                 R.animator.fragment_slide_right_exit)
-                                        .add(R.id.fragmentLogin,createPasswordFragment,null)
+                                        .add(R.id.frameLayoutLogin,createPasswordFragment,null)
                                         .addToBackStack(null)
                                         .commit();
 
