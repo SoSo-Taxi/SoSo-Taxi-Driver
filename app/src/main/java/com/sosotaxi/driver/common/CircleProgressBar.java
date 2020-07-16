@@ -39,7 +39,14 @@ public class CircleProgressBar extends View {
     // 当前进度
     private int currentProgress;
 
-    private int alpha = 50;
+    private int alpha = 5;
+
+
+    int startAngle = -90;
+
+
+    int sweepAngle = 0;
+
 
     public CircleProgressBar(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -75,18 +82,22 @@ public class CircleProgressBar extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         if (currentProgress >= 0) {
-            ringPaint.setAlpha((int) ( alpha + ((float) currentProgress / totalProgress)*50));
             RectF oval = new RectF(getWidth() / 2 - radius, getHeight() / 2 - radius, getWidth() / 2 + radius, getHeight() / 2 + radius);
-            canvas.drawArc(oval, 0, 0, false, ringPaint);
-            canvas.drawArc(oval, -90, ((float) currentProgress / totalProgress) * 360, false, ringPaint);
+            ringPaint.setAlpha((int) ( alpha + ((float) currentProgress / totalProgress )*100));
+//            canvas.drawArc(oval, 0, 0, false, ringPaint);
+//            canvas.drawArc(oval, startAngle, ((float) currentProgress / totalProgress) * 360, false, ringPaint);
+            canvas.drawArc(oval, startAngle, sweepAngle, false, ringPaint);
             String txt = currentProgress + "%";
             txtWidth = textPaint.measureText(txt, 0, txt.length());
             canvas.drawText(txt, getWidth() / 2 - txtWidth / 2, getHeight() / 2 + txtHeight / 4, textPaint);
+            startAngle += 10;
+//            sweepAngle = 100;
         }
     }
 
     public void setProgress(int progress) {
         currentProgress = progress;
+        sweepAngle = 200;
         postInvalidate();
     }
 }

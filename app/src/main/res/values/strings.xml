@@ -62,5 +62,7 @@
 
     <string name="industry_choice_label">行业</string>
     <string name="btn_successful">确认成功</string>
+    <string name="btn_arrive_starting_point">到达上车地点</string>
+    <string name="end_work_text">收车</string>
 
 </resources>
