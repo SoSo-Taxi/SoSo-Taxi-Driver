@@ -42,10 +42,10 @@
                     style="@style/DriverOrder.Destination"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="奥体中心"
                     android:ellipsize="end"
                     android:maxWidth="@dimen/driver_order_destination_width"
                     android:singleLine="true"
+                    android:text="天安门广场"
                     app:layout_constraintBottom_toBottomOf="@+id/textViewDriverArriveDestinationTo"
                     app:layout_constraintStart_toEndOf="@+id/textViewDriverArriveDestinationTo" />
 
@@ -111,7 +111,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:clickable="true"
-        app:layout_constraintBottom_toTopOf="@+id/slideButtonArriveStartingPoint"
+        app:layout_constraintBottom_toTopOf="@+id/slideButtonArriveDestination"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cardViewDriverArriveDestination" />

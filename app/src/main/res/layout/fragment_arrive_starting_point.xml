@@ -228,7 +228,7 @@
                     style="@style/DriverOrder.Address"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/dot_orange"
+                    android:drawableStart="@drawable/dot_red"
                     android:ellipsize="end"
                     android:maxWidth="@dimen/driver_order_detail_card_address_width"
                     android:singleLine="true"
