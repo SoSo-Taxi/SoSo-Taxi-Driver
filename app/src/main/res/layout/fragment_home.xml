@@ -9,21 +9,20 @@
     tools:context=".ui.home.HomeFragment">
 
 
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="404dp"
         android:layout_height="727dp"
         android:background="#E6E6E6"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" >
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintLayout13"
-            android:background="@android:color/background_light"
             android:layout_width="404dp"
             android:layout_height="87dp"
-            android:layout_marginTop="5dp"
+            android:background="@android:color/background_light"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -42,9 +41,7 @@
                     android:id="@+id/firstpage_servicepoint_textView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="5dp"
+                    android:layout_marginTop="25dp"
                     android:gravity="center"
                     android:text="94"
                     android:textColor="#6F6F6F"
@@ -58,8 +55,6 @@
                     android:id="@+id/textView14"
                     android:layout_width="wrap_content"
                     android:layout_height="18dp"
-                    android:layout_marginStart="22dp"
-                    android:layout_marginEnd="22dp"
                     android:gravity="center"
                     android:text="服务分"
                     android:textSize="14sp"
@@ -82,9 +77,7 @@
                     android:id="@+id/firstpage_account_textView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="5dp"
+                    android:layout_marginTop="25dp"
                     android:gravity="center"
                     android:text="283.43"
                     android:textColor="#6F6F6F"
@@ -98,8 +91,6 @@
                     android:id="@+id/textView18"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="22dp"
-                    android:layout_marginEnd="22dp"
                     android:gravity="center"
                     android:text="今日流水"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -121,9 +112,7 @@
                     android:id="@+id/firstpage_orderquantity_textView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="5dp"
+                    android:layout_marginTop="25dp"
                     android:text="16"
                     android:textColor="#6F6F6F"
                     android:textSize="28sp"
@@ -136,8 +125,6 @@
                     android:id="@+id/textView22"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="22dp"
-                    android:layout_marginEnd="22dp"
                     android:text="接单数"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -157,10 +144,8 @@
                     android:id="@+id/firstpage_onlinetime_textView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="5dp"
-                    android:text="8.5"
+                    android:layout_marginTop="25dp"
+                    android:text="8.5h"
                     android:textColor="#6F6F6F"
                     android:textSize="28sp"
                     android:textStyle="bold"
@@ -172,8 +157,6 @@
                     android:id="@+id/textView25"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="22dp"
-                    android:layout_marginEnd="22dp"
                     android:text="在线时长"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -182,132 +165,157 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="404dp"
-            android:layout_height="601dp"
-            android:layout_marginTop="22dp"
+            android:id="@+id/constraintLayout15"
+            android:layout_width="398dp"
+            android:layout_height="433dp"
+            android:layout_marginTop="16dp"
             android:background="@android:color/background_light"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/constraintLayout13">
 
-            <TextView
-                android:id="@+id/textView10"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:text="您有"
-                android:textSize="18sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/first_page_undone_order_recycleView"
                 android:layout_width="404dp"
                 android:layout_height="401dp"
-                android:layout_marginTop="12dp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView10" />
-
-            <TextView
-                android:id="@+id/firstpage_undone_orderquantity_textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="7dp"
-                android:layout_marginTop="16dp"
-                android:text="10"
-                android:textSize="18sp"
-                app:layout_constraintStart_toEndOf="@+id/textView10"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/textView16"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="7dp"
-                android:layout_marginTop="16dp"
-                android:text="个未完成订单"
-                android:textSize="18sp"
-                app:layout_constraintStart_toEndOf="@+id/firstpage_undone_orderquantity_textView"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout16" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/constraintLayout14"
-                android:layout_width="404dp"
-                android:layout_height="146dp"
-                android:layout_marginTop="1dp"
+                android:id="@+id/constraintLayout16"
+                android:layout_width="402dp"
+                android:layout_height="34dp"
+                app:layout_constraintBottom_toTopOf="@+id/first_page_undone_order_recycleView"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/first_page_undone_order_recycleView">
-
-                <com.sosotaxi.driver.common.CircleProgressBar
-                    android:id="@+id/circle_progress_bar"
-                    android:layout_width="140dp"
-                    android:layout_height="140dp"
-                    android:layout_marginStart="122dp"
-                    android:layout_marginTop="3dp"
-                    android:layout_marginEnd="122dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    cp:radius="65dp"
-                    cp:ringColor="#FFE62A3E"
-                    cp:strokeWidth="10dp"
-                    cp:textColor="#0000ff" />
+                app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
-                    android:id="@+id/textView27"
-                    android:layout_width="140dp"
-                    android:layout_height="140dp"
-                    android:layout_marginStart="132dp"
-                    android:layout_marginTop="3dp"
-                    android:layout_marginEnd="132dp"
-                    android:background="@drawable/round_textview_transparent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/start_order_textView"
-                    android:layout_width="124dp"
-                    android:layout_height="124dp"
-                    android:layout_marginStart="140dp"
-                    android:layout_marginTop="11dp"
-                    android:background="@drawable/shape_round_textview"
-                    android:gravity="center"
-                    android:text="开始听单"
-                    android:textColor="@android:color/background_light"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/end_work_textView"
-                    android:layout_width="72dp"
-                    android:layout_height="72dp"
-                    android:layout_marginTop="37dp"
-                    android:layout_marginEnd="16dp"
-                    android:alpha="0.3"
-                    android:background="@drawable/round_endwork_textview"
-                    android:gravity="center"
-                    android:text="@string/end_work_text"
-                    android:textColor="@android:color/background_light"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <Button
-                    android:id="@+id/test_order_btn"
+                    android:id="@+id/textView10"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="46dp"
-                    android:text="addorder"
+                    android:layout_marginStart="22dp"
+                    android:text="您有"
+                    android:textSize="14sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/textView16"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="245dp"
+                    android:text="个未完成订单"
+                    android:textSize="14sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/firstpage_undone_orderquantity_textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="10"
+                    android:textSize="14sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/textView16"
+                    app:layout_constraintStart_toEndOf="@+id/textView10"
                     app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="189dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/constraintLayout15">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:cardCornerRadius="15dp"
+                app:cardElevation="10dp"
+                app:cardMaxElevation="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <com.sosotaxi.driver.common.CircleProgressBar
+                        android:id="@+id/circle_progress_bar"
+                        android:layout_width="140dp"
+                        android:layout_height="140dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        cp:radius="65dp"
+                        cp:ringColor="#FFE62A3E"
+                        cp:strokeWidth="10dp"
+                        cp:textColor="#0000ff" />
+
+                    <TextView
+                        android:id="@+id/textView27"
+                        android:layout_width="140dp"
+                        android:layout_height="140dp"
+                        android:background="@drawable/round_textview_transparent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/start_order_textView"
+                        android:layout_width="124dp"
+                        android:layout_height="124dp"
+                        android:background="@drawable/shape_round_textview"
+                        android:gravity="center"
+                        android:text="开始听单"
+                        android:textColor="@android:color/background_light"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/end_work_textView"
+                        android:layout_width="72dp"
+                        android:layout_height="72dp"
+                        android:layout_marginEnd="30dp"
+                        android:alpha="0.3"
+                        android:background="@drawable/round_endwork_textview"
+                        android:gravity="center"
+                        android:text="@string/end_work_text"
+                        android:textColor="@android:color/background_light"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <Button
+                        android:id="@+id/test_order_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:text="addorder"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

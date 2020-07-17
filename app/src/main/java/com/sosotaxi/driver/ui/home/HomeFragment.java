@@ -136,6 +136,7 @@ public class HomeFragment extends Fragment{
 
         mUndoneOrderQuantityTextView.setText(String.valueOf(mUndoneOrderRecycleViewAdapter.getItemCount()));
 
+
         mEndWorkTextView = root.findViewById(R.id.end_work_textView);
 
         setEndWorkTextViewVisible(false);

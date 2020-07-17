@@ -8,60 +8,47 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/undone_order_CardView"
         android:layout_width="374dp"
-        android:layout_height="106dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="6dp"
-        android:layout_marginEnd="5dp"
-        android:elevation="5dp"
-        android:translationZ="5dp"
+        android:layout_height="136dp"
+        android:layout_marginStart="7dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="7dp"
+        android:layout_marginBottom="5dp"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="7dp"
+        app:cardMaxElevation="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.486"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/undone_order_constaint_layout"
             android:layout_width="374dp"
-            android:layout_height="106dp"
-            android:background="@drawable/personal_data_clayout">
+            android:layout_height="136dp"
+            android:background="@drawable/personal_data_clayout"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
                 android:id="@+id/undone_order_time_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="3dp"
+                android:layout_marginStart="14dp"
+                android:layout_marginTop="24dp"
                 android:text="预约时间"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/imageView7"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/textView12"
-                android:layout_width="15dp"
-                android:layout_height="15dp"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
                 android:layout_marginStart="17dp"
-                android:layout_marginTop="4dp"
+                android:layout_marginBottom="63dp"
                 android:background="@drawable/round_green_textview"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/undone_order_time_textview" />
-
-            <TextView
-                android:id="@+id/textView26"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="4dp"
-                android:text="⬇"
-                android:textSize="18sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView12" />
-
-            <TextView
-                android:id="@+id/textView24"
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:layout_marginStart="17dp"
-                android:layout_marginBottom="11dp"
-                android:background="@drawable/shape_round_textview"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
 
@@ -69,34 +56,74 @@
                 android:id="@+id/undone_order_destination_textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="2dp"
-                android:layout_marginBottom="11dp"
-                android:text="TextView"
-                android:textSize="18sp"
+                android:layout_marginStart="15dp"
+                android:layout_marginBottom="16dp"
+                android:text="destination"
+                android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/textView24" />
+
+            <TextView
+                android:id="@+id/textView24"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:layout_marginStart="17dp"
+                android:layout_marginBottom="21dp"
+                android:background="@drawable/shape_round_textview"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
 
             <TextView
                 android:id="@+id/undone_order_starting_point"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="2dp"
-                android:layout_marginTop="3dp"
-                android:text="TextView"
-                android:textSize="18sp"
-                app:layout_constraintStart_toEndOf="@+id/textView12"
-                app:layout_constraintTop_toBottomOf="@+id/undone_order_time_textview" />
+                android:layout_marginStart="15dp"
+                android:layout_marginBottom="58dp"
+                android:text="starting_point"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/textView12" />
 
             <TextView
                 android:id="@+id/undoen_order_schedule_textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:layout_marginEnd="10dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="25dp"
                 android:text="去接乘客  >"
                 android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/imageView7"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="28dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_schedule_icon" />
+
+            <ImageView
+                android:id="@+id/imageView8"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="6dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView12"
+                app:srcCompat="@drawable/ic_downward_arrow_icon" />
+
+            <ImageView
+                android:id="@+id/imageView9"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginBottom="6dp"
+                app:layout_constraintBottom_toTopOf="@+id/textView24"
+                app:layout_constraintStart_toStartOf="parent"
+                app:srcCompat="@drawable/ic_downward_arrow_icon" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 
