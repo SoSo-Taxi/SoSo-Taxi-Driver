@@ -10,8 +10,8 @@
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="404dp"
-        android:layout_height="727dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:background="#E6E6E6"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -20,20 +20,21 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintLayout13"
-            android:layout_width="404dp"
-            android:layout_height="87dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="16dp"
             android:background="@android:color/background_light"
+            app:layout_constraintBottom_toTopOf="@+id/constraintLayout15"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraintLayout5"
-                android:layout_width="101dp"
-                android:layout_height="85dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/constraintLayout9"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
@@ -47,6 +48,7 @@
                     android:textColor="#6F6F6F"
                     android:textSize="28sp"
                     android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@+id/textView14"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -54,10 +56,12 @@
                 <TextView
                     android:id="@+id/textView14"
                     android:layout_width="wrap_content"
-                    android:layout_height="18dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="7dp"
                     android:gravity="center"
                     android:text="服务分"
                     android:textSize="14sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/firstpage_servicepoint_textView" />
@@ -65,11 +69,10 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraintLayout9"
-                android:layout_width="101dp"
-                android:layout_height="85dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/constraintLayout12"
                 app:layout_constraintStart_toEndOf="@+id/constraintLayout5"
                 app:layout_constraintTop_toTopOf="parent">
 
@@ -83,7 +86,9 @@
                     android:textColor="#6F6F6F"
                     android:textSize="28sp"
                     android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@+id/textView18"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.466"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -91,8 +96,10 @@
                     android:id="@+id/textView18"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="7dp"
                     android:gravity="center"
                     android:text="今日流水"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/firstpage_account_textView" />
@@ -100,11 +107,10 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraintLayout12"
-                android:layout_width="101dp"
-                android:layout_height="85dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/constraintLayout14"
                 app:layout_constraintStart_toEndOf="@+id/constraintLayout9"
                 app:layout_constraintTop_toTopOf="parent">
 
@@ -117,6 +123,7 @@
                     android:textColor="#6F6F6F"
                     android:textSize="28sp"
                     android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@+id/textView22"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -125,18 +132,20 @@
                     android:id="@+id/textView22"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="7dp"
                     android:text="接单数"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/firstpage_orderquantity_textView" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="101dp"
-                android:layout_height="85dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
+                android:id="@+id/constraintLayout14"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/constraintLayout12"
                 app:layout_constraintTop_toTopOf="parent">
 
@@ -149,6 +158,7 @@
                     android:textColor="#6F6F6F"
                     android:textSize="28sp"
                     android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@+id/textView25"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -157,7 +167,9 @@
                     android:id="@+id/textView25"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="7dp"
                     android:text="在线时长"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/firstpage_onlinetime_textView" />
@@ -166,18 +178,19 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintLayout15"
-            android:layout_width="398dp"
-            android:layout_height="433dp"
-            android:layout_marginTop="16dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="100dp"
             android:background="@android:color/background_light"
+            app:layout_constraintBottom_toTopOf="@+id/constraintLayout17"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/constraintLayout13">
+            app:layout_constraintTop_toTopOf="parent">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/first_page_undone_order_recycleView"
-                android:layout_width="404dp"
-                android:layout_height="401dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -185,8 +198,8 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraintLayout16"
-                android:layout_width="402dp"
-                android:layout_height="34dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 app:layout_constraintBottom_toTopOf="@+id/first_page_undone_order_recycleView"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -199,6 +212,8 @@
                     android:layout_marginStart="22dp"
                     android:text="您有"
                     android:textSize="14sp"
+                    android:paddingTop="@dimen/undone_order_padding_tv"
+                    android:paddingBottom="@dimen/undone_order_padding_tv"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -210,6 +225,8 @@
                     android:layout_marginEnd="245dp"
                     android:text="个未完成订单"
                     android:textSize="14sp"
+                    android:paddingTop="@dimen/undone_order_padding_tv"
+                    android:paddingBottom="@dimen/undone_order_padding_tv"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -220,6 +237,8 @@
                     android:layout_height="wrap_content"
                     android:text="10"
                     android:textSize="14sp"
+                    android:paddingTop="@dimen/undone_order_padding_tv"
+                    android:paddingBottom="@dimen/undone_order_padding_tv"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/textView16"
                     app:layout_constraintStart_toEndOf="@+id/textView10"
@@ -230,12 +249,14 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout17"
             android:layout_width="match_parent"
-            android:layout_height="189dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="550dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/constraintLayout15">
+            app:layout_constraintTop_toTopOf="parent">
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
@@ -244,7 +265,8 @@
                 app:cardMaxElevation="3dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent">
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -255,6 +277,7 @@
                         android:layout_width="140dp"
                         android:layout_height="140dp"
                         app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintDimensionRatio="1:1"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -268,6 +291,7 @@
                         android:layout_width="140dp"
                         android:layout_height="140dp"
                         android:background="@drawable/round_textview_transparent"
+                        app:layout_constraintDimensionRatio="1:1"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -284,6 +308,7 @@
                         android:textSize="18sp"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintDimensionRatio="1:1"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -292,10 +317,11 @@
                         android:id="@+id/end_work_textView"
                         android:layout_width="72dp"
                         android:layout_height="72dp"
-                        android:layout_marginEnd="30dp"
+                        android:layout_marginEnd="39dp"
                         android:alpha="0.3"
                         android:background="@drawable/round_endwork_textview"
                         android:gravity="center"
+                        app:layout_constraintDimensionRatio="1:1"
                         android:text="@string/end_work_text"
                         android:textColor="@android:color/background_light"
                         android:textStyle="bold"
