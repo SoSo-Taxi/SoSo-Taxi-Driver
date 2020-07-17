@@ -165,7 +165,7 @@ public class EnterPhoneFragment extends Fragment {
                                 R.animator.fragment_slide_left_exit,
                                 R.animator.fragment_slide_right_enter,
                                 R.animator.fragment_slide_right_exit)
-                        .add(R.id.fragmentLogin, enterPasswordFragment, null)
+                        .add(R.id.frameLayoutLogin, enterPasswordFragment, null)
                         .addToBackStack(null)
                         .commit();
 
@@ -186,7 +186,7 @@ public class EnterPhoneFragment extends Fragment {
                                 R.animator.fragment_slide_left_exit,
                                 R.animator.fragment_slide_right_enter,
                                 R.animator.fragment_slide_right_exit)
-                        .add(R.id.fragmentLogin, enterVerificationCodeFragment, null)
+                        .add(R.id.frameLayoutLogin, enterVerificationCodeFragment, null)
                         .addToBackStack(null)
                         .commit();
 

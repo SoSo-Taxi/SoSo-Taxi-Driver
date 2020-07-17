@@ -1,14 +1,137 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.driverOrder.ArriveDestinationFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardViewDriverArriveDestination"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-</FrameLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraintLayout9"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toStartOf="@+id/constraintLayoutArriveDestinationNavigation"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/textViewDriverArriveDestinationTo"
+                    style="@style/DriverOrder.Title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/driver_order_horizontal_margin"
+                    android:layout_marginTop="@dimen/driver_order_vertical_margin"
+                    android:text="@string/title_driver_order_to"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/textViewDriverArriveDestinationDestination"
+                    style="@style/DriverOrder.Destination"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxWidth="@dimen/driver_order_destination_width"
+                    android:singleLine="true"
+                    android:text="天安门广场"
+                    app:layout_constraintBottom_toBottomOf="@+id/textViewDriverArriveDestinationTo"
+                    app:layout_constraintStart_toEndOf="@+id/textViewDriverArriveDestinationTo" />
+
+                <TextView
+                    android:id="@+id/textViewDriverArriveDestinationHint"
+                    style="@style/DriverOrder.Hint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/driver_order_horizontal_margin"
+                    android:layout_marginTop="@dimen/driver_order_title_hint_spacing"
+                    android:layout_marginBottom="@dimen/driver_order_title_hint_spacing"
+                    android:layout_weight="1"
+                    android:text="行程1.2公里  20分钟"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/textViewDriverArriveDestinationTo" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraintLayoutArriveDestinationNavigation"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                app:layout_constraintBottom_toBottomOf="@+id/constraintLayout9"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/constraintLayout9">
+
+                <ImageButton
+                    android:id="@+id/imageButtonDriverArriveDestinationNavigation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/driver_order_horizontal_margin"
+                    android:layout_marginTop="@dimen/driver_order_vertical_margin"
+                    android:layout_marginEnd="@dimen/driver_order_horizontal_margin"
+                    android:layout_weight="1"
+                    android:background="@drawable/ic_navigation"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/textViewDriverOrderArriveDestinationNavigation"
+                    style="@style/DriverOrder.TimeRequirement"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/driver_order_navigation_button_horizontal_margin"
+                    android:layout_marginTop="@dimen/driver_order_navigation_button_spacing"
+                    android:layout_marginEnd="@dimen/driver_order_navigation_button_horizontal_margin"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:text="@string/btn_driver_order_navigation"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/imageButtonDriverArriveDestinationNavigation" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+    <com.baidu.mapapi.map.MapView
+        android:id="@+id/baiduMapViewDriverArriveDestination"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clickable="true"
+        app:layout_constraintBottom_toTopOf="@+id/slideButtonArriveDestination"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardViewDriverArriveDestination" />
+
+    <com.sosotaxi.driver.ui.widget.SlideButton
+        android:id="@+id/slideButtonArriveDestination"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/driver_order_button_height"
+        app:background_drawable="@drawable/btn_background"
+        app:background_text="@string/btn_driver_order_arrive_destination"
+        app:background_text_color="@color/colorBackground"
+        app:background_text_complete="@string/btn_driver_order_successful"
+        app:background_text_size="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:overlay_drawable="@drawable/btn_background_overlay"
+        app:overlay_drawable_complete="@drawable/btn_background_overlay_complete"
+        app:reset_not_full="true"
+        app:secondary_color="@color/colorButtonSuccessful" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

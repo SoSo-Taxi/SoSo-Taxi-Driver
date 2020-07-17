@@ -45,6 +45,17 @@
     <string name="hint_verification_code_sent">验证码已发送</string>
 
     <!-- 订单界面 -->
+    <string name="btn_driver_order_successful">确认成功</string>
+    <string name="btn_driver_order_arrive_starting_point">到达上车地点</string>
+    <string name="btn_driver_order_pick_up_passenger">接到乘客</string>
+    <string name="hint_driver_order_number">尾号</string>
+    <string name="btn_driver_order_navigation">导航</string>
+    <string name="hint_driver_order_time_requirement">内到达乘客上车点</string>
+    <string name="hint_driver_order_please">请在</string>
+    <string name="title_driver_order_to">去</string>
+    <string name="hint_driver_order_wait_passenger">已到达约定乘车点，请等待乘客上车</string>
+    <string name="btn_driver_order_arrive_destination">到达目的地</string>
+    <string name="btn_driver_order_confirm_bill">发起收款</string>
 
     <string name="menu_order_label">我的订单</string>
     <string name="menu_wallet_label">我的钱包</string>
@@ -64,5 +75,15 @@
     <string name="btn_successful">确认成功</string>
     <string name="btn_arrive_starting_point">到达上车地点</string>
     <string name="end_work_text">收车</string>
+    <string name="error_phone_content_empty">手机号或短信内容不能为空</string>
+    <string name="hint_send_successful">发送成功</string>
+    <string name="error_phone_empty">手机号不能为空</string>
+    <string name="hint_route_planning">正在规划路径</string>
+    <string name="hint_permission_send_message_restrict">请授予此权限用于与乘客短信联系</string>
+    <string name="hint_permission_call_restrict">请授予此权限用于与乘客电话联系</string>
+    <string name="btn_finish_order">完成订单</string>
+    <string name="hint_navigation_finish">导航结束</string>
+    <string name="hint_permission_navigation_restrict">请授予此权限用于导航</string>
+
 
 </resources>

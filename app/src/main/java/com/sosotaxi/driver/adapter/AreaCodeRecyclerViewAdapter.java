@@ -31,7 +31,7 @@ public class AreaCodeRecyclerViewAdapter extends RecyclerView.Adapter<AreaCodeRe
 
     public AreaCodeRecyclerViewAdapter(List<String> items) {
         mValues = items;
-        mFilterValues=items;
+        mFilterValues = items;
     }
 
     public void setListener(OnRecyclerViewClickListener listener) {
@@ -42,7 +42,7 @@ public class AreaCodeRecyclerViewAdapter extends RecyclerView.Adapter<AreaCodeRe
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_area_code, parent, false);
-        if(mListener!=null){
+        if (mListener != null) {
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -64,35 +64,35 @@ public class AreaCodeRecyclerViewAdapter extends RecyclerView.Adapter<AreaCodeRe
     }
 
     @Override
-    public Filter getFilter(){
+    public Filter getFilter() {
         return new Filter() {
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
-                String filterString=constraint.toString();
-                if(filterString.isEmpty()){
+                String filterString = constraint.toString();
+                if (filterString.isEmpty()) {
                     // 没有过滤的内容则使用原数据
-                    mFilterValues=mValues;
-                }else{
-                    List<String> filterList=new ArrayList<>();
+                    mFilterValues = mValues;
+                } else {
+                    List<String> filterList = new ArrayList<>();
 
                     //寻找符合条件的区号
-                    for(String string : mValues){
-                        if(string.contains(filterString)){
+                    for (String string : mValues) {
+                        if (string.contains(filterString)) {
                             filterList.add(string);
                         }
                     }
 
-                    mFilterValues=filterList;
+                    mFilterValues = filterList;
                 }
 
-                FilterResults filterResults=new FilterResults();
-                filterResults.values=mFilterValues;
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = mFilterValues;
                 return filterResults;
             }
 
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
-                mFilterValues=(List<String>) results.values;
+                mFilterValues = (List<String>) results.values;
                 notifyDataSetChanged();
             }
         };

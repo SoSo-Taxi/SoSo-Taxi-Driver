@@ -7,65 +7,105 @@ package com.sosotaxi.driver.ui.driverOrder;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sosotaxi.driver.R;
+import com.sosotaxi.driver.common.Constant;
+import com.sosotaxi.driver.ui.widget.OnSlideListener;
+import com.sosotaxi.driver.ui.widget.SlideButton;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link ConfirmBillFragment#newInstance} factory method to
- * create an instance of this fragment.
+ *
  */
 public class ConfirmBillFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private TextView mTextViewAmount;
+    private EditText mEditTextRoadToll;
+    private EditText mEditTextParkingRate;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private SlideButton mSlideButton;
 
     public ConfirmBillFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ConfirmBillFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ConfirmBillFragment newInstance(String param1, String param2) {
-        ConfirmBillFragment fragment = new ConfirmBillFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
+        // 所需空构造器
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        // 填充布局
         return inflater.inflate(R.layout.fragment_confirm_bill, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        mTextViewAmount=getActivity().findViewById(R.id.textViewDriverOrderBillAmount);
+        mEditTextRoadToll=getActivity().findViewById(R.id.editTextDriverOrderBillItemRoadToll);
+        mEditTextParkingRate=getActivity().findViewById(R.id.editTextDriverOrderBillItemParkingRate);
+
+        mSlideButton=getActivity().findViewById(R.id.slideButtonConfirmBill);
+
+        mSlideButton.addSlideListener(new OnSlideListener() {
+            @Override
+            public void onSlideSuccess() {
+                // 获取账单项金额
+                double amount=0;
+                double roadToll=0;
+                double parkingRate=0;
+                String amountString=mTextViewAmount.getText().toString();
+                String roadTollString=mEditTextRoadToll.getText().toString();
+                String parkingRateString=mEditTextParkingRate.getText().toString();
+                if(amountString.isEmpty()==false){
+                    amount=Double.parseDouble(amountString);
+                }
+                if(roadTollString.isEmpty()==false){
+                    roadToll=Double.parseDouble(roadTollString);
+                }
+                if(parkingRateString.isEmpty()==false){
+                    parkingRate=Double.parseDouble(parkingRateString);
+                }
+
+                // 计算账单金额
+                double total=amount+roadToll+parkingRate;
+
+
+                Bundle bundle=new Bundle();
+                bundle.putDouble(Constant.EXTRA_TOTAL,total);
+
+                RankPassengerFragment rankPassengerFragment=new RankPassengerFragment();
+                rankPassengerFragment.setArguments(bundle);
+
+                Toast.makeText(getContext(), "确认成功!", Toast.LENGTH_SHORT).show();
+
+                // 跳转评价乘客界面
+                FragmentManager fragmentManager=getActivity().getSupportFragmentManager();
+                fragmentManager.popBackStack();
+                FragmentTransaction fragmentTransaction=fragmentManager.beginTransaction();
+                fragmentTransaction.setCustomAnimations(
+                        R.animator.fragment_slide_left_enter,
+                        R.animator.fragment_slide_left_exit,
+                        R.animator.fragment_slide_right_enter,
+                        R.animator.fragment_slide_right_exit);
+                fragmentTransaction.add(R.id.frameLayoutDriverOrder,rankPassengerFragment,null);
+                fragmentTransaction.commit();
+            }
+        });
     }
 }

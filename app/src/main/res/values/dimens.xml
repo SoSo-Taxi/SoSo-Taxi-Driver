@@ -21,10 +21,11 @@
     <dimen name="text_margin">16dp</dimen>
 
     <!-- 订单界面 -->
-    <dimen name="driver_order_vertical_margin">28dp</dimen>
+    <dimen name="driver_order_vertical_margin">10dp</dimen>
     <dimen name="driver_order_horizontal_margin">20dp</dimen>
-    <dimen name="driver_order_title_hint_spacing">15dp</dimen>
-    <dimen name="driver_order_time_requirement_vertical_margin">12dp</dimen>
+    <dimen name="driver_order_title_hint_spacing">10dp</dimen>
+    <dimen name="driver_order_destination_width">170dp</dimen>
+    <dimen name="driver_order_time_requirement_vertical_margin">10dp</dimen>
     <dimen name="driver_order_navigation_button_spacing">10dp</dimen>
     <dimen name="driver_order_navigation_button_horizontal_margin">40dp</dimen>
     <dimen name="driver_order_detail_card_horizontal_spacing">12dp</dimen>
@@ -38,6 +39,19 @@
     <dimen name="driver_order_detail_card_icon_size">30dp</dimen>
     <dimen name="driver_order_button_vertical_margin">28dp</dimen>
     <dimen name="driver_order_button_height">72dp</dimen>
+    <dimen name="driver_order_bill_amount_unit_spacing">5dp</dimen>
+    <dimen name="driver_order_bill_hint_vertical_margin">20dp</dimen>
+    <dimen name="driver_order_bill_title_vertical_margin">32dp</dimen>
+    <dimen name="driver_order_bill_title_hint_spacing">40dp</dimen>
+    <dimen name="driver_order_bill_item_horizontal_margin">28dp</dimen>
+    <dimen name="driver_order_bill_item_vertical_margin">28dp</dimen>
+    <dimen name="driver_order_rank_passenger_avatar_size">25dp</dimen>
+    <dimen name="driver_order_rank_passenger_ranking_bar_vertical_margin">28dp</dimen>
+    <dimen name="driver_order_rank_passenger_hint_ranking_bar_spacing">15dp</dimen>
+    <dimen name="driver_order_rank_passenger_card_vertical_margin">25dp</dimen>
+    <dimen name="driver_order_rank_passenger_title_hint_spacing">40dp</dimen>
+    <dimen name="driver_order_rank_passenger_card_horizontal_spacing">12dp</dimen>
+    <dimen name="driver_order_rank_passenger_card_horizontal_margin">18dp</dimen>
 
     <dimen name="nav_vip_textView">70dp</dimen>
     <dimen name="head_photo_width">55dp</dimen>

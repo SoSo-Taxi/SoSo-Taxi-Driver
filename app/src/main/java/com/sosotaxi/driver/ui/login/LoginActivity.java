@@ -10,9 +10,13 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.view.Menu;
@@ -24,13 +28,16 @@ import com.sosotaxi.driver.common.Constant;
 import com.sosotaxi.driver.model.User;
 import com.sosotaxi.driver.service.net.LoginTask;
 import com.sosotaxi.driver.ui.main.MainActivity;
+import com.sosotaxi.driver.utils.PermissionHelper;
+
+import java.io.File;
 
 public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.splash_layout);
+        setContentView(R.layout.splash_layout);
 
         // 获取已登录用户信息
         SharedPreferences sharedPreferences=getSharedPreferences(Constant.SHARE_PREFERENCE_LOGIN, MODE_PRIVATE);
@@ -55,7 +62,7 @@ public class LoginActivity extends AppCompatActivity {
             // 跳转登陆界面
             FragmentManager fragmentManager=getSupportFragmentManager();
             FragmentTransaction fragmentTransaction=fragmentManager.beginTransaction();
-            fragmentTransaction.add(R.id.fragmentLogin,new EnterPhoneFragment(),null);
+            fragmentTransaction.add(R.id.frameLayoutLogin,new EnterPhoneFragment(),null);
             fragmentTransaction.commit();
         }
 
@@ -133,7 +140,7 @@ public class LoginActivity extends AppCompatActivity {
                 // 跳转登陆界面
                 FragmentManager fragmentManager=getSupportFragmentManager();
                 FragmentTransaction fragmentTransaction=fragmentManager.beginTransaction();
-                fragmentTransaction.add(R.id.fragmentLogin,new EnterPhoneFragment(),null);
+                fragmentTransaction.add(R.id.frameLayoutLogin,new EnterPhoneFragment(),null);
                 fragmentTransaction.commit();
             }
             return true;

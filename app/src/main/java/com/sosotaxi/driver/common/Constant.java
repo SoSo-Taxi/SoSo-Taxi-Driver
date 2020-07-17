@@ -5,6 +5,8 @@
  */
 package com.sosotaxi.driver.common;
 
+import android.Manifest;
+
 import okhttp3.MediaType;
 
 /**
@@ -16,6 +18,12 @@ public class Constant {
      * 区号请求
      */
     public static final int SELECT_AREA_CODE_REQUEST=0;
+
+    public static final int PERMISSION_SEND_SMS_REQUEST=1;
+
+    public static final int PERMISSION_CALL_PHONE_REQUEST=2;
+
+    public static final int PERMISSION_NAVIGATION_REQUEST=3;
 
     /**
      * 区号EXTRA
@@ -39,6 +47,8 @@ public class Constant {
 
     public static final String EXTRA_RESPONSE_MESSAGE="com.sosotaxi.driver.ui.login.EXTRA_RESPONSE_MESSAGE";
 
+    public static final String EXTRA_TOTAL="com.sosotaxi.driver.ui.driverorder.EXTRA_TOTAL";
+
     public static final String IS_REGISTERED_URL="http://122.51.162.119:8001/user/isRegistered";
 
     public static final String EXTRA_ERROR="com.sosotaxi.driver.ui.login.EXTRA_ERROR";
@@ -54,4 +64,14 @@ public class Constant {
     public static final String USERNAME="com.sosotaxi.username";
 
     public static final String PASSWORD="com.sosotaxi.password";
+
+    public static final String APP_FOLDER_NAME="SoSoTaxiDriver";
+
+    public static final String[] AUTH_ARRAY_NAVIGATION = {
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+    };
+
+    public static final String TTS_APP_ID="21383548";
+
 }
