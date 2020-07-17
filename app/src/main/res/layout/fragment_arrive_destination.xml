@@ -22,7 +22,7 @@
                 android:id="@+id/constraintLayout9"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintEnd_toStartOf="@+id/constraintLayoutArriveStartingPointNavigation"
+                app:layout_constraintEnd_toStartOf="@+id/constraintLayoutArriveDestinationNavigation"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
@@ -66,7 +66,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/constraintLayoutArriveStartingPointNavigation"
+                android:id="@+id/constraintLayoutArriveDestinationNavigation"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:clickable="true"
@@ -88,7 +88,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/textViewDriverOrderArriveStartingPointNavigation"
+                    android:id="@+id/textViewDriverOrderArriveDestinationNavigation"
                     style="@style/DriverOrder.TimeRequirement"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

@@ -134,7 +134,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
-            android:id="@+id/editTextTextDriverOrderBillItemParkingRate"
+            android:id="@+id/editTextDriverOrderBillItemParkingRate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/driver_order_bill_amount_unit_spacing"

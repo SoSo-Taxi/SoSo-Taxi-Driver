@@ -16,9 +16,12 @@ import androidx.fragment.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sosotaxi.driver.R;
+import com.sosotaxi.driver.common.Constant;
 import com.sosotaxi.driver.ui.widget.OnSlideListener;
 import com.sosotaxi.driver.ui.widget.SlideButton;
 
@@ -26,6 +29,10 @@ import com.sosotaxi.driver.ui.widget.SlideButton;
  *
  */
 public class ConfirmBillFragment extends Fragment {
+
+    private TextView mTextViewAmount;
+    private EditText mEditTextRoadToll;
+    private EditText mEditTextParkingRate;
 
     private SlideButton mSlideButton;
 
@@ -49,18 +56,54 @@ public class ConfirmBillFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        mTextViewAmount=getActivity().findViewById(R.id.textViewDriverOrderBillAmount);
+        mEditTextRoadToll=getActivity().findViewById(R.id.editTextDriverOrderBillItemRoadToll);
+        mEditTextParkingRate=getActivity().findViewById(R.id.editTextDriverOrderBillItemParkingRate);
+
         mSlideButton=getActivity().findViewById(R.id.slideButtonConfirmBill);
 
         mSlideButton.addSlideListener(new OnSlideListener() {
             @Override
             public void onSlideSuccess() {
+                // 获取账单项金额
+                double amount=0;
+                double roadToll=0;
+                double parkingRate=0;
+                String amountString=mTextViewAmount.getText().toString();
+                String roadTollString=mEditTextRoadToll.getText().toString();
+                String parkingRateString=mEditTextParkingRate.getText().toString();
+                if(amountString.isEmpty()==false){
+                    amount=Double.parseDouble(amountString);
+                }
+                if(roadTollString.isEmpty()==false){
+                    roadToll=Double.parseDouble(roadTollString);
+                }
+                if(parkingRateString.isEmpty()==false){
+                    parkingRate=Double.parseDouble(parkingRateString);
+                }
+
+                // 计算账单金额
+                double total=amount+roadToll+parkingRate;
+
+
+                Bundle bundle=new Bundle();
+                bundle.putDouble(Constant.EXTRA_TOTAL,total);
+
+                RankPassengerFragment rankPassengerFragment=new RankPassengerFragment();
+                rankPassengerFragment.setArguments(bundle);
+
                 Toast.makeText(getContext(), "确认成功!", Toast.LENGTH_SHORT).show();
+
                 // 跳转评价乘客界面
                 FragmentManager fragmentManager=getActivity().getSupportFragmentManager();
-                Fragment currentFragment=getActivity().getSupportFragmentManager().getFragments().get(0);
+                fragmentManager.popBackStack();
                 FragmentTransaction fragmentTransaction=fragmentManager.beginTransaction();
-                fragmentTransaction.hide(currentFragment);
-                fragmentTransaction.add(R.id.frameLayoutDriverOrder,new RankPassengerFragment(),null);
+                fragmentTransaction.setCustomAnimations(
+                        R.animator.fragment_slide_left_enter,
+                        R.animator.fragment_slide_left_exit,
+                        R.animator.fragment_slide_right_enter,
+                        R.animator.fragment_slide_right_exit);
+                fragmentTransaction.add(R.id.frameLayoutDriverOrder,rankPassengerFragment,null);
                 fragmentTransaction.commit();
             }
         });
