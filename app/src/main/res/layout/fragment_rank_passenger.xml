@@ -81,7 +81,7 @@
                 style="@style/DriverOrder.BillHint"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="3308"
+                android:text="0086"
                 app:layout_constraintBottom_toBottomOf="@+id/textView20"
                 app:layout_constraintStart_toEndOf="@+id/textView20" />
 
@@ -131,5 +131,23 @@
                 app:layout_constraintTop_toBottomOf="@+id/textView28" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
+
+    <com.sosotaxi.driver.ui.widget.SlideButton
+        android:id="@+id/slideButtonRankPassenger"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/driver_order_button_height"
+        app:background_drawable="@drawable/btn_background"
+        app:background_text="@string/btn_finish_order"
+        app:background_text_color="@color/colorBackground"
+        app:background_text_complete="@string/btn_driver_order_successful"
+        app:background_text_size="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:overlay_drawable="@drawable/btn_background_overlay"
+        app:overlay_drawable_complete="@drawable/btn_background_overlay_complete"
+        app:reset_not_full="true"
+        app:secondary_color="@color/colorButtonSuccessful" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

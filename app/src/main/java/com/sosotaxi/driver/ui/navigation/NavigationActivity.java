@@ -1,18 +1,35 @@
 package com.sosotaxi.driver.ui.navigation;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.Manifest;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.baidu.navisdk.adapter.BNaviCommonParams;
 import com.baidu.navisdk.adapter.BaiduNaviManagerFactory;
 import com.baidu.navisdk.adapter.IBNRouteGuideManager;
+import com.baidu.navisdk.adapter.IBaiduNaviManager;
 import com.sosotaxi.driver.R;
+import com.sosotaxi.driver.common.Constant;
+import com.sosotaxi.driver.utils.PermissionHelper;
+
+import java.io.File;
+
+import static com.baidu.mapapi.BMapManager.getContext;
 
 public class NavigationActivity extends AppCompatActivity {
+
+    private static final String[] sAuthBaseArray = {
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+    };
 
     private FrameLayout mFrameLayoutNavigation;
 
@@ -21,16 +38,17 @@ public class NavigationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation);
 
-        mFrameLayoutNavigation=findViewById(R.id.frameLayoutNavigation);
+        mFrameLayoutNavigation = findViewById(R.id.frameLayoutNavigation);
 
         Bundle bundle = new Bundle();
 
         // true为真实导航，false为模拟导航
         bundle.putBoolean(BNaviCommonParams.ProGuideKey.IS_REALNAVI, false);
-        View navigationView= BaiduNaviManagerFactory.getRouteGuideManager().onCreate(this,
+        View navigationView = BaiduNaviManagerFactory.getRouteGuideManager().onCreate(this,
                 new IBNRouteGuideManager.OnNavigationListener() {
                     @Override
                     public void onNaviGuideEnd() {
+                        Toast.makeText(getContext(), R.string.hint_navigation_finish, Toast.LENGTH_SHORT).show();
                         finish();
                     }
 

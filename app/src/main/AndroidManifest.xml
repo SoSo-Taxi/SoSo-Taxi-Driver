@@ -21,6 +21,10 @@
     <!-- 用于导航中省电设置 -->
     <uses-permission android:name="android.permission.WRITE_SETTINGS"
         tools:ignore="ProtectedPermissions" />
+    <!-- 用于短信联系乘客 -->
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <!-- 用于电话联系乘客-->
+    <uses-permission android:name="android.permission.CALL_PHONE" />
 
     <application
         android:name=".application.MapApplication"
@@ -82,12 +86,6 @@
             android:name=".ui.login.LoginActivity"
             android:label="@string/title_activity_login"
             android:theme="@style/AppTheme.NoActionBar">
-
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".ui.login.SelectAreaCodeActivity"
