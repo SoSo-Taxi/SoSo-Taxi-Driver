@@ -14,6 +14,7 @@ import com.sosotaxi.driver.common.TTSUtility;
  * 用于百度地图SDK初始化
  */
 public class MapApplication extends Application {
+
     @Override
     public void onCreate() {
         super.onCreate();

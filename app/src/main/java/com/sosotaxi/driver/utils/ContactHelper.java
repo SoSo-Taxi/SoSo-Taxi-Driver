@@ -1,3 +1,8 @@
+/**
+ * @Author 范承祥
+ * @CreateTime 2020/7/17
+ * @UpdateTime 2020/7/18
+ */
 package com.sosotaxi.driver.utils;
 
 import android.content.Context;
@@ -9,12 +14,16 @@ import android.widget.Toast;
 import com.sosotaxi.driver.R;
 
 /**
- * @Author 范承祥
- * @CreateTime 2020/7/17
- * @UpdateTime 2020/7/17
+ * 联系帮手类
  */
 public class ContactHelper {
 
+    /**
+     * 发送短信
+     * @param context 上下文
+     * @param phone 手机号
+     * @param content 短信内容
+     */
     public static void sendMessage(Context context, String phone,String content){
         if(phone.isEmpty()&&content.isEmpty()){
             // 提示手机号或短信内容为空
@@ -28,6 +37,11 @@ public class ContactHelper {
         Toast.makeText(context, R.string.hint_send_successful, Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * 拨打电话
+     * @param context 上下文
+     * @param phone 手机号
+     */
     public static void makeCall(Context context, String phone){
         if(phone.isEmpty()){
             // 提示手机号为空

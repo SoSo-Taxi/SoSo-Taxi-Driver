@@ -1,7 +1,7 @@
 /**
  * @Author 范承祥
  * @CreateTime 2020/7/15
- * @UpdateTime 2020/7/15
+ * @UpdateTime 2020/7/18
  */
 package com.sosotaxi.driver.ui.driverOrder;
 
@@ -53,19 +53,18 @@ import java.util.List;
  * 接到乘客界面
  */
 public class PickUpPassengerFragment extends Fragment {
+    /**
+     * 百度地图对象
+     */
+    private BaiduMap mBaiduMap;
 
+    private MapView mBaiduMapView;
+    private ImageButton mImageButtonText;
+    private ImageButton mImageButtonPhone;
     private TextView mTextViewNumber;
     private TextView mTextViewFrom;
     private TextView mTextViewTo;
     private RoutePlanSearch mSearch;
-
-    private BaiduMap mBaiduMap;
-
-    private MapView mBaiduMapView;
-
-    private ImageButton mImageButtonText;
-    private ImageButton mImageButtonPhone;
-
     private SlideButton mSlideButton;
 
     public PickUpPassengerFragment() {
@@ -88,7 +87,7 @@ public class PickUpPassengerFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-
+        // 获取控件
         mBaiduMapView=getActivity().findViewById(R.id.baiduMapViewDriverPickUpPassenger);
         mTextViewNumber=getActivity().findViewById(R.id.textViewDriverPickUpPassengerNumber);
         mTextViewFrom=getActivity().findViewById(R.id.textViewDriverPickUpPassengerDetailFrom);
@@ -114,14 +113,19 @@ public class PickUpPassengerFragment extends Fragment {
         mImageButtonText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // 检查权限
                 if (Build.VERSION.SDK_INT >= 23) {
                     if (PermissionHelper.hasBaseAuth(getContext(), Manifest.permission.SEND_SMS)==false) {
+                        // 未获得则请求权限
                         requestPermissions(new String[]{Manifest.permission.SEND_SMS}, Constant.PERMISSION_SEND_SMS_REQUEST);
                         return;
                     }
                 }
+                // TODO:与订单对接获取乘客联系方式
+                // 测试用数据
                 String phone="+86 10086";
                 String content="您好，我已到达上车点，请您尽快上车。";
+                //发送短信
                 ContactHelper.sendMessage(getContext(),phone,content);
             }
         });
@@ -130,13 +134,18 @@ public class PickUpPassengerFragment extends Fragment {
         mImageButtonPhone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // 检查权限
                 if (Build.VERSION.SDK_INT >= 23) {
                     if (PermissionHelper.hasBaseAuth(getContext(), Manifest.permission.CALL_PHONE)==false) {
+                        // 未获取则请求权限
                         requestPermissions(new String[]{Manifest.permission.CALL_PHONE}, Constant.PERMISSION_CALL_PHONE_REQUEST);
                         return;
                     }
                 }
+                // TODO:与订单对接获取乘客联系方式
+                // 测试用数据
                 String phone="+86 10086";
+                // 拨打电话
                 ContactHelper.makeCall(getContext(),phone);
             }
         });
@@ -160,41 +169,41 @@ public class PickUpPassengerFragment extends Fragment {
             }
         });
 
+        // 路径规划
         initRoutePlan();
     }
 
+    // 权限请求结果处理
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        // TODO:与订单对接获取乘客联系方式
+        // 测试用数据
         String phone="+86 10086";
         String content="您好，我已到达上车点，请您尽快上车。";
         switch (requestCode){
             case Constant.PERMISSION_SEND_SMS_REQUEST:
                 if(PermissionHelper.hasBaseAuth(getContext(),Manifest.permission.SEND_SMS)==false){
+                    // 未获得权限则提示用户权限作用
                     Toast.makeText(getContext(), R.string.hint_permission_send_message_restrict, Toast.LENGTH_SHORT).show();
                     break;
                 }
+                // 发送短信
                 ContactHelper.sendMessage(getContext(),phone,content);
                 break;
             case Constant.PERMISSION_CALL_PHONE_REQUEST:
                 if(PermissionHelper.hasBaseAuth(getContext(),Manifest.permission.CALL_PHONE)==false){
+                    // 未获得权限则提示用户权限作用
                     Toast.makeText(getContext(), R.string.hint_permission_call_restrict, Toast.LENGTH_SHORT).show();
                     break;
                 }
+                // 拨打电话
                 ContactHelper.makeCall(getContext(),phone);
                 break;
 
         }
     }
 
-    private void initRoutePlan() {
-        Toast.makeText(getContext(), R.string.hint_route_planning, Toast.LENGTH_SHORT).show();
-        PlanNode stNode = PlanNode.withCityNameAndPlaceName("北京", "奥体中心");
-        PlanNode enNode = PlanNode.withCityNameAndPlaceName("北京", "天安门广场");
-        mSearch.drivingSearch((new DrivingRoutePlanOption())
-                .from(stNode)
-                .to(enNode));
-    }
-
+    // 路径规划结果监听器
     OnGetRoutePlanResultListener listener = new OnGetRoutePlanResultListener() {
         @Override
         public void onGetWalkingRouteResult(WalkingRouteResult walkingRouteResult) {
@@ -213,17 +222,18 @@ public class PickUpPassengerFragment extends Fragment {
 
         @Override
         public void onGetDrivingRouteResult(DrivingRouteResult drivingRouteResult) {
-            //创建DrivingRouteOverlay实例
+            //创建DrivingRouteOverlay对象
             DrivingRouteOverlay overlay = new DrivingRouteOverlay(mBaiduMap);
             // 清除原有路线
             overlay.removeFromMap();
+            // 获取规划路径集
             List<DrivingRouteLine> routes = drivingRouteResult.getRouteLines();
             if (routes != null && routes.size() > 0) {
-                //获取路径规划数据
-                //为DrivingRouteOverlay实例设置数据
+                // 设置数据
                 overlay.setData(drivingRouteResult.getRouteLines().get(0));
-                //在地图上绘制路线
+                // 在地图上绘制路线
                 overlay.addToMap(false);
+                // 自动缩放至合适位置
                 overlay.zoomToSpanPaddingBounds(100, 100, 100, 400);
             }
         }
@@ -238,4 +248,16 @@ public class PickUpPassengerFragment extends Fragment {
 
         }
     };
+
+    // 路径规划
+    private void initRoutePlan() {
+        Toast.makeText(getContext(), R.string.hint_route_planning, Toast.LENGTH_SHORT).show();
+        // TODO: 与订单对接获取起始点
+        // 测试用数据
+        PlanNode stNode = PlanNode.withCityNameAndPlaceName("北京", "奥体中心");
+        PlanNode enNode = PlanNode.withCityNameAndPlaceName("北京", "天安门广场");
+        mSearch.drivingSearch((new DrivingRoutePlanOption())
+                .from(stNode)
+                .to(enNode));
+    }
 }

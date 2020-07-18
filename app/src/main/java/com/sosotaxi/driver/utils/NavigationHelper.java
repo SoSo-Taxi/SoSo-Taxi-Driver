@@ -1,3 +1,8 @@
+/**
+ * @Author 范承祥
+ * @CreateTime 2020/7/17
+ * @UpdateTime 2020/7/18
+ */
 package com.sosotaxi.driver.utils;
 
 import android.content.Context;
@@ -23,20 +28,33 @@ import java.util.List;
 import static com.baidu.mapapi.BMapManager.getContext;
 
 /**
- * @Author 范承祥
- * @CreateTime 2020/7/17
- * @UpdateTime 2020/7/17
+ * 导航帮手类
  */
 public class NavigationHelper {
 
+    /**
+     * SD卡路径
+     */
     private static String sSdCardPath;
 
+    /**
+     * 初始化导航
+     */
     public static void init(){
+        // 判断SD卡路径是否初始化
         if(initDirectory()){
+            // 已初始化则导航初始化
             initNavigation();
         }
     }
 
+    /**
+     * 规划路线并开始导航
+     * @param context 上下文
+     * @param sNode 起始节点
+     * @param eNode 中至节点
+     * @param bundle 数据束
+     */
     public static void routePlanToNavigation(final Context context, BNRoutePlanNode sNode, BNRoutePlanNode eNode, final Bundle bundle) {
         if(sNode==null||eNode==null){
             return;
@@ -79,6 +97,9 @@ public class NavigationHelper {
                 });
     }
 
+    /**
+     * 初始化导航
+     */
     private static void initNavigation() {
         if (BaiduNaviManagerFactory.getBaiduNaviManager().isInited()) {
             return;
@@ -119,11 +140,17 @@ public class NavigationHelper {
                 });
     }
 
-
+    /**
+     * 初始化导航语音
+     */
     private static void initTTS() {
         BaiduNaviManagerFactory.getTTSManager().initTTS(getContext(), getSdcardDirectory(), Constant.APP_FOLDER_NAME, Constant.TTS_APP_ID);
     }
 
+    /**
+     * 初始化SD卡路径
+     * @return 是否已初始化
+     */
     private static boolean initDirectory() {
         sSdCardPath = getSdcardDirectory();
         if (sSdCardPath == null) {
@@ -141,6 +168,10 @@ public class NavigationHelper {
         return true;
     }
 
+    /**
+     * 获取SD卡路径
+     * @return
+     */
     private static String getSdcardDirectory() {
         if (Environment.getExternalStorageState().equalsIgnoreCase(Environment.MEDIA_MOUNTED)) {
             return Environment.getExternalStorageDirectory().toString();

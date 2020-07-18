@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.driverOrder.ReceiveOrderFragment">
+
+    <TextView
+        android:id="@+id/textViewDriverOrderReceiveOrder"
+        style="@style/DriverOrder.ToolbarTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/driver_order_receive_order_vertical_button_margin"
+        android:text="订单详情"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewDriverReceiveOrderFrom"
+        style="@style/DriverOrder.FromTo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/driver_order_receive_order_horizontal_margin"
+        android:layout_marginTop="@dimen/driver_order_receive_order_title_from_spacing"
+        android:layout_marginEnd="@dimen/driver_order_receive_order_horizontal_margin"
+        android:drawableStart="@drawable/dot_green"
+        android:drawablePadding="@dimen/driver_order_receive_order_dot_from_spacing"
+        android:maxWidth="@dimen/driver_order_detail_card_address_width"
+        android:singleLine="false"
+        android:text="奥体中心"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewDriverOrderReceiveOrder" />
+
+    <TextView
+        android:id="@+id/textViewDriverOrderReceiveOrderTo"
+        style="@style/DriverOrder.FromTo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/driver_order_receive_order_horizontal_margin"
+        android:layout_marginTop="@dimen/driver_order_receive_order_from_to_spacing"
+        android:layout_marginEnd="@dimen/driver_order_receive_order_horizontal_margin"
+        android:drawableStart="@drawable/dot_red"
+        android:drawablePadding="@dimen/driver_order_receive_order_dot_from_spacing"
+        android:text="天安门广场"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewDriverReceiveOrderFrom" />
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="@dimen/driver_order_receive_order_horizontal_margin"
+        android:layout_marginTop="@dimen/driver_order_receive_order_vertical_margin"
+        android:layout_marginEnd="@dimen/driver_order_receive_order_horizontal_margin"
+        android:layout_marginBottom="@dimen/driver_order_receive_order_vertical_margin"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="3dp"
+        app:layout_constraintBottom_toTopOf="@+id/slideButtonReceiveOrder"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewDriverOrderReceiveOrderTo">
+
+        <com.baidu.mapapi.map.MapView
+            android:id="@+id/mapViewReceiveOrder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </androidx.cardview.widget.CardView>
+
+    <com.sosotaxi.driver.ui.widget.SlideButton
+        android:id="@+id/slideButtonReceiveOrder"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/driver_order_button_height"
+        app:background_drawable="@drawable/btn_background"
+        app:background_text="@string/btn_receive_order"
+        app:background_text_color="@color/colorBackground"
+        app:background_text_complete="@string/btn_successful"
+        app:background_text_size="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:overlay_drawable="@drawable/btn_background_overlay"
+        app:overlay_drawable_complete="@drawable/btn_background_overlay_complete"
+        app:reset_not_full="true"
+        app:secondary_color="@color/colorButtonSuccessful" >
+
+    </com.sosotaxi.driver.ui.widget.SlideButton>
+
+    <ImageButton
+        android:id="@+id/imageButtonReceiveOrderClose"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/driver_order_receive_order_vertical_button_margin"
+        android:layout_marginEnd="@dimen/driver_order_receive_order_horizontal_button_margin"
+        android:background="@drawable/ic_close"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

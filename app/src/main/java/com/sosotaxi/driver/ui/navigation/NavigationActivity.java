@@ -1,3 +1,8 @@
+/**
+ * @Author 范承祥
+ * @CreateTime 2020/7/15
+ * @UpdateTime 2020/7/18
+ */
 package com.sosotaxi.driver.ui.navigation;
 
 import androidx.annotation.NonNull;
@@ -26,11 +31,6 @@ import static com.baidu.mapapi.BMapManager.getContext;
 
 public class NavigationActivity extends AppCompatActivity {
 
-    private static final String[] sAuthBaseArray = {
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.ACCESS_FINE_LOCATION,
-    };
-
     private FrameLayout mFrameLayoutNavigation;
 
     @Override
@@ -38,6 +38,7 @@ public class NavigationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation);
 
+        // 获取控件
         mFrameLayoutNavigation = findViewById(R.id.frameLayoutNavigation);
 
         Bundle bundle = new Bundle();

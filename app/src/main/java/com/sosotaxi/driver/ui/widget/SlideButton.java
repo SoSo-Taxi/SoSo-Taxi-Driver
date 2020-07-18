@@ -1,3 +1,8 @@
+/**
+ * @Author 范承祥
+ * @CreateTime 2020/7/14
+ * @UpdateTime 2020/7/14
+ */
 package com.sosotaxi.driver.ui.widget;
 
 import android.content.Context;
@@ -11,9 +16,7 @@ import android.view.ViewGroup;
 import com.sosotaxi.driver.R;
 
 /**
- * @Author 范承祥
- * @CreateTime 2020/7/14
- * @UpdateTime 2020/7/14
+ * 滑动按钮
  */
 public class SlideButton extends ViewGroup {
 
