@@ -84,6 +84,7 @@
     <string name="btn_finish_order">完成订单</string>
     <string name="hint_navigation_finish">导航结束</string>
     <string name="hint_permission_navigation_restrict">请授予此权限用于导航</string>
+    <string name="app_id">5f1251ac</string>
 
 
 </resources>

@@ -1,7 +1,7 @@
 /**
  * @Author 屠天宇
  * @CreateTime 2020/7/14
- * @UpdateTime 2020/7/16
+ * @UpdateTime 2020/7/18
  */
 package com.sosotaxi.driver.ui.home;
 
@@ -48,6 +48,7 @@ import com.sosotaxi.driver.R;
 import com.sosotaxi.driver.adapter.UndoneOrderRecycleViewAdapter;
 import com.sosotaxi.driver.common.CircleProgressBar;
 import com.sosotaxi.driver.common.ProgressRunnable;
+import com.sosotaxi.driver.common.TTSUtility;
 
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
@@ -84,6 +85,8 @@ public class HomeFragment extends Fragment{
 
     private TextView mEndWorkTextView;
 
+    private TTSUtility mTtsUtility;
+
     //模拟增加订单
     private Button testBtn;
     private List<String> testOrder = new ArrayList<String>();
@@ -97,6 +100,11 @@ public class HomeFragment extends Fragment{
         mAccountTextView = root.findViewById(R.id.firstpage_account_textView);
         mReceivingOrderQuantityTextView = root.findViewById(R.id.firstpage_orderquantity_textView);
 
+        mTtsUtility = TTSUtility.getInstance(getActivity().getApplicationContext());
+        //连接一下，让后面的语音延迟小一些
+        mTtsUtility.speaking("SoSo出行，安全放心");
+
+
         testBtn = root.findViewById(R.id.test_order_btn);
         testBtn.setOnClickListener(new View.OnClickListener() {
             int index = 5;
@@ -105,6 +113,7 @@ public class HomeFragment extends Fragment{
                 testOrder.add("order"+index);
                 startingPoints.add("出发点"+index);
                 destinations.add("目的地"+index);
+                mTtsUtility.speaking("已接到来自"+"order"+index+"的订单");
                 index++;
                 mUndoneOrderRecycleViewAdapter = new UndoneOrderRecycleViewAdapter(getContext(),startingPoints,destinations);
                 mUndoneOrderRecycleViewAdapter.adapterListener = new AdapterListener() {
@@ -152,6 +161,7 @@ public class HomeFragment extends Fragment{
             public void onClick(View v) {
                 if(toggle || mStartOrderTextView.getText() == "开始听单"){
                     mStartOrderTextView.setText("听单中");
+                    mTtsUtility.speaking("正在为您接受附近的订单");//为您接受附近的订单
                     if (thread.getState() != Thread.State.RUNNABLE){
                         thread.start();
                     }
@@ -159,6 +169,7 @@ public class HomeFragment extends Fragment{
                     mDrawingCircleThread.start();
                     toggle = false;
                 }else {
+                    TTSUtility.getInstance(getActivity().getApplicationContext()).speaking("停止听单");
                     setHearingOrderStartState();
                     toggle = true;
                 }
@@ -170,7 +181,8 @@ public class HomeFragment extends Fragment{
             @Override
             public void onClick(View v) {
                 setHearingOrderStartState();
-                Toast.makeText(getActivity().getApplicationContext(),"收车",Toast.LENGTH_SHORT).show();
+                mTtsUtility.speaking("已收车，停止听单");
+                //Toast.makeText(getActivity().getApplicationContext(),"收车",Toast.LENGTH_SHORT).show();
             }
         });
 
