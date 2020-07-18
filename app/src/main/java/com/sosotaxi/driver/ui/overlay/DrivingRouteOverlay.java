@@ -32,8 +32,7 @@ public class DrivingRouteOverlay extends OverlayManager {
     /**
      * 构造函数
      * 
-     * @param baiduMap
-     *            该DrivingRouteOvelray引用的 BaiduMap
+     * @param baiduMap 该DrivingRouteOvelray引用的 BaiduMap
      */
     public DrivingRouteOverlay(BaiduMap baiduMap) {
         super(baiduMap);

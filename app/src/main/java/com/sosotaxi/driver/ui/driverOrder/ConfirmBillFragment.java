@@ -1,7 +1,7 @@
 /**
  * @Author 范承祥
  * @CreateTime 2020/7/15
- * @UpdateTime 2020/7/15
+ * @UpdateTime 2020/7/18
  */
 package com.sosotaxi.driver.ui.driverOrder;
 
@@ -26,14 +26,13 @@ import com.sosotaxi.driver.ui.widget.OnSlideListener;
 import com.sosotaxi.driver.ui.widget.SlideButton;
 
 /**
- *
+ * 确认账单界面
  */
 public class ConfirmBillFragment extends Fragment {
 
     private TextView mTextViewAmount;
     private EditText mEditTextRoadToll;
     private EditText mEditTextParkingRate;
-
     private SlideButton mSlideButton;
 
     public ConfirmBillFragment() {
@@ -56,12 +55,13 @@ public class ConfirmBillFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // 获取控件
         mTextViewAmount=getActivity().findViewById(R.id.textViewDriverOrderBillAmount);
         mEditTextRoadToll=getActivity().findViewById(R.id.editTextDriverOrderBillItemRoadToll);
         mEditTextParkingRate=getActivity().findViewById(R.id.editTextDriverOrderBillItemParkingRate);
-
         mSlideButton=getActivity().findViewById(R.id.slideButtonConfirmBill);
 
+        // 设置滑动监听器
         mSlideButton.addSlideListener(new OnSlideListener() {
             @Override
             public void onSlideSuccess() {
@@ -85,10 +85,10 @@ public class ConfirmBillFragment extends Fragment {
                 // 计算账单金额
                 double total=amount+roadToll+parkingRate;
 
-
+                // 填充数据
                 Bundle bundle=new Bundle();
                 bundle.putDouble(Constant.EXTRA_TOTAL,total);
-
+                // 设置参数
                 RankPassengerFragment rankPassengerFragment=new RankPassengerFragment();
                 rankPassengerFragment.setArguments(bundle);
 

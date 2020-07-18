@@ -22,6 +22,7 @@
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
             <TextView
+                android:id="@+id/textViewDriverOrderToolbarTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"

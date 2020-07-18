@@ -59,7 +59,7 @@
                     android:layout_marginTop="@dimen/driver_order_title_hint_spacing"
                     android:layout_marginBottom="@dimen/driver_order_title_hint_spacing"
                     android:layout_weight="1"
-                    android:text="行程1.2公里  20分钟"
+                    android:text="行程13.9公里  21分钟"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/textViewDriverOrderArriveStartingPointTo" />
@@ -93,7 +93,7 @@
                     style="@style/DriverOrder.Time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="5分01秒"
+                    android:text="25分30秒"
                     app:layout_constraintBottom_toBottomOf="@id/textViewDriverOrderArriveStartingPointTimeRequirementPlease"
                     app:layout_constraintStart_toEndOf="@id/textViewDriverOrderArriveStartingPointTimeRequirementPlease" />
 
