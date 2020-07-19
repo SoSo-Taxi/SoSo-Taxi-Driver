@@ -1,7 +1,7 @@
 /**
  * @Author 屠天宇
  * @CreateTime 2020/7/18
- * @UpdateTime 2020/7/18
+ * @UpdateTime 2020/7/19
  */
 
 package com.sosotaxi.driver.common;
@@ -163,7 +163,7 @@ public class TTSUtility {
         // 设置发音人
         mTts.setParameter(SpeechConstant.VOICE_NAME, COLOUD_VOICERS_VALUE[0]);
         // 设置语速
-        mTts.setParameter(SpeechConstant.SPEED, "50");
+        mTts.setParameter(SpeechConstant.SPEED, "40");
         // 设置音调
         mTts.setParameter(SpeechConstant.PITCH, "50");
         // 设置音量

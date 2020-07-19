@@ -1,7 +1,7 @@
 /**
  * @Author 屠天宇
  * @CreateTime 2020/7/14
- * @UpdateTime 2020/7/16
+ * @UpdateTime 2020/7/19
  */
 
 package com.sosotaxi.driver.adapter;
@@ -34,6 +34,7 @@ public class UndoneOrderRecycleViewAdapter extends RecyclerView.Adapter<UndoneOr
 
     private List<String> mStartingPoints;
     private List<String> mDestinations;
+    private List<String> mScheduleTime;
 
     public AdapterListener adapterListener;
 
@@ -45,6 +46,13 @@ public class UndoneOrderRecycleViewAdapter extends RecyclerView.Adapter<UndoneOr
         this.mContext = context;
         this.mStartingPoints = startingPoints;
         this.mDestinations = destinations;
+    }
+
+    public UndoneOrderRecycleViewAdapter(Context mContext, List<String> mStartingPoints, List<String> mDestinations, List<String> mScheduleTime) {
+        this.mContext = mContext;
+        this.mStartingPoints = mStartingPoints;
+        this.mDestinations = mDestinations;
+        this.mScheduleTime = mScheduleTime;
     }
 
     @NonNull
@@ -61,12 +69,13 @@ public class UndoneOrderRecycleViewAdapter extends RecyclerView.Adapter<UndoneOr
 //        holder.mScheduleTimeTextView.setText("预约时间");
         holder.mStartingPointTextView.setText(mStartingPoints.get(position));
         holder.mDestinationTextView.setText(mDestinations.get(position));
-        holder.mScheduleTimeTextView.setText("预约时间");
+        //holder.mScheduleTimeTextView.setText("预约时间");
+        holder.mScheduleTimeTextView.setText(mScheduleTime.get(position));
         holder.mConstraintLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                adapterListener.setListener();
-                Toast.makeText(mContext,"hint:跳转到接单界面",Toast.LENGTH_LONG).show();
+                //adapterListener.setListener();
+               // Toast.makeText(mContext,"hint:跳转到接单界面",Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(mContext, DriverOrderActivity.class);
                 mContext.startActivity(intent);
             }

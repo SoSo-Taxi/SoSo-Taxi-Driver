@@ -1,13 +1,14 @@
 /**
  * @Author 屠天宇
  * @CreateTime 2020/7/14
- * @UpdateTime 2020/7/18
+ * @UpdateTime 2020/7/19
  */
 package com.sosotaxi.driver.ui.home;
 
 import androidx.lifecycle.ViewModelProviders;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -49,6 +50,7 @@ import com.sosotaxi.driver.adapter.UndoneOrderRecycleViewAdapter;
 import com.sosotaxi.driver.common.CircleProgressBar;
 import com.sosotaxi.driver.common.ProgressRunnable;
 import com.sosotaxi.driver.common.TTSUtility;
+import com.sosotaxi.driver.ui.driverOrder.DriverOrderActivity;
 
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
@@ -74,8 +76,9 @@ public class HomeFragment extends Fragment{
     private UndoneOrderRecycleViewAdapter mUndoneOrderRecycleViewAdapter;
 
     //模拟的出发地和目的地
-    private List<String> startingPoints = new ArrayList<String>(Arrays.asList("出发点1", "出发点2", "出发点3", "出发点4"));
-    private List<String> destinations = new ArrayList<String>(Arrays.asList("目的地1","目的地2","目的地3","目的地4"));
+    private List<String> startingPoints = new ArrayList<String>(Arrays.asList("人民艺术剧院", "天坛公园", "世贸天阶", " 三里屯"));
+    private List<String> destinations = new ArrayList<String>(Arrays.asList("天安门广场","八宝山","圆明园","故宫"));
+    private List<String> scheduleTime = new ArrayList<String>(Arrays.asList("2020年7月21日8：00","2020年7月21日17：00","2020年7月22日7：00","2020年7月22日22：00"));
 
     //听单动态效果
     private CircleProgressBar mCircleProgressBar;
@@ -102,7 +105,7 @@ public class HomeFragment extends Fragment{
 
         mTtsUtility = TTSUtility.getInstance(getActivity().getApplicationContext());
         //连接一下，让后面的语音延迟小一些
-        mTtsUtility.speaking("SoSo出行，安全放心");
+        mTtsUtility.speaking(getString(R.string.slogan));
 
 
         testBtn = root.findViewById(R.id.test_order_btn);
@@ -119,13 +122,15 @@ public class HomeFragment extends Fragment{
                 mUndoneOrderRecycleViewAdapter.adapterListener = new AdapterListener() {
                     @Override
                     public void setListener() {
-                        setHearingOrderStartState();
+                        //setHearingOrderStartState();
                     }
                 };
                 mUndoneOrderRecycleView.setAdapter(mUndoneOrderRecycleViewAdapter);
                 mUndoneOrderQuantityTextView.setText(String.valueOf(mUndoneOrderRecycleViewAdapter.getItemCount()));
             }
         });
+
+        testBtn.setVisibility(View.INVISIBLE);
 
         mOnlineTimeTextView = root.findViewById(R.id.firstpage_onlinetime_textView);
 
@@ -134,7 +139,7 @@ public class HomeFragment extends Fragment{
         mUndoneOrderRecycleView = root.findViewById(R.id.first_page_undone_order_recycleView);
         mUndoneOrderRecycleView.setLayoutManager(new LinearLayoutManager(getContext()));
 //        mUndoneOrderRecycleViewAdapter = new UndoneOrderRecycleViewAdapter(getContext());
-        mUndoneOrderRecycleViewAdapter = new UndoneOrderRecycleViewAdapter(getContext(),startingPoints,destinations);
+        mUndoneOrderRecycleViewAdapter = new UndoneOrderRecycleViewAdapter(getContext(),startingPoints,destinations,scheduleTime);
         mUndoneOrderRecycleViewAdapter.adapterListener = new AdapterListener() {
             @Override
             public void setListener() {
@@ -156,15 +161,16 @@ public class HomeFragment extends Fragment{
 
         mStartOrderTextView.setOnClickListener(new View.OnClickListener() {
             boolean toggle = true;
-            Thread thread = new Thread(new testRunnable());
+           // Thread thread = new Thread(new testRunnable());
             @Override
             public void onClick(View v) {
                 if(toggle || mStartOrderTextView.getText() == "开始听单"){
                     mStartOrderTextView.setText("听单中");
                     mTtsUtility.speaking("正在为您接受附近的订单");//为您接受附近的订单
-                    if (thread.getState() != Thread.State.RUNNABLE){
-                        thread.start();
-                    }
+
+                    new Thread(new orderHearingRunnable
+                            ("奥体中心","天安门广场","11.5","27")).start();
+
                     setEndWorkTextViewVisible(true);
                     mDrawingCircleThread.start();
                     toggle = false;
@@ -212,6 +218,40 @@ public class HomeFragment extends Fragment{
 
         mViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
         // TODO: Use the ViewModel
+    }
+
+    class orderHearingRunnable implements Runnable{
+        private int index = 0;
+        private String mStartingPoint;
+        private String mDestination;
+        private String mDistance;
+        private String mCostTime;
+        public orderHearingRunnable(){}
+        
+        public orderHearingRunnable(String mStartingPoint, String mDestination, String mDistance, String mCostTime) {
+            this.mStartingPoint = mStartingPoint;
+            this.mDestination = mDestination;
+            this.mDistance = mDistance;
+            this.mCostTime = mCostTime;
+        }
+
+        @Override
+        public void run() {
+            while (index < 5){
+                try {
+                    Thread.sleep(1000);
+                    index ++;
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            mTtsUtility.speaking("已为您接到从"+mStartingPoint+"到"+mDestination+"的订单"+"预计行程"
+                    +mDistance+"公里"+"时间"+mCostTime+"分钟");
+
+            Intent intent = new Intent(getActivity().getApplicationContext(), DriverOrderActivity.class);
+            startActivity(intent);
+
+        }
     }
 
     class testRunnable implements Runnable{
