@@ -225,7 +225,7 @@
                     android:layout_marginStart="7dp"
                     android:paddingTop="@dimen/undone_order_padding_tv"
                     android:paddingBottom="@dimen/undone_order_padding_tv"
-                    android:text="个未完成订单"
+                    android:text="个预约订单"
                     android:textSize="14sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/firstpage_undone_orderquantity_textView"
