@@ -7,15 +7,14 @@
     tools:context=".ui.driverOrder.ReceiveOrderFragment">
 
     <TextView
-        android:id="@+id/textViewDriverOrderReceiveOrder"
-        style="@style/DriverOrder.ToolbarTitle"
+        android:id="@+id/textViewDriverOrderReceiveOrderHint"
+        style="@style/DriverOrder.Hint"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/driver_order_receive_order_vertical_button_margin"
-        android:text="订单详情"
+        android:layout_marginBottom="@dimen/driver_order_receive_order_vertical_margin"
+        app:layout_constraintBottom_toTopOf="@+id/slideButtonReceiveOrder"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/textViewDriverReceiveOrderFrom"
@@ -23,7 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/driver_order_receive_order_horizontal_margin"
-        android:layout_marginTop="@dimen/driver_order_receive_order_title_from_spacing"
+        android:layout_marginTop="@dimen/driver_order_receive_order_vertical_margin"
         android:layout_marginEnd="@dimen/driver_order_receive_order_horizontal_margin"
         android:drawableStart="@drawable/dot_green"
         android:drawablePadding="@dimen/driver_order_receive_order_dot_from_spacing"
@@ -33,7 +32,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewDriverOrderReceiveOrder" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/textViewDriverOrderReceiveOrderTo"
@@ -59,7 +58,7 @@
         android:layout_marginBottom="@dimen/driver_order_receive_order_vertical_margin"
         app:cardCornerRadius="10dp"
         app:cardElevation="3dp"
-        app:layout_constraintBottom_toTopOf="@+id/slideButtonReceiveOrder"
+        app:layout_constraintBottom_toTopOf="@+id/textViewDriverOrderReceiveOrderHint"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewDriverOrderReceiveOrderTo">
@@ -89,15 +88,5 @@
         app:secondary_color="@color/colorButtonSuccessful" >
 
     </com.sosotaxi.driver.ui.widget.SlideButton>
-
-    <ImageButton
-        android:id="@+id/imageButtonReceiveOrderClose"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/driver_order_receive_order_vertical_button_margin"
-        android:layout_marginEnd="@dimen/driver_order_receive_order_horizontal_button_margin"
-        android:background="@drawable/ic_close"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

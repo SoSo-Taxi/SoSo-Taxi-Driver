@@ -7,10 +7,11 @@
     tools:context=".ui.driverOrder.DriverOrderActivity">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:elevation="0dp"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:elevation="0dp">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbarDriverOrder"
@@ -23,14 +24,12 @@
 
             <TextView
                 android:id="@+id/textViewDriverOrderToolbarTitle"
+                style="@style/DriverOrder.ToolbarTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="订单进行中"
-                android:textColor="@color/colorDriverOrderTitle"
-                android:textSize="20sp" />
+                android:text="订单进行中" />
         </androidx.appcompat.widget.Toolbar>
-
     </com.google.android.material.appbar.AppBarLayout>
 
     <include layout="@layout/content_driver_order" />

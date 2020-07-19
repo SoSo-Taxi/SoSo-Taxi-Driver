@@ -10,11 +10,15 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.sosotaxi.driver.R;
 import com.sosotaxi.driver.common.OnToolbarListener;
+import com.sosotaxi.driver.ui.login.LoginActivity;
+import com.sosotaxi.driver.ui.main.MainActivity;
 
 public class DriverOrderActivity extends AppCompatActivity implements OnToolbarListener {
 
@@ -39,6 +43,22 @@ public class DriverOrderActivity extends AppCompatActivity implements OnToolbarL
         fragmentTransaction.commit();
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                // 返回上一级页面
+                FragmentManager fragmentManager=getSupportFragmentManager();
+                getSupportFragmentManager().popBackStack();
+                if(fragmentManager.getBackStackEntryCount()==1){
+                    showBackButton(false);
+                }
+                finish();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     /**
      * 设置工具栏标题
      * @param title 标题
@@ -59,5 +79,14 @@ public class DriverOrderActivity extends AppCompatActivity implements OnToolbarL
         }else{
             getSupportActionBar().show();
         }
+    }
+
+    /**
+     * 设置工具栏返回按钮是否显示
+     * @param isShown 是否展示
+     */
+    @Override
+    public void showBackButton(boolean isShown) {
+        getSupportActionBar().setDisplayHomeAsUpEnabled(isShown);
     }
 }
