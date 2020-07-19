@@ -255,20 +255,20 @@ public class ArriveStartingPointFragment extends Fragment {
         // 路径规划
         initRoutePlan();
         // 初始化轨迹记录
-        //TraceHelper.initTrace(getContext(),"京A 88888",1,2,onTraceListener);
+        TraceHelper.initTrace(getContext(),"京A 88888",1,2,onTraceListener);
         // 开始记录轨迹
         //TraceHelper.startTrace();
 
-//        mHandler = new Handler(Looper.getMainLooper());
-//        long activeTime= System.currentTimeMillis() / 1000 - 12 * 60 * 60;
-//        List<String> entityList=new LinkedList<String>();
-//        entityList.add("123456");
-//        //开始时间（Unix时间戳）
-//        long startTime = System.currentTimeMillis() / 1000 - 12 * 60 * 60;
-//        //结束时间（Unix时间戳）
-//        long endTime = System.currentTimeMillis() / 1000;
-//        //TraceHelper.queryEntity(entityList,activeTime,entityListener);
-//        TraceHelper.queryHistoryTrack("123456",startTime,endTime,onTrackListener);
+        mHandler = new Handler(Looper.getMainLooper());
+        long activeTime= System.currentTimeMillis() / 1000 - 12 * 60 * 60;
+        List<String> entityList=new LinkedList<String>();
+        entityList.add("123456");
+        //开始时间（Unix时间戳）
+        long startTime = System.currentTimeMillis() / 1000 - 12 * 60 * 60;
+        //结束时间（Unix时间戳）
+        long endTime = System.currentTimeMillis() / 1000;
+        //TraceHelper.queryEntity(entityList,activeTime,entityListener);
+        TraceHelper.queryHistoryTrack("123456",startTime,endTime,onTrackListener);
     }
 
     @Override
