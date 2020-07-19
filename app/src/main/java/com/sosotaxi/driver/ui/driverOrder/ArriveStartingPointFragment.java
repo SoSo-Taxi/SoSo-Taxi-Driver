@@ -24,6 +24,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +41,7 @@ import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.map.Polyline;
 import com.baidu.mapapi.map.PolylineOptions;
 import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.search.core.RouteLine;
 import com.baidu.mapapi.search.route.BikingRouteResult;
 import com.baidu.mapapi.search.route.DrivingRouteLine;
 import com.baidu.mapapi.search.route.DrivingRoutePlanOption;
@@ -70,6 +72,7 @@ import com.baidu.trace.model.TraceLocation;
 import com.sosotaxi.driver.R;
 import com.sosotaxi.driver.common.Constant;
 import com.sosotaxi.driver.common.OnToolbarListener;
+import com.sosotaxi.driver.common.TTSUtility;
 import com.sosotaxi.driver.ui.overlay.DrivingRouteOverlay;
 import com.sosotaxi.driver.ui.widget.OnSlideListener;
 import com.sosotaxi.driver.ui.widget.SlideButton;
@@ -86,30 +89,11 @@ import java.util.List;
  * 到达上车地点界面
  */
 public class ArriveStartingPointFragment extends Fragment {
-    /**
-     * 间隔时间
-     */
-    private static final int TIME_INTERVAL = 80;
-
-    /**
-     * 图标移动距离
-     */
-    private static final double DISTANCE = 0.00002;
 
     /**
      * 路径
      */
     private List<LatLng> latlngs;
-
-    /**
-     * 多边形路径
-     */
-    private Polyline mPolyline;
-
-    /**
-     * 标记
-     */
-    private Marker mMoveMarker;
 
     /**
      * 起始点
@@ -131,8 +115,16 @@ public class ArriveStartingPointFragment extends Fragment {
      */
     private BaiduMap mBaiduMap;
 
+    /**
+     * 语音播报对象
+     */
+    private TTSUtility mTtsUtility;
+
     private MapView mBaiduMapView;
     private ConstraintLayout mConstraintLayoutNavigation;
+    private TextView mTextViewDestination;
+    private TextView mTextViewHint;
+    private TextView mTextViewTime;
     private TextView mTextViewNavigation;
     private ImageButton mImageButtonNavigation;
     private ImageButton mImageButtonText;
@@ -146,6 +138,8 @@ public class ArriveStartingPointFragment extends Fragment {
     public ArriveStartingPointFragment() {
         // 初始化路径
         latlngs= new LinkedList<LatLng>();
+        // 获取语音播报对象
+        mTtsUtility=TTSUtility.getInstance(getContext());
     }
 
     @Override
@@ -170,6 +164,9 @@ public class ArriveStartingPointFragment extends Fragment {
         mImageButtonText=getActivity().findViewById(R.id.buttonDriverOrderArriveStartingPointText);
         mImageButtonPhone=getActivity().findViewById(R.id.buttonDriverOrderArriveStartingPointPhone);
         mConstraintLayoutNavigation = getActivity().findViewById(R.id.constraintLayoutArriveStartingPointNavigation);
+        mTextViewDestination=getActivity().findViewById(R.id.textViewDriverOrderArriveStartingPointDestination);
+        mTextViewHint=getActivity().findViewById(R.id.textViewDriverOrderArriveStartingPointHint);
+        mTextViewTime=getActivity().findViewById(R.id.textViewDriverOrderArriveStartingPointTime);
         mTextViewNavigation=getActivity().findViewById(R.id.textViewDriverOrderArriveStartingPointNavigation);
         mSlideButton = getActivity().findViewById(R.id.slideButtonArriveStartingPoint);
         mTextViewFrom = getActivity().findViewById(R.id.textViewDriverOrderArriveStartingPointDetailFrom);
@@ -258,9 +255,9 @@ public class ArriveStartingPointFragment extends Fragment {
         // 路径规划
         initRoutePlan();
         // 初始化轨迹记录
-        TraceHelper.initTrace(getContext(),"京A 88888",1,2,onTraceListener);
+        //TraceHelper.initTrace(getContext(),"京A 88888",1,2,onTraceListener);
         // 开始记录轨迹
-        TraceHelper.startTrace();
+        //TraceHelper.startTrace();
 
 //        mHandler = new Handler(Looper.getMainLooper());
 //        long activeTime= System.currentTimeMillis() / 1000 - 12 * 60 * 60;
@@ -304,8 +301,9 @@ public class ArriveStartingPointFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if(getActivity() instanceof OnToolbarListener){
-            ((OnToolbarListener)getActivity()).showToolbar(true);
-            ((OnToolbarListener)getActivity()).setTitle(getString(R.string.title_driver_order_processing));
+            OnToolbarListener onToolbarListener=((OnToolbarListener) getActivity());
+            // 改变工具栏标题
+            onToolbarListener.setTitle(getString(R.string.title_driver_order_processing));
         }
     }
 
@@ -472,9 +470,31 @@ public class ArriveStartingPointFragment extends Fragment {
             // 获取规划路径集
             List<DrivingRouteLine> routes = drivingRouteResult.getRouteLines();
             if (routes != null && routes.size() > 0) {
+                // 获取路径
+                DrivingRouteLine drivingRouteLine=drivingRouteResult.getRouteLines().get(0);
+                // 计算里程与时间
+                double distance=drivingRouteLine.getDistance()/1000.0;
+                int hour=drivingRouteLine.getDuration()/3600;
+                int minute=drivingRouteLine.getDuration()%3600/60;
+                int second=drivingRouteLine.getDuration()%60;
+                StringBuffer timeBuffer=new StringBuffer();
+                if(hour!=0){
+                    timeBuffer.append(hour+"时");
+                }
+                if(minute!=0){
+                    timeBuffer.append(minute+"分");
+                }
+                if(second!=0){
+                    timeBuffer.append(second+"秒");
+                }
+                // 设置提示
+                mTextViewHint.setText("行程"+String.format("%.1f",distance)+"公里  预计"+timeBuffer.toString());
+                mTextViewTime.setText(timeBuffer.toString());
+                // 语音播报信息
+                mTtsUtility.speaking("订单已开始，请前往上车点 奥体中心。"+mTextViewHint.getText().toString());
                 // 设置数据
-                overlay.setData(drivingRouteResult.getRouteLines().get(0));
-                //在地图上绘制路线
+                overlay.setData(drivingRouteLine);
+                // 在地图上绘制路线
                 overlay.addToMap(true);
                 // 自动缩放至合适位置
                 overlay.zoomToSpanPaddingBounds(100, 100, 100, 400);
@@ -516,8 +536,8 @@ public class ArriveStartingPointFragment extends Fragment {
                 double longitude=location.getLongitude();
                 latlngs.add(new LatLng(latitude,longitude));
             }
-            drawPolyLine();
-            moveLooper();
+//            drawPolyLine();
+//            moveLooper();
         }
 
         @Override
@@ -544,165 +564,5 @@ public class ArriveStartingPointFragment extends Fragment {
         mSearch.drivingSearch((new DrivingRoutePlanOption())
                 .from(stNode)
                 .to(enNode));
-    }
-
-    /**
-     * 绘制路径
-     */
-    private void drawPolyLine() {
-        if(latlngs.size()==0){
-            return;
-        }
-
-        List<LatLng> polylines = new ArrayList<LatLng>();
-        for (int index = 0; index < latlngs.size(); index++) {
-            polylines.add(latlngs.get(index));
-        }
-
-
-        polylines.add(latlngs.get(0));
-        PolylineOptions polylineOptions = new PolylineOptions().points(polylines).width(10).color(Color.RED);
-
-        mPolyline = (Polyline) mBaiduMap.addOverlay(polylineOptions);
-        OverlayOptions markerOptions;
-        markerOptions = new MarkerOptions().flat(true).anchor(0.5f, 0.5f)
-                .icon(BitmapDescriptorFactory.fromAsset("Icon_line_node.png")).position(polylines.get(0))
-                .rotate((float) getAngle(0));
-        mMoveMarker = (Marker) mBaiduMap.addOverlay(markerOptions);
-
-    }
-
-    /**
-     * 根据点获取图标转的角度
-     */
-    private double getAngle(int startIndex) {
-        if ((startIndex + 1) >= mPolyline.getPoints().size()) {
-            throw new RuntimeException("index out of bonds");
-        }
-        LatLng startPoint = mPolyline.getPoints().get(startIndex);
-        LatLng endPoint = mPolyline.getPoints().get(startIndex + 1);
-        return getAngle(startPoint, endPoint);
-    }
-
-    /**
-     * 根据两点算取图标转的角度
-     */
-    private double getAngle(LatLng fromPoint, LatLng toPoint) {
-        double slope = getSlope(fromPoint, toPoint);
-        if (slope == Double.MAX_VALUE) {
-            if (toPoint.latitude > fromPoint.latitude) {
-                return 0;
-            } else {
-                return 180;
-            }
-        }
-        float deltAngle = 0;
-        if ((toPoint.latitude - fromPoint.latitude) * slope < 0) {
-            deltAngle = 180;
-        }
-        double radio = Math.atan(slope);
-        double angle = 180 * (radio / Math.PI) + deltAngle - 90;
-        return angle;
-    }
-
-    /**
-     * 根据点和斜率算取截距
-     */
-    private double getInterception(double slope, LatLng point) {
-
-        double interception = point.latitude - slope * point.longitude;
-        return interception;
-    }
-
-    /**
-     * 算斜率
-     */
-    private double getSlope(LatLng fromPoint, LatLng toPoint) {
-        if (toPoint.longitude == fromPoint.longitude) {
-            return Double.MAX_VALUE;
-        }
-        double slope = ((toPoint.latitude - fromPoint.latitude) / (toPoint.longitude - fromPoint.longitude));
-        return slope;
-
-    }
-    /**
-     * 计算x方向每次移动的距离
-     */
-    private double getXMoveDistance(double slope) {
-        if (slope == Double.MAX_VALUE) {
-            return DISTANCE;
-        }
-        return Math.abs((DISTANCE * slope) / Math.sqrt(1 + slope * slope));
-    }
-
-    /**
-     * 循环进行移动逻辑
-     */
-    public void moveLooper() {
-        new Thread() {
-
-            public void run() {
-
-                while (true) {
-
-                    for (int i = 0; i < latlngs.size() - 1; i++) {
-
-
-                        final LatLng startPoint = latlngs.get(i);
-                        final LatLng endPoint = latlngs.get(i+1);
-                        mMoveMarker
-                                .setPosition(startPoint);
-
-                        mHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                // refresh marker's rotate
-                                if (mBaiduMapView == null) {
-                                    return;
-                                }
-                                mMoveMarker.setRotate((float) getAngle(startPoint,
-                                        endPoint));
-                            }
-                        });
-                        double slope = getSlope(startPoint, endPoint);
-                        // 是不是正向的标示
-                        boolean isReverse = (startPoint.latitude > endPoint.latitude);
-
-                        double intercept = getInterception(slope, startPoint);
-
-                        double xMoveDistance = isReverse ? getXMoveDistance(slope) : -1 * getXMoveDistance(slope);
-
-
-                        for (double j = startPoint.latitude; !((j > endPoint.latitude) ^ isReverse);
-                             j = j - xMoveDistance) {
-                            LatLng latLng = null;
-                            if (slope == Double.MAX_VALUE) {
-                                latLng = new LatLng(j, startPoint.longitude);
-                            } else {
-                                latLng = new LatLng(j, (j - intercept) / slope);
-                            }
-
-                            final LatLng finalLatLng = latLng;
-                            mHandler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (mBaiduMapView == null) {
-                                        return;
-                                    }
-                                    mMoveMarker.setPosition(finalLatLng);
-                                }
-                            });
-                            try {
-                                Thread.sleep(TIME_INTERVAL);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-
-                    }
-                }
-            }
-
-        }.start();
     }
 }

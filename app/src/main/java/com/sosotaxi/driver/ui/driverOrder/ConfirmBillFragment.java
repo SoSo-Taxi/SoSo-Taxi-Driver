@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.sosotaxi.driver.R;
 import com.sosotaxi.driver.common.Constant;
+import com.sosotaxi.driver.common.TTSUtility;
 import com.sosotaxi.driver.ui.widget.OnSlideListener;
 import com.sosotaxi.driver.ui.widget.SlideButton;
 
@@ -30,13 +31,19 @@ import com.sosotaxi.driver.ui.widget.SlideButton;
  */
 public class ConfirmBillFragment extends Fragment {
 
+    /**
+     * 语音播报对象
+     */
+    private TTSUtility mTtsUtility;
+
     private TextView mTextViewAmount;
     private EditText mEditTextRoadToll;
     private EditText mEditTextParkingRate;
     private SlideButton mSlideButton;
 
     public ConfirmBillFragment() {
-        // 所需空构造器
+        // 获取语音播报对象
+        mTtsUtility=TTSUtility.getInstance(getContext());
     }
 
     @Override
@@ -54,6 +61,9 @@ public class ConfirmBillFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        // 语音播报信息
+        mTtsUtility.speaking("已到达目的地，请提醒乘客带好随身物品。请确认账单金额并发起收款。");
 
         // 获取控件
         mTextViewAmount=getActivity().findViewById(R.id.textViewDriverOrderBillAmount);

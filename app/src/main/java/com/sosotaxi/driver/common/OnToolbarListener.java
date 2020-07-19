@@ -20,4 +20,10 @@ public interface OnToolbarListener {
      * @param isShown 是否展示
      */
     void showToolbar(boolean isShown);
+
+    /**
+     * 设置工具栏返回按钮是否显示
+     * @param isShown 是否展示
+     */
+    void showBackButton(boolean isShown);
 }

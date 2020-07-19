@@ -40,6 +40,7 @@ import com.baidu.navisdk.adapter.BNRoutePlanNode;
 import com.baidu.navisdk.adapter.BaiduNaviManagerFactory;
 import com.sosotaxi.driver.R;
 import com.sosotaxi.driver.common.Constant;
+import com.sosotaxi.driver.common.TTSUtility;
 import com.sosotaxi.driver.ui.overlay.DrivingRouteOverlay;
 import com.sosotaxi.driver.ui.widget.OnSlideListener;
 import com.sosotaxi.driver.ui.widget.SlideButton;
@@ -74,14 +75,21 @@ public class ArriveDestinationFragment extends Fragment {
      */
     private RoutePlanSearch mSearch;
 
+    /**
+     * 语音播报对象
+     */
+    private TTSUtility mTtsUtility;
+
     private MapView mBaiduMapView;
     private ConstraintLayout mConstraintLayoutNavigation;
     private TextView mTextViewNavigation;
+    private TextView mTextViewHint;
     private ImageButton mImageButtonNavigation;
     private SlideButton mSlideButton;
 
     public ArriveDestinationFragment() {
-        // 所需空构造器
+        // 获取语音播报对象
+        mTtsUtility=TTSUtility.getInstance(getContext());
     }
 
     @Override
@@ -104,6 +112,7 @@ public class ArriveDestinationFragment extends Fragment {
         mBaiduMapView=getActivity().findViewById(R.id.baiduMapViewDriverArriveDestination);
         mConstraintLayoutNavigation = getActivity().findViewById(R.id.constraintLayoutArriveDestinationNavigation);
         mTextViewNavigation=getActivity().findViewById(R.id.textViewDriverOrderArriveDestinationNavigation);
+        mTextViewHint=getActivity().findViewById(R.id.textViewDriverArriveDestinationHint);
         mImageButtonNavigation = getActivity().findViewById(R.id.imageButtonDriverArriveDestinationNavigation);
         mSlideButton=getActivity().findViewById(R.id.slideButtonArriveDestination);
 
@@ -151,6 +160,32 @@ public class ArriveDestinationFragment extends Fragment {
 
         // 路径规划
         initRoutePlan();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        //在activity执行onResume时执行mMapView. onResume ()，实现地图生命周期管理
+        mBaiduMapView.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        //在activity执行onPause时执行mMapView. onPause ()，实现地图生命周期管理
+        mBaiduMapView.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        //在activity执行onDestroy时执行mMapView.onDestroy()，实现地图生命周期管理
+        mBaiduMapView.onDestroy();
+        if (mSearch != null) {
+            mSearch.destroy();
+        }
+        //TraceHelper.stopGather();
+        //TraceHelper.stopTrace();
     }
 
     // 请求权限结果处理
@@ -231,8 +266,29 @@ public class ArriveDestinationFragment extends Fragment {
             // 获取规划路径集
             List<DrivingRouteLine> routes = drivingRouteResult.getRouteLines();
             if (routes != null && routes.size() > 0) {
+                // 获取路径
+                DrivingRouteLine drivingRouteLine=drivingRouteResult.getRouteLines().get(0);
+                // 计算里程与时间
+                double distance=drivingRouteLine.getDistance()/1000.0;
+                int hour=drivingRouteLine.getDuration()/3600;
+                int minute=drivingRouteLine.getDuration()%3600/60;
+                int second=drivingRouteLine.getDuration()%60;
+                StringBuffer timeBuffer=new StringBuffer();
+                if(hour!=0){
+                    timeBuffer.append(hour+"时");
+                }
+                if(minute!=0){
+                    timeBuffer.append(minute+"分");
+                }
+                if(second!=0){
+                    timeBuffer.append(second+"秒");
+                }
+                // 设置提示
+                mTextViewHint.setText("行程"+String.format("%.1f",distance)+"公里  预计"+timeBuffer.toString());
+                // 语音播报信息
+                mTtsUtility.speaking("已接到乘客，请前往目的地 天安门广场。"+mTextViewHint.getText().toString());
                 // 设置数据
-                overlay.setData(drivingRouteResult.getRouteLines().get(0));
+                overlay.setData(drivingRouteLine);
                 // 在地图上绘制路线
                 overlay.addToMap(false);
                 // 自动缩放至合适位置

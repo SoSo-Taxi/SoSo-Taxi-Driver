@@ -41,6 +41,7 @@ import com.baidu.mapapi.search.route.TransitRouteResult;
 import com.baidu.mapapi.search.route.WalkingRouteResult;
 import com.sosotaxi.driver.R;
 import com.sosotaxi.driver.common.Constant;
+import com.sosotaxi.driver.common.TTSUtility;
 import com.sosotaxi.driver.ui.overlay.DrivingRouteOverlay;
 import com.sosotaxi.driver.ui.widget.OnSlideListener;
 import com.sosotaxi.driver.ui.widget.SlideButton;
@@ -58,6 +59,11 @@ public class PickUpPassengerFragment extends Fragment {
      */
     private BaiduMap mBaiduMap;
 
+    /**
+     * 语音播报对象
+     */
+    private TTSUtility mTtsUtility;
+
     private MapView mBaiduMapView;
     private ImageButton mImageButtonText;
     private ImageButton mImageButtonPhone;
@@ -68,7 +74,8 @@ public class PickUpPassengerFragment extends Fragment {
     private SlideButton mSlideButton;
 
     public PickUpPassengerFragment() {
-        // 所需空构造器
+        // 获取语音播报对象
+        mTtsUtility=TTSUtility.getInstance(getContext());
     }
 
     @Override
@@ -173,6 +180,32 @@ public class PickUpPassengerFragment extends Fragment {
         initRoutePlan();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        //在activity执行onResume时执行mMapView. onResume ()，实现地图生命周期管理
+        mBaiduMapView.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        //在activity执行onPause时执行mMapView. onPause ()，实现地图生命周期管理
+        mBaiduMapView.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        //在activity执行onDestroy时执行mMapView.onDestroy()，实现地图生命周期管理
+        mBaiduMapView.onDestroy();
+        if (mSearch != null) {
+            mSearch.destroy();
+        }
+        //TraceHelper.stopGather();
+        //TraceHelper.stopTrace();
+    }
+
     // 权限请求结果处理
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -231,6 +264,8 @@ public class PickUpPassengerFragment extends Fragment {
             if (routes != null && routes.size() > 0) {
                 // 设置数据
                 overlay.setData(drivingRouteResult.getRouteLines().get(0));
+                // 语音播报信息
+                mTtsUtility.speaking("已到达上车点，请等待乘客上车。若乘客长时间未上车，请及时联系乘客。");
                 // 在地图上绘制路线
                 overlay.addToMap(false);
                 // 自动缩放至合适位置

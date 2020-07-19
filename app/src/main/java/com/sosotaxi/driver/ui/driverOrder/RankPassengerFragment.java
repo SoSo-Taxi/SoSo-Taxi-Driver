@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.sosotaxi.driver.R;
 import com.sosotaxi.driver.common.Constant;
 import com.sosotaxi.driver.common.OnToolbarListener;
+import com.sosotaxi.driver.common.TTSUtility;
 import com.sosotaxi.driver.ui.widget.OnSlideListener;
 import com.sosotaxi.driver.ui.widget.SlideButton;
 
@@ -30,6 +31,11 @@ import com.sosotaxi.driver.ui.widget.SlideButton;
  */
 public class RankPassengerFragment extends Fragment {
 
+    /**
+     * 语音播报对象
+     */
+    private TTSUtility mTtsUtility;
+
     private TextView mTextViewBillAmount;
     private TextView mTextViewNumber;
     private ImageView mImageViewAvatar;
@@ -37,7 +43,8 @@ public class RankPassengerFragment extends Fragment {
     private SlideButton mSlideButton;
 
     public RankPassengerFragment() {
-        // 所需空构造器
+        // 获取语音播报对象
+        mTtsUtility=TTSUtility.getInstance(getContext());
     }
 
     @Override
@@ -55,6 +62,9 @@ public class RankPassengerFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        // 语音播报信息
+        mTtsUtility.speaking("订单已结束，请评价乘客。");
 
         // 获取控件
         mTextViewBillAmount=getActivity().findViewById(R.id.textViewDriverOrderRankPassengerAmount);

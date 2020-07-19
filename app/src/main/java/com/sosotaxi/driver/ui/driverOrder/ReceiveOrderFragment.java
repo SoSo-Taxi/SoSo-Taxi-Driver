@@ -57,10 +57,10 @@ public class ReceiveOrderFragment extends Fragment {
     private RoutePlanSearch mSearch;
 
     private MapView mBaiduMapView;
+    private TextView mTextViewHint;
     private TextView mTextViewFrom;
     private TextView mTextViewTo;
     private SlideButton mSlideButton;
-    private ImageButton mImageButtonClose;
 
     public ReceiveOrderFragment() {
         // 所需空构造器
@@ -85,9 +85,9 @@ public class ReceiveOrderFragment extends Fragment {
         //获取控件
         mTextViewFrom=getActivity().findViewById(R.id.textViewDriverReceiveOrderFrom);
         mTextViewTo=getActivity().findViewById(R.id.textViewDriverOrderReceiveOrderTo);
+        mTextViewHint=getActivity().findViewById(R.id.textViewDriverOrderReceiveOrderHint);
         mBaiduMapView=getActivity().findViewById(R.id.mapViewReceiveOrder);
         mSlideButton=getActivity().findViewById(R.id.slideButtonReceiveOrder);
-        mImageButtonClose=getActivity().findViewById(R.id.imageButtonReceiveOrderClose);
 
         // 不显示地图比例尺及缩放控件
         mBaiduMapView.showZoomControls(false);
@@ -122,13 +122,6 @@ public class ReceiveOrderFragment extends Fragment {
             }
         });
 
-        mImageButtonClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               getActivity().finish();
-            }
-        });
-
         initRoutePlan();
     }
 
@@ -136,8 +129,9 @@ public class ReceiveOrderFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (getActivity() instanceof OnToolbarListener) {
-            // 置工具栏为不可见
-            ((OnToolbarListener) getActivity()).showToolbar(false);
+            OnToolbarListener onToolbarListener=((OnToolbarListener) getActivity());
+            // 改变工具栏标题
+            onToolbarListener.setTitle(getString(R.string.title_driver_order_detail));
         }
     }
 
@@ -167,8 +161,27 @@ public class ReceiveOrderFragment extends Fragment {
             // 获取规划路径集
             List<DrivingRouteLine> routes = drivingRouteResult.getRouteLines();
             if (routes != null && routes.size() > 0) {
+                // 获取路径
+                DrivingRouteLine drivingRouteLine=drivingRouteResult.getRouteLines().get(0);
+                // 计算里程与时间
+                double distance=drivingRouteLine.getDistance()/1000.0;
+                int hour=drivingRouteLine.getDuration()/3600;
+                int minute=drivingRouteLine.getDuration()%3600/60;
+                int second=drivingRouteLine.getDuration()%60;
+                StringBuffer timeBuffer=new StringBuffer();
+                if(hour!=0){
+                    timeBuffer.append(hour+"时");
+                }
+                if(minute!=0){
+                    timeBuffer.append(minute+"分");
+                }
+                if(second!=0){
+                    timeBuffer.append(second+"秒");
+                }
+                // 设置提示
+                mTextViewHint.setText("行程"+String.format("%.1f",distance)+"公里  预计"+timeBuffer.toString());
                 // 设置数据
-                overlay.setData(drivingRouteResult.getRouteLines().get(0));
+                overlay.setData(drivingRouteLine);
                 // 在地图上绘制路线
                 overlay.addToMap(false);
                 // 自动缩放至合适位置
@@ -186,6 +199,32 @@ public class ReceiveOrderFragment extends Fragment {
 
         }
     };
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        //在activity执行onResume时执行mMapView. onResume ()，实现地图生命周期管理
+        mBaiduMapView.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        //在activity执行onPause时执行mMapView. onPause ()，实现地图生命周期管理
+        mBaiduMapView.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        //在activity执行onDestroy时执行mMapView.onDestroy()，实现地图生命周期管理
+        mBaiduMapView.onDestroy();
+        if (mSearch != null) {
+            mSearch.destroy();
+        }
+        //TraceHelper.stopGather();
+        //TraceHelper.stopTrace();
+    }
 
     /**
      * 路径规划
