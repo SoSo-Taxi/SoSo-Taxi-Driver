@@ -105,7 +105,7 @@
             android:layout_marginEnd="@dimen/driver_order_bill_item_horizontal_margin"
             android:layout_marginBottom="@dimen/driver_order_bill_item_vertical_margin"
             android:text="元"
-            app:layout_constraintBottom_toTopOf="@+id/textViewDriverOrderBillItemParkingRateUnit"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
