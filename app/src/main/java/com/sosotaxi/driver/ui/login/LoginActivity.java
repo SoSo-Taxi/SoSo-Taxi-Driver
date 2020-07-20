@@ -10,13 +10,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.view.Menu;
@@ -28,9 +24,6 @@ import com.sosotaxi.driver.common.Constant;
 import com.sosotaxi.driver.model.User;
 import com.sosotaxi.driver.service.net.LoginTask;
 import com.sosotaxi.driver.ui.main.MainActivity;
-import com.sosotaxi.driver.utils.PermissionHelper;
-
-import java.io.File;
 
 public class LoginActivity extends AppCompatActivity {
 

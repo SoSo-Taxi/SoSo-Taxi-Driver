@@ -5,6 +5,11 @@
  */
 package com.sosotaxi.driver.ui.driverOrder;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -13,9 +18,12 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.os.IBinder;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,12 +42,18 @@ import com.baidu.mapapi.search.route.RoutePlanSearch;
 import com.baidu.mapapi.search.route.TransitRouteResult;
 import com.baidu.mapapi.search.route.WalkingRouteResult;
 import com.sosotaxi.driver.R;
+import com.sosotaxi.driver.common.Constant;
 import com.sosotaxi.driver.common.OnToolbarListener;
+import com.sosotaxi.driver.service.net.DriverOrderClient;
+import com.sosotaxi.driver.service.net.DriverOrderService;
 import com.sosotaxi.driver.ui.overlay.DrivingRouteOverlay;
 import com.sosotaxi.driver.ui.widget.OnSlideListener;
 import com.sosotaxi.driver.ui.widget.SlideButton;
 
+import java.net.URI;
 import java.util.List;
+
+import static android.content.Context.BIND_AUTO_CREATE;
 
 /**
  * 接单界面
@@ -60,10 +74,12 @@ public class ReceiveOrderFragment extends Fragment {
     private TextView mTextViewHint;
     private TextView mTextViewFrom;
     private TextView mTextViewTo;
-    private SlideButton mSlideButton;
+    private Button mButtonReceive;
+    private Button mButtonDeny;
 
     public ReceiveOrderFragment() {
         // 所需空构造器
+
     }
 
     @Override
@@ -87,7 +103,8 @@ public class ReceiveOrderFragment extends Fragment {
         mTextViewTo=getActivity().findViewById(R.id.textViewDriverOrderReceiveOrderTo);
         mTextViewHint=getActivity().findViewById(R.id.textViewDriverOrderReceiveOrderHint);
         mBaiduMapView=getActivity().findViewById(R.id.mapViewReceiveOrder);
-        mSlideButton=getActivity().findViewById(R.id.slideButtonReceiveOrder);
+        mButtonReceive=getActivity().findViewById(R.id.buttonDriverOrderReceiveOrder);
+        mButtonDeny=getActivity().findViewById(R.id.buttonDriverOrderDenyOrder);
 
         // 不显示地图比例尺及缩放控件
         mBaiduMapView.showZoomControls(false);
@@ -104,10 +121,10 @@ public class ReceiveOrderFragment extends Fragment {
         mSearch.setOnGetRoutePlanResultListener(onGetRoutePlanResultListener);
 
         //设置滑动监听器
-        mSlideButton.addSlideListener(new OnSlideListener() {
+        mButtonReceive.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onSlideSuccess() {
-                Toast.makeText(getContext(), "确认成功!", Toast.LENGTH_SHORT).show();
+            public void onClick(View v) {
+                Toast.makeText(getContext(), "接单成功!", Toast.LENGTH_SHORT).show();
                 // 跳转到达上车点界面
                 FragmentManager fragmentManager=getActivity().getSupportFragmentManager();
                 fragmentManager.popBackStack();
@@ -119,6 +136,15 @@ public class ReceiveOrderFragment extends Fragment {
                         R.animator.fragment_slide_right_exit);
                 fragmentTransaction.add(R.id.frameLayoutDriverOrder,new ArriveStartingPointFragment(),null);
                 fragmentTransaction.commit();
+            }
+        });
+
+        mButtonDeny.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(), "拒绝接单!", Toast.LENGTH_SHORT).show();
+                // 返回首页
+                getActivity().finish();
             }
         });
 
@@ -222,8 +248,6 @@ public class ReceiveOrderFragment extends Fragment {
         if (mSearch != null) {
             mSearch.destroy();
         }
-        //TraceHelper.stopGather();
-        //TraceHelper.stopTrace();
     }
 
     /**

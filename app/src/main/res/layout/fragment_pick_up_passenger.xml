@@ -88,11 +88,13 @@
 
             <LinearLayout
                 android:id="@+id/linearLayoutArriveStartingPointFromTo"
-                android:layout_width="@dimen/driver_order_detail_card_address_width"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginStart="@dimen/driver_order_detail_card_number_address_spacing"
+                android:layout_marginEnd="@dimen/driver_order_detail_card_address_sms_spacing"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/buttonDriverPickUpPassengerText"
                 app:layout_constraintStart_toEndOf="@+id/linearLayoutArriveStartingPointNumber"
                 app:layout_constraintTop_toTopOf="parent">
 
@@ -123,22 +125,20 @@
                 android:id="@+id/buttonDriverPickUpPassengerText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/driver_order_detail_card_address_sms_spacing"
+                android:layout_marginEnd="@dimen/driver_order_detail_card_sms_phone_spacing"
                 android:background="@drawable/ic_text"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/linearLayoutArriveStartingPointFromTo"
+                app:layout_constraintEnd_toStartOf="@+id/buttonDriverPickUpPassengerPhone"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageButton
                 android:id="@+id/buttonDriverPickUpPassengerPhone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/driver_order_detail_card_sms_phone_spacing"
                 android:layout_marginEnd="@dimen/driver_order_detail_card_horizontal_margin"
                 android:background="@drawable/ic_phone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/buttonDriverPickUpPassengerText"
                 app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

@@ -62,6 +62,7 @@ import com.baidu.trace.api.entity.EntityListResponse;
 import com.baidu.trace.api.entity.OnEntityListener;
 import com.baidu.trace.api.entity.SearchResponse;
 import com.baidu.trace.api.entity.UpdateEntityResponse;
+import com.baidu.trace.api.track.HistoryTrackRequest;
 import com.baidu.trace.api.track.HistoryTrackResponse;
 import com.baidu.trace.api.track.LatestPointResponse;
 import com.baidu.trace.api.track.OnTrackListener;
@@ -70,6 +71,7 @@ import com.baidu.trace.model.OnTraceListener;
 import com.baidu.trace.model.PushMessage;
 import com.baidu.trace.model.TraceLocation;
 import com.sosotaxi.driver.R;
+import com.sosotaxi.driver.application.MapApplication;
 import com.sosotaxi.driver.common.Constant;
 import com.sosotaxi.driver.common.OnToolbarListener;
 import com.sosotaxi.driver.common.TTSUtility;
@@ -84,6 +86,7 @@ import com.sosotaxi.driver.utils.TraceHelper;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 到达上车地点界面
@@ -119,6 +122,8 @@ public class ArriveStartingPointFragment extends Fragment {
      * 语音播报对象
      */
     private TTSUtility mTtsUtility;
+
+    private MapApplication mMapApplication;
 
     private MapView mBaiduMapView;
     private ConstraintLayout mConstraintLayoutNavigation;
@@ -157,6 +162,8 @@ public class ArriveStartingPointFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        mMapApplication=(MapApplication) getActivity().getApplicationContext();
 
         // 获取控件
         mBaiduMapView = getActivity().findViewById(R.id.baiduMapViewDriverOrderArriveStartingPoint);
@@ -250,25 +257,33 @@ public class ArriveStartingPointFragment extends Fragment {
         mImageButtonNavigation.setOnClickListener(onClickListener);
         mTextViewNavigation.setOnClickListener(onClickListener);
 
-        // 导航初始化
-        NavigationHelper.init();
         // 路径规划
         initRoutePlan();
         // 初始化轨迹记录
-        TraceHelper.initTrace(getContext(),"京A 88888",1,2,onTraceListener);
+        TraceHelper.initTrace("8613823831820",1,2,onTraceListener);
         // 开始记录轨迹
-        //TraceHelper.startTrace();
+        TraceHelper.startTrace();
 
-        mHandler = new Handler(Looper.getMainLooper());
-        long activeTime= System.currentTimeMillis() / 1000 - 12 * 60 * 60;
-        List<String> entityList=new LinkedList<String>();
-        entityList.add("123456");
+        //mHandler = new Handler(Looper.getMainLooper());
+//        long activeTime= System.currentTimeMillis() / 1000 - 12 * 60 * 60;
+//        List<String> entityList=new LinkedList<String>();
+//        entityList.add("123456");
         //开始时间（Unix时间戳）
-        long startTime = System.currentTimeMillis() / 1000 - 12 * 60 * 60;
+//        long startTime = System.currentTimeMillis() / 1000 - 12 * 60 * 60;
         //结束时间（Unix时间戳）
-        long endTime = System.currentTimeMillis() / 1000;
+//        long endTime = System.currentTimeMillis() / 1000;
+//        HistoryTrackRequest historyTrackRequest=new HistoryTrackRequest();
+//        historyTrackRequest.setStartTime(startTime);
+        // 设置结束时间
+//        historyTrackRequest.setEndTime(endTime);
+//        historyTrackRequest.setTag(1);
+//        historyTrackRequest.setServiceId(222372);
+//        historyTrackRequest.setEntityName("myTrace");
+        //TraceHelper.getTraceClient().setOnTraceListener(onTraceListener);
+        //mMapApplication.getTraceClient().queryHistoryTrack(historyTrackRequest,onTrackListener);
+//        TraceHelper.getTraceClient().queryHistoryTrack(historyTrackRequest,onTrackListener);
         //TraceHelper.queryEntity(entityList,activeTime,entityListener);
-        TraceHelper.queryHistoryTrack("123456",startTime,endTime,onTrackListener);
+        //TraceHelper.queryHistoryTrack("myTrace",startTime,endTime,onTrackListener);
     }
 
     @Override
@@ -293,8 +308,8 @@ public class ArriveStartingPointFragment extends Fragment {
         if (mSearch != null) {
             mSearch.destroy();
         }
-        //TraceHelper.stopGather();
-        //TraceHelper.stopTrace();
+        TraceHelper.stopGather();
+        TraceHelper.stopTrace();
     }
 
     @Override
@@ -338,8 +353,29 @@ public class ArriveStartingPointFragment extends Fragment {
                     Toast.makeText(getContext(), R.string.hint_permission_navigation_restrict, Toast.LENGTH_SHORT).show();
                     break;
                 }
-                // 导航
-                NavigationHelper.routePlanToNavigation(getContext(),mStartNode, mEndNode, null);
+
+                // 初始化导航
+                NavigationHelper.init();
+                if (BaiduNaviManagerFactory.getBaiduNaviManager().isInited()) {
+                    // TODO: 与订单对接获取起始点
+                    // 测试用数据
+                    mStartNode = new BNRoutePlanNode.Builder()
+                            .latitude(40.05087)
+                            .longitude(116.30142)
+                            .name("西二旗地铁站")
+                            .description("西二旗地铁站")
+                            .coordinateType(BNRoutePlanNode.CoordinateType.BD09LL)
+                            .build();
+                    mEndNode = new BNRoutePlanNode.Builder()
+                            .latitude(39.98340)
+                            .longitude(116.42532)
+                            .name("奥体中心")
+                            .description("奥体中心")
+                            .coordinateType(BNRoutePlanNode.CoordinateType.BD09LL)
+                            .build();
+
+                    NavigationHelper.routePlanToNavigation(getContext(),mStartNode, mEndNode, null);
+                }
                 break;
 
         }
@@ -353,11 +389,13 @@ public class ArriveStartingPointFragment extends Fragment {
             if (Build.VERSION.SDK_INT >= 23) {
                 if (PermissionHelper.hasBaseAuth(getContext(), Constant.AUTH_ARRAY_NAVIGATION) == false) {
                     // 未获得则请求权限
-                    requestPermissions(Constant.AUTH_ARRAY_NAVIGATION, Constant.PERMISSION_SEND_SMS_REQUEST);
+                    requestPermissions(Constant.AUTH_ARRAY_NAVIGATION, Constant.PERMISSION_NAVIGATION_REQUEST);
                     return;
                 }
             }
 
+            // 初始化导航
+            NavigationHelper.init();
             if (BaiduNaviManagerFactory.getBaiduNaviManager().isInited()) {
                 // TODO: 与订单对接获取起始点
                 // 测试用数据
