@@ -25,6 +25,7 @@ import com.baidu.trace.model.TransportMode;
 import com.sosotaxi.driver.common.Constant;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 轨迹帮手类
@@ -40,30 +41,64 @@ public class TraceHelper {
      */
     private static LBSTraceClient sTraceClient;
 
+	
+	private static AtomicInteger mSequenceGenerator;
+
+	private static Context mContext;
+
     /**
-     * 轨迹查询标签
+     * 设置路径
+     * @param trace
      */
-    private static int tag;
+	public static void setTrace(Trace trace){
+	    sTrace=trace;
+    }
+
+    /**
+     * 设置路径连接器
+     * @param traceClient
+     */
+    public static void setTraceClient(LBSTraceClient traceClient){
+	    sTraceClient=traceClient;
+    }
 
     /**
      * 初始化轨迹
-     * @param context 上下文
+     * @param entityName 实体名
+     * @param gatherInterval 收集间隔时间
+     * @param packInterval 打包间隔时间
+     */
+    public static void initTrace(String entityName, int gatherInterval, int packInterval){
+        if(sTrace==null||sTraceClient==null){
+            return;
+        }
+        // 设置实体名
+        sTrace.setEntityName(entityName);
+        // 设置定位和打包周期
+        sTraceClient.setInterval(gatherInterval, packInterval);
+        // 初始化序号创造器
+        mSequenceGenerator = new AtomicInteger();
+    }
+
+    /**
+     * 初始化轨迹
      * @param entityName 实体名
      * @param gatherInterval 收集间隔时间
      * @param packInterval 打包间隔时间
      * @param onTraceListener 轨迹监听器
      */
-    public static void initTrace(Context context, String entityName, int gatherInterval, int packInterval, OnTraceListener onTraceListener){
-        // 初始化轨迹服务
-        sTrace = new Trace(Constant.SERVICE_ID, entityName, false);
-        // 初始化轨迹服务客户端
-        sTraceClient = new LBSTraceClient(context);
+    public static void initTrace(String entityName, int gatherInterval, int packInterval, OnTraceListener onTraceListener){
+        if(sTrace==null||sTraceClient==null){
+            return;
+        }
+        // 设置实体名
+        sTrace.setEntityName(entityName);
         // 设置定位和打包周期
         sTraceClient.setInterval(gatherInterval, packInterval);
         // 设置监听器
         sTraceClient.setOnTraceListener(onTraceListener);
-        // tag默认为0
-        tag=0;
+		// 初始化序号创造器
+		mSequenceGenerator = new AtomicInteger();
     }
 
     /**
@@ -132,30 +167,20 @@ public class TraceHelper {
      * @param onTrackListener 轨迹监听器
      */
     public static void queryHistoryTrack(String entityName, long startTime, long endTime, OnTrackListener onTrackListener){
-        HistoryTrackRequest historyTrackRequest=new HistoryTrackRequest(++tag,Constant.SERVICE_ID,entityName);
+        HistoryTrackRequest historyTrackRequest=new HistoryTrackRequest();
+        historyTrackRequest.setTag(getTag());
+        historyTrackRequest.setServiceId(Constant.SERVICE_ID);
+        historyTrackRequest.setEntityName(entityName);
         // 设置开始时间
         historyTrackRequest.setStartTime(startTime);
         // 设置结束时间
         historyTrackRequest.setEndTime(endTime);
-        // 设置需要纠偏
-        historyTrackRequest.setProcessed(true);
-        // 创建纠偏选项实例
-        ProcessOption processOption = new ProcessOption();
-        // 设置需要去噪
-        processOption.setNeedDenoise(true);
-        // 设置需要抽稀
-        processOption.setNeedVacuate(true);
-        // 设置需要绑路
-        processOption.setNeedMapMatch(true);
-        // 设置精度过滤值(定位精度大于100米的过滤掉)
-        processOption.setRadiusThreshold(100);
-        // 设置交通方式为驾车
-        processOption.setTransportMode(TransportMode.driving);
-        // 设置纠偏选项
-        historyTrackRequest.setProcessOption(processOption);
-        // 设置里程填充方式为驾车
-        historyTrackRequest.setSupplementMode(SupplementMode.driving);
+
         //查询历史轨迹
         sTraceClient.queryHistoryTrack(historyTrackRequest,onTrackListener);
     }
+	
+	public static int getTag(){
+		return mSequenceGenerator.incrementAndGet();
+	}
 }

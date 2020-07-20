@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/driver_order_receive_order_vertical_margin"
-        app:layout_constraintBottom_toTopOf="@+id/slideButtonReceiveOrder"
+        app:layout_constraintBottom_toTopOf="@+id/buttonDriverOrderReceiveOrder"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -49,7 +49,31 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewDriverReceiveOrderFrom" />
 
+    <Button
+        android:id="@+id/buttonDriverOrderReceiveOrder"
+        style="@style/DriverOrder.Button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:height="@dimen/driver_order_button_height"
+        android:background="@color/colorAccent"
+        android:text="开始订单"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/buttonDriverOrderDenyOrder" />
+
+    <Button
+        android:id="@+id/buttonDriverOrderDenyOrder"
+        style="@style/DriverOrder.DisableButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:height="@dimen/driver_order_button_height"
+        android:background="@color/colorDisabledButton"
+        android:text="拒绝"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginStart="@dimen/driver_order_receive_order_horizontal_margin"
@@ -66,27 +90,9 @@
         <com.baidu.mapapi.map.MapView
             android:id="@+id/mapViewReceiveOrder"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent">
+
+        </com.baidu.mapapi.map.MapView>
     </androidx.cardview.widget.CardView>
-
-    <com.sosotaxi.driver.ui.widget.SlideButton
-        android:id="@+id/slideButtonReceiveOrder"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/driver_order_button_height"
-        app:background_drawable="@drawable/btn_background"
-        app:background_text="@string/btn_receive_order"
-        app:background_text_color="@color/colorBackground"
-        app:background_text_complete="@string/btn_successful"
-        app:background_text_size="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:overlay_drawable="@drawable/btn_background_overlay"
-        app:overlay_drawable_complete="@drawable/btn_background_overlay_complete"
-        app:reset_not_full="true"
-        app:secondary_color="@color/colorButtonSuccessful" >
-
-    </com.sosotaxi.driver.ui.widget.SlideButton>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

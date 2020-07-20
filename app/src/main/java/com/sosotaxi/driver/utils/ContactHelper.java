@@ -30,6 +30,10 @@ public class ContactHelper {
             Toast.makeText(context, R.string.error_phone_content_empty, Toast.LENGTH_SHORT).show();
             return;
         }
+        // 添加+
+        if(!phone.startsWith("+")){
+            phone="+"+phone;
+        }
 
         // 发送短信
         SmsManager smsManager=SmsManager.getDefault();
@@ -47,6 +51,10 @@ public class ContactHelper {
             // 提示手机号为空
             Toast.makeText(context, R.string.error_phone_empty, Toast.LENGTH_SHORT).show();
             return;
+        }
+        // 添加+
+        if(!phone.startsWith("+")){
+            phone="+"+phone;
         }
 
         // 跳转至通话界面

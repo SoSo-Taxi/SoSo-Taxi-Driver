@@ -1,7 +1,7 @@
 /**
  * @Author 范承祥
  * @CreateTime 2020/7/12
- * @UpdateTime 2020/7/12
+ * @UpdateTime 2020/7/20
  */
 package com.sosotaxi.driver.model;
 
@@ -11,6 +11,11 @@ package com.sosotaxi.driver.model;
 public class User {
     /** 用户名 */
     private String userName;
+
+    /**
+     * 手机号
+     */
+    private String Phone;
 
     /** 密码 */
     private String password;
@@ -30,6 +35,17 @@ public class User {
     }
 
     public void setUserName(String userName) {
+        // 去除加号
+        if(userName.startsWith("+")){
+            userName=userName.substring(1);
+        }
+        // 去除空格
+        int index=userName.indexOf(" ");
+        if(index!=-1){
+            String code=userName.substring(0,index);
+            String phone=userName.substring(index+1);
+            userName=code+phone;
+        }
         this.userName = userName;
     }
 

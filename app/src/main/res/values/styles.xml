@@ -68,6 +68,12 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="Login.DisableButton">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/colorLoginTitle</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
     <style name="DriverOrder">
 
     </style>
@@ -169,6 +175,18 @@
     <style name="DriverOrder.FromTo">
         <item name="android:textSize">24sp</item>
         <item name="android:textColor">@color/colorDriverOrderTitle</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="DriverOrder.Button">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@android:color/primary_text_dark</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="DriverOrder.DisableButton">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/colorLoginTitle</item>
         <item name="android:textStyle">bold</item>
     </style>
 </resources>
