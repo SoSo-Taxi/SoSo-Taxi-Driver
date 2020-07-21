@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,8 +20,11 @@ import com.sosotaxi.driver.R;
 import com.sosotaxi.driver.common.OnToolbarListener;
 import com.sosotaxi.driver.ui.login.LoginActivity;
 import com.sosotaxi.driver.ui.main.MainActivity;
+import com.sosotaxi.driver.viewModel.OrderViewModel;
 
 public class DriverOrderActivity extends AppCompatActivity implements OnToolbarListener {
+
+    private OrderViewModel mOrderViewModel;
 
     private Toolbar mToolbar;
     private TextView mTextViewTitle;
@@ -29,6 +33,8 @@ public class DriverOrderActivity extends AppCompatActivity implements OnToolbarL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_driver_order);
+
+        mOrderViewModel=new ViewModelProvider(this).get(OrderViewModel.class);
 
         mToolbar = findViewById(R.id.toolbarDriverOrder);
         setSupportActionBar(mToolbar);

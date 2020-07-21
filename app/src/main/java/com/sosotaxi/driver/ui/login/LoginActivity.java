@@ -9,6 +9,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -24,25 +27,26 @@ import com.sosotaxi.driver.common.Constant;
 import com.sosotaxi.driver.model.User;
 import com.sosotaxi.driver.service.net.LoginTask;
 import com.sosotaxi.driver.ui.main.MainActivity;
+import com.sosotaxi.driver.viewModel.UserViewModel;
 
 public class LoginActivity extends AppCompatActivity {
+
+    /**
+     * 用户ViewModel
+     */
+    private UserViewModel mUserViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash_layout);
 
-        // 获取已登录用户信息
-        SharedPreferences sharedPreferences=getSharedPreferences(Constant.SHARE_PREFERENCE_LOGIN, MODE_PRIVATE);
-        String username=sharedPreferences.getString(Constant.USERNAME,"");
-        String password=sharedPreferences.getString(Constant.PASSWORD,"");
+        mUserViewModel= new ViewModelProvider(this).get(UserViewModel.class);
+        User user=mUserViewModel.getUser().getValue();
+        String username=user.getUserName();
+        String password=user.getPassword();
 
         if(username!=""&&password!=""){
-            // 创建用户对象
-            User user=new User();
-            user.setUserName(username);
-            user.setPassword(password);
-
             // 存在用户信息则自动登陆
             new Thread(new LoginTask(user,handler)).start();
         }else{
@@ -58,7 +62,6 @@ public class LoginActivity extends AppCompatActivity {
             fragmentTransaction.add(R.id.frameLayoutLogin,new EnterPhoneFragment(),null);
             fragmentTransaction.commit();
         }
-
     }
 
     @Override

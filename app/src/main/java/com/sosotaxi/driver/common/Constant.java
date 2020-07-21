@@ -102,7 +102,7 @@ public class Constant {
     /**
      * WebSocket地址
      */
-    public static final String WEBSOCKET_URI="ws://121.40.165.18:8800";
+    public static final String WEB_SOCKET_URI="ws://122.51.162.119:8001/webSocket?accessToken=";
 
     /**
      * BODY类型
@@ -125,6 +125,11 @@ public class Constant {
     public static final String PASSWORD="com.sosotaxi.password";
 
     /**
+     * TOKEN键名
+     */
+    public static final String TOKEN="com.sosotaxi.token";
+
+    /**
      * SD卡文件夹名
      */
     public static final String APP_FOLDER_NAME="SoSoTaxiDriver";
@@ -145,7 +150,8 @@ public class Constant {
     /**
      * 鹰眼授权码
      */
-    public static final long SERVICE_ID=222389;
+    public static final long SERVICE_ID=222372;
+
 
     public static final String FILTER_CONTENT="com.sosotaxi.driver.service.callback.content";
 

@@ -44,4 +44,27 @@ public class BaseNetService {
             return new Pair<>(response,data);
         }
     }
+
+    /**
+     * GET
+     * @param url URL
+     * @return 响应结果
+     * @throws IOException 输入输出异常
+     */
+    protected static Pair<Response,String> get(String url) throws IOException{
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url(url)
+                .get()
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            String data=new String();
+            if(response.code()==200){
+                data=response.body().string();
+            }
+            return new Pair<>(response,data);
+        }
+    }
 }

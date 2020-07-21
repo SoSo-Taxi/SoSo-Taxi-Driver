@@ -14,6 +14,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -44,11 +45,14 @@ import com.baidu.mapapi.search.route.WalkingRouteResult;
 import com.sosotaxi.driver.R;
 import com.sosotaxi.driver.common.Constant;
 import com.sosotaxi.driver.common.OnToolbarListener;
+import com.sosotaxi.driver.databinding.FragmentArriveStartingPointBinding;
+import com.sosotaxi.driver.databinding.FragmentReceiveOrderBinding;
 import com.sosotaxi.driver.service.net.DriverOrderClient;
 import com.sosotaxi.driver.service.net.DriverOrderService;
 import com.sosotaxi.driver.ui.overlay.DrivingRouteOverlay;
 import com.sosotaxi.driver.ui.widget.OnSlideListener;
 import com.sosotaxi.driver.ui.widget.SlideButton;
+import com.sosotaxi.driver.viewModel.OrderViewModel;
 
 import java.net.URI;
 import java.util.List;
@@ -61,6 +65,16 @@ import static android.content.Context.BIND_AUTO_CREATE;
 public class ReceiveOrderFragment extends Fragment {
 
     /**
+     * 订单ViewModel
+     */
+    private OrderViewModel mOrderViewModel;
+
+    /**
+     * 数据绑定对象
+     */
+    private FragmentReceiveOrderBinding mBinding;
+
+    /**
      * 百度地图对象
      */
     private BaiduMap mBaiduMap;
@@ -69,13 +83,6 @@ public class ReceiveOrderFragment extends Fragment {
      * 路径规划对象
      */
     private RoutePlanSearch mSearch;
-
-    private MapView mBaiduMapView;
-    private TextView mTextViewHint;
-    private TextView mTextViewFrom;
-    private TextView mTextViewTo;
-    private Button mButtonReceive;
-    private Button mButtonDeny;
 
     public ReceiveOrderFragment() {
         // 所需空构造器
@@ -90,38 +97,17 @@ public class ReceiveOrderFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // 填充布局
-        return inflater.inflate(R.layout.fragment_receive_order, container, false);
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        //获取控件
-        mTextViewFrom=getActivity().findViewById(R.id.textViewDriverReceiveOrderFrom);
-        mTextViewTo=getActivity().findViewById(R.id.textViewDriverOrderReceiveOrderTo);
-        mTextViewHint=getActivity().findViewById(R.id.textViewDriverOrderReceiveOrderHint);
-        mBaiduMapView=getActivity().findViewById(R.id.mapViewReceiveOrder);
-        mButtonReceive=getActivity().findViewById(R.id.buttonDriverOrderReceiveOrder);
-        mButtonDeny=getActivity().findViewById(R.id.buttonDriverOrderDenyOrder);
+        mBinding= DataBindingUtil.inflate(inflater,R.layout.fragment_receive_order, container, false);
+        mBinding.setViewModel(mOrderViewModel);
+        mBinding.setLifecycleOwner(getActivity());
 
         // 不显示地图比例尺及缩放控件
-        mBaiduMapView.showZoomControls(false);
+        mBinding.mapViewReceiveOrder.showZoomControls(false);
         // 不显示比例尺
-        mBaiduMapView.showScaleControl(false);
-
-        // 获取百度地图对象
-        mBaiduMap = mBaiduMapView.getMap();
-
-        // 获取路径规划对象
-        mSearch=RoutePlanSearch.newInstance();
-
-        // 设置路径规划结果监听器
-        mSearch.setOnGetRoutePlanResultListener(onGetRoutePlanResultListener);
+        mBinding.mapViewReceiveOrder.showScaleControl(false);
 
         //设置滑动监听器
-        mButtonReceive.setOnClickListener(new View.OnClickListener() {
+        mBinding.buttonDriverOrderReceiveOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getContext(), "接单成功!", Toast.LENGTH_SHORT).show();
@@ -139,7 +125,7 @@ public class ReceiveOrderFragment extends Fragment {
             }
         });
 
-        mButtonDeny.setOnClickListener(new View.OnClickListener() {
+        mBinding.buttonDriverOrderDenyOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getContext(), "拒绝接单!", Toast.LENGTH_SHORT).show();
@@ -148,6 +134,24 @@ public class ReceiveOrderFragment extends Fragment {
             }
         });
 
+        // 填充布局
+        return mBinding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        // 获取百度地图对象
+        mBaiduMap = mBinding.mapViewReceiveOrder.getMap();
+
+        // 获取路径规划对象
+        mSearch=RoutePlanSearch.newInstance();
+
+        // 设置路径规划结果监听器
+        mSearch.setOnGetRoutePlanResultListener(onGetRoutePlanResultListener);
+
+        // 规划路径
         initRoutePlan();
     }
 
@@ -205,7 +209,7 @@ public class ReceiveOrderFragment extends Fragment {
                     timeBuffer.append(second+"秒");
                 }
                 // 设置提示
-                mTextViewHint.setText("行程"+String.format("%.1f",distance)+"公里  预计"+timeBuffer.toString());
+                mBinding.textViewDriverOrderReceiveOrderHint.setText("行程"+String.format("%.1f",distance)+"公里  预计"+timeBuffer.toString());
                 // 设置数据
                 overlay.setData(drivingRouteLine);
                 // 在地图上绘制路线
@@ -230,23 +234,26 @@ public class ReceiveOrderFragment extends Fragment {
     public void onResume() {
         super.onResume();
         //在activity执行onResume时执行mMapView. onResume ()，实现地图生命周期管理
-        mBaiduMapView.onResume();
+        mBinding.mapViewReceiveOrder.onResume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
         //在activity执行onPause时执行mMapView. onPause ()，实现地图生命周期管理
-        mBaiduMapView.onPause();
+        mBinding.mapViewReceiveOrder.onPause();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         //在activity执行onDestroy时执行mMapView.onDestroy()，实现地图生命周期管理
-        mBaiduMapView.onDestroy();
+        mBinding.mapViewReceiveOrder.onDestroy();
         if (mSearch != null) {
             mSearch.destroy();
+        }
+        if(mBaiduMap!=null){
+            mBaiduMap.clear();
         }
     }
 
