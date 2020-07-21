@@ -19,12 +19,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,10 +59,13 @@ import com.baidu.mapapi.search.route.TransitRouteResult;
 import com.baidu.mapapi.search.route.WalkingRouteResult;
 import com.baidu.navisdk.adapter.BNRoutePlanNode;
 import com.baidu.navisdk.adapter.BaiduNaviManagerFactory;
+import com.baidu.navisdk.ui.widget.recyclerview.vlayout.extend.ViewLifeCycleHelper;
 import com.baidu.trace.LBSTraceClient;
 import com.baidu.trace.api.entity.DeleteEntityResponse;
 import com.baidu.trace.api.entity.EntityInfo;
+import com.baidu.trace.api.entity.EntityListRequest;
 import com.baidu.trace.api.entity.EntityListResponse;
+import com.baidu.trace.api.entity.FilterCondition;
 import com.baidu.trace.api.entity.OnEntityListener;
 import com.baidu.trace.api.entity.SearchResponse;
 import com.baidu.trace.api.entity.UpdateEntityResponse;
@@ -69,24 +76,31 @@ import com.baidu.trace.api.track.OnTrackListener;
 import com.baidu.trace.api.track.TrackPoint;
 import com.baidu.trace.model.OnTraceListener;
 import com.baidu.trace.model.PushMessage;
+import com.baidu.trace.model.StatusCodes;
 import com.baidu.trace.model.TraceLocation;
 import com.sosotaxi.driver.R;
 import com.sosotaxi.driver.application.MapApplication;
 import com.sosotaxi.driver.common.Constant;
 import com.sosotaxi.driver.common.OnToolbarListener;
 import com.sosotaxi.driver.common.TTSUtility;
+import com.sosotaxi.driver.databinding.FragmentArriveStartingPointBinding;
 import com.sosotaxi.driver.ui.overlay.DrivingRouteOverlay;
+import com.sosotaxi.driver.ui.overlay.TrackOverlay;
 import com.sosotaxi.driver.ui.widget.OnSlideListener;
 import com.sosotaxi.driver.ui.widget.SlideButton;
 import com.sosotaxi.driver.utils.ContactHelper;
 import com.sosotaxi.driver.utils.NavigationHelper;
 import com.sosotaxi.driver.utils.PermissionHelper;
 import com.sosotaxi.driver.utils.TraceHelper;
+import com.sosotaxi.driver.viewModel.OrderViewModel;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import okhttp3.Response;
 
 /**
  * 到达上车地点界面
@@ -125,75 +139,48 @@ public class ArriveStartingPointFragment extends Fragment {
 
     private MapApplication mMapApplication;
 
-    private MapView mBaiduMapView;
-    private ConstraintLayout mConstraintLayoutNavigation;
-    private TextView mTextViewDestination;
-    private TextView mTextViewHint;
-    private TextView mTextViewTime;
-    private TextView mTextViewNavigation;
-    private ImageButton mImageButtonNavigation;
-    private ImageButton mImageButtonText;
-    private ImageButton mImageButtonPhone;
-    private TextView mTextViewFrom;
-    private TextView mTextViewTo;
-    private SlideButton mSlideButton;
     private Handler mHandler;
 
+    /**
+     * 订单ViewModel
+     */
+    private OrderViewModel mOrderViewModel;
+
+    /**
+     * 数据绑定对象
+     */
+    private FragmentArriveStartingPointBinding mBinding;
 
     public ArriveStartingPointFragment() {
         // 初始化路径
         latlngs= new LinkedList<LatLng>();
         // 获取语音播报对象
         mTtsUtility=TTSUtility.getInstance(getContext());
+
+        mHandler=new Handler(Looper.getMainLooper());
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // 获取订单ViewModel
+        mOrderViewModel=new ViewModelProvider(getActivity()).get(OrderViewModel.class);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // 填充布局
-        return inflater.inflate(R.layout.fragment_arrive_starting_point, container, false);
-    }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        mMapApplication=(MapApplication) getActivity().getApplicationContext();
-
-        // 获取控件
-        mBaiduMapView = getActivity().findViewById(R.id.baiduMapViewDriverOrderArriveStartingPoint);
-        mImageButtonNavigation = getActivity().findViewById(R.id.imageButtonDriverOrderArriveStartingPointNavigation);
-        mImageButtonText=getActivity().findViewById(R.id.buttonDriverOrderArriveStartingPointText);
-        mImageButtonPhone=getActivity().findViewById(R.id.buttonDriverOrderArriveStartingPointPhone);
-        mConstraintLayoutNavigation = getActivity().findViewById(R.id.constraintLayoutArriveStartingPointNavigation);
-        mTextViewDestination=getActivity().findViewById(R.id.textViewDriverOrderArriveStartingPointDestination);
-        mTextViewHint=getActivity().findViewById(R.id.textViewDriverOrderArriveStartingPointHint);
-        mTextViewTime=getActivity().findViewById(R.id.textViewDriverOrderArriveStartingPointTime);
-        mTextViewNavigation=getActivity().findViewById(R.id.textViewDriverOrderArriveStartingPointNavigation);
-        mSlideButton = getActivity().findViewById(R.id.slideButtonArriveStartingPoint);
-        mTextViewFrom = getActivity().findViewById(R.id.textViewDriverOrderArriveStartingPointDetailFrom);
-        mTextViewTo = getActivity().findViewById(R.id.textViewDriverOrderArriveStartingPointDetailTo);
+        mBinding= DataBindingUtil.inflate(inflater,R.layout.fragment_arrive_starting_point, container, false);
+        mBinding.setViewModel(mOrderViewModel);
+        mBinding.setLifecycleOwner(getActivity());
 
         // 不显示地图比例尺及缩放控件
-        mBaiduMapView.showZoomControls(false);
-        mBaiduMapView.showScaleControl(false);
-
-        // 获取百度地图对象
-        mBaiduMap = mBaiduMapView.getMap();
-
-        // 获取路径规划对象
-        mSearch = RoutePlanSearch.newInstance();
-
-        // 设置路径规划结果监听器
-        mSearch.setOnGetRoutePlanResultListener(onGetRoutePlanResultListener);
+        mBinding.baiduMapViewDriverOrderArriveStartingPoint.showZoomControls(false);
+        mBinding.baiduMapViewDriverOrderArriveStartingPoint.showScaleControl(false);
 
         // 设置短信按钮监听器
-        mImageButtonText.setOnClickListener(new View.OnClickListener() {
+        mBinding.buttonDriverOrderArriveStartingPointText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // 检查权限
@@ -214,7 +201,7 @@ public class ArriveStartingPointFragment extends Fragment {
         });
 
         // 设置电话按钮监听器
-        mImageButtonPhone.setOnClickListener(new View.OnClickListener() {
+        mBinding.buttonDriverOrderArriveStartingPointPhone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // 检查权限
@@ -234,7 +221,7 @@ public class ArriveStartingPointFragment extends Fragment {
         });
 
         // 设置滑动按钮监听器
-        mSlideButton.addSlideListener(new OnSlideListener() {
+        mBinding.slideButtonArriveStartingPoint.addSlideListener(new OnSlideListener() {
             @Override
             public void onSlideSuccess() {
                 Toast.makeText(getContext(), "确认成功!", Toast.LENGTH_SHORT).show();
@@ -253,60 +240,62 @@ public class ArriveStartingPointFragment extends Fragment {
         });
 
         // 设置点击监听器
-        mConstraintLayoutNavigation.setOnClickListener(onClickListener);
-        mImageButtonNavigation.setOnClickListener(onClickListener);
-        mTextViewNavigation.setOnClickListener(onClickListener);
+        mBinding.constraintLayoutArriveStartingPointNavigation.setOnClickListener(onClickListener);
+        mBinding.imageButtonDriverOrderArriveStartingPointNavigation.setOnClickListener(onClickListener);
+        mBinding.textViewDriverOrderArriveStartingPointNavigation.setOnClickListener(onClickListener);
+
+        // 填充布局
+        return mBinding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        mMapApplication=(MapApplication) getActivity().getApplicationContext();
+
+        // 获取百度地图对象
+        mBaiduMap = mBinding.baiduMapViewDriverOrderArriveStartingPoint.getMap();
+
+        // 获取路径规划对象
+        mSearch = RoutePlanSearch.newInstance();
+
+        // 设置路径规划结果监听器
+        mSearch.setOnGetRoutePlanResultListener(onGetRoutePlanResultListener);
 
         // 路径规划
         initRoutePlan();
         // 初始化轨迹记录
-        TraceHelper.initTrace("8613823831820",1,2,onTraceListener);
+        TraceHelper.initTrace("8613823831820",2,15,onTraceListener);
         // 开始记录轨迹
-        TraceHelper.startTrace();
+        //TraceHelper.startTrace();
 
-        //mHandler = new Handler(Looper.getMainLooper());
-//        long activeTime= System.currentTimeMillis() / 1000 - 12 * 60 * 60;
-//        List<String> entityList=new LinkedList<String>();
-//        entityList.add("123456");
-        //开始时间（Unix时间戳）
-//        long startTime = System.currentTimeMillis() / 1000 - 12 * 60 * 60;
-        //结束时间（Unix时间戳）
-//        long endTime = System.currentTimeMillis() / 1000;
-//        HistoryTrackRequest historyTrackRequest=new HistoryTrackRequest();
-//        historyTrackRequest.setStartTime(startTime);
-        // 设置结束时间
-//        historyTrackRequest.setEndTime(endTime);
-//        historyTrackRequest.setTag(1);
-//        historyTrackRequest.setServiceId(222372);
-//        historyTrackRequest.setEntityName("myTrace");
-        //TraceHelper.getTraceClient().setOnTraceListener(onTraceListener);
-        //mMapApplication.getTraceClient().queryHistoryTrack(historyTrackRequest,onTrackListener);
-//        TraceHelper.getTraceClient().queryHistoryTrack(historyTrackRequest,onTrackListener);
-        //TraceHelper.queryEntity(entityList,activeTime,entityListener);
-        //TraceHelper.queryHistoryTrack("myTrace",startTime,endTime,onTrackListener);
     }
 
     @Override
     public void onResume() {
         super.onResume();
         //在activity执行onResume时执行mMapView. onResume ()，实现地图生命周期管理
-        mBaiduMapView.onResume();
+        mBinding.baiduMapViewDriverOrderArriveStartingPoint.onResume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
         //在activity执行onPause时执行mMapView. onPause ()，实现地图生命周期管理
-        mBaiduMapView.onPause();
+        mBinding.baiduMapViewDriverOrderArriveStartingPoint.onPause();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         //在activity执行onDestroy时执行mMapView.onDestroy()，实现地图生命周期管理
-        mBaiduMapView.onDestroy();
+        mBinding.baiduMapViewDriverOrderArriveStartingPoint.onDestroy();
         if (mSearch != null) {
             mSearch.destroy();
+        }
+        if(mBaiduMap!=null){
+            mBaiduMap.clear();
         }
         TraceHelper.stopGather();
         TraceHelper.stopTrace();
@@ -466,14 +455,37 @@ public class ArriveStartingPointFragment extends Fragment {
         }
     };
 
-    // 轨迹查询回调
+    // 轨迹查询结果监听器
     OnTrackListener onTrackListener=new OnTrackListener() {
         @Override
         public void onHistoryTrackCallback(HistoryTrackResponse historyTrackResponse) {
+            // 判断是否响应成功
+            if(historyTrackResponse.getStatus()!= StatusCodes.SUCCESS){
+                // 失败打印原因
+                Toast.makeText(getContext(),historyTrackResponse.getMessage(),Toast.LENGTH_SHORT).show();
+                return;
+            }
+            // 获取轨迹
             List<TrackPoint> trackPoints=historyTrackResponse.trackPoints;
             if(trackPoints==null||trackPoints.size()==0){
                 return;
             }
+
+            latlngs.clear();
+            for(TrackPoint trackPoint : trackPoints){
+                com.baidu.trace.model.LatLng location=trackPoint.getLocation();
+                double latitude=location.getLatitude();
+                double longitude=location.getLongitude();
+                latlngs.add(new LatLng(latitude,longitude));
+            }
+
+            // 绘制轨迹
+            TrackOverlay trackOverlay=new TrackOverlay();
+            trackOverlay.setBaiduMapView(mBinding.baiduMapViewDriverOrderArriveStartingPoint);
+            trackOverlay.setLatlngs(latlngs);
+            trackOverlay.setHandler(mHandler);
+            trackOverlay.drawPolyLine();
+            trackOverlay.moveLooper();
         }
 
         @Override
@@ -482,7 +494,7 @@ public class ArriveStartingPointFragment extends Fragment {
         }
     };
 
-
+    // 路径规划结果监听器
     OnGetRoutePlanResultListener onGetRoutePlanResultListener = new OnGetRoutePlanResultListener() {
         @Override
         public void onGetWalkingRouteResult(WalkingRouteResult walkingRouteResult) {
@@ -526,10 +538,10 @@ public class ArriveStartingPointFragment extends Fragment {
                     timeBuffer.append(second+"秒");
                 }
                 // 设置提示
-                mTextViewHint.setText("行程"+String.format("%.1f",distance)+"公里  预计"+timeBuffer.toString());
-                mTextViewTime.setText(timeBuffer.toString());
+                mBinding.textViewDriverOrderArriveStartingPointHint.setText("行程"+String.format("%.1f",distance)+"公里  预计"+timeBuffer.toString());
+                mBinding.textViewDriverOrderArriveStartingPointTime.setText(timeBuffer.toString());
                 // 语音播报信息
-                mTtsUtility.speaking("订单已开始，请前往上车点 奥体中心。"+mTextViewHint.getText().toString());
+                mTtsUtility.speaking("订单已开始，请前往上车点 奥体中心。"+mBinding.textViewDriverOrderArriveStartingPointHint.getText().toString());
                 // 设置数据
                 overlay.setData(drivingRouteLine);
                 // 在地图上绘制路线
@@ -564,18 +576,36 @@ public class ArriveStartingPointFragment extends Fragment {
 
         @Override
         public void onEntityListCallback(EntityListResponse entityListResponse) {
+            // 判断是否响应成功
+            if(entityListResponse.getStatus()!= StatusCodes.SUCCESS){
+                // 失败打印原因
+                Toast.makeText(getContext(),entityListResponse.getMessage(),Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // 获取定位
             List<EntityInfo> entityInfos=entityListResponse.getEntities();
             if(entityInfos==null||entityInfos.size()==0){
                 return;
             }
+            // 清除原路定位息
+            latlngs.clear();
+            // 获取定位信息
             for(EntityInfo entityInfo : entityInfos){
                 com.baidu.trace.model.LatLng location=entityInfo.getLatestLocation().getLocation();
                 double latitude=location.getLatitude();
                 double longitude=location.getLongitude();
+                // TODO: 发送定位给服务端
+
                 latlngs.add(new LatLng(latitude,longitude));
             }
-//            drawPolyLine();
-//            moveLooper();
+            // 绘制历史轨迹
+            TrackOverlay trackOverlay=new TrackOverlay();
+            trackOverlay.setBaiduMapView(mBinding.baiduMapViewDriverOrderArriveStartingPoint);
+            trackOverlay.setLatlngs(latlngs);
+            trackOverlay.setHandler(mHandler);
+            trackOverlay.drawPolyLine();
+            trackOverlay.moveLooper();
         }
 
         @Override

@@ -12,7 +12,9 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Handler;
 import android.os.Message;
@@ -27,19 +29,24 @@ import android.widget.Toast;
 
 import com.sosotaxi.driver.R;
 import com.sosotaxi.driver.common.Constant;
+import com.sosotaxi.driver.databinding.FragmentCreatePasswordBinding;
 import com.sosotaxi.driver.model.User;
 import com.sosotaxi.driver.service.net.LoginTask;
 import com.sosotaxi.driver.service.net.RegisterTask;
 import com.sosotaxi.driver.ui.main.MainActivity;
+import com.sosotaxi.driver.viewModel.UserViewModel;
 
 /**
  * 创建密码界面
  */
 public class CreatePasswordFragment extends Fragment {
 
-    private EditText mEditTextPassword;
-    private EditText mEditTextPasswordConfirmed;
-    private Button mButtonConfirm;
+    /**
+     * 用户ViewModel
+     */
+    private UserViewModel mUserViewModel;
+
+    private FragmentCreatePasswordBinding mBinding;
 
     /**
      * 密码长度标志位
@@ -52,34 +59,27 @@ public class CreatePasswordFragment extends Fragment {
     private boolean mFlag2;
 
     public CreatePasswordFragment() {
-        // 所需空构造器
+        // 初始化密码长度标志位
+        mFlag1=false;
+        mFlag2=false;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // 获取用户ViewModel
+        mUserViewModel=new ViewModelProvider(getActivity()).get(UserViewModel.class);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // 填充布局
-        return inflater.inflate(R.layout.fragment_create_password, container, false);
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        // 获取控件
-        mEditTextPassword=getActivity().findViewById(R.id.editTextCreatePassword);
-        mEditTextPasswordConfirmed=getActivity().findViewById(R.id.editTextCreatePasswordConfirmed);
-        mButtonConfirm=getActivity().findViewById(R.id.buttonCreatePasswordConfirm);
-        mFlag1=false;
-        mFlag2=false;
+        mBinding= DataBindingUtil.inflate(inflater,R.layout.fragment_create_password, container, false);
+        mBinding.setViewModel(mUserViewModel);
+        mBinding.setLifecycleOwner(getActivity());
 
         // 设置输入改变监听器
-        mEditTextPassword.addTextChangedListener(new TextWatcher() {
+        mBinding.editTextCreatePassword.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -98,7 +98,7 @@ public class CreatePasswordFragment extends Fragment {
         });
 
         // 设置输入改变监听器
-        mEditTextPasswordConfirmed.addTextChangedListener(new TextWatcher() {
+        mBinding.editTextCreatePasswordConfirmed.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -116,41 +116,41 @@ public class CreatePasswordFragment extends Fragment {
         });
 
         // 设置确认按钮点击事件
-        mButtonConfirm.setOnClickListener(new View.OnClickListener() {
+        mBinding.buttonCreatePasswordConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String password=mEditTextPassword.getText().toString();
-                String passwordConfirmed=mEditTextPasswordConfirmed.getText().toString();
+                String password=mBinding.editTextCreatePassword.getText().toString();
+                String passwordConfirmed=mBinding.editTextCreatePasswordConfirmed.getText().toString();
 
                 if(!password.equals(passwordConfirmed)){
                     // 提示密码不一致
-                    mEditTextPasswordConfirmed.setError(getString(R.string.error_password_different));
+                    mBinding.editTextCreatePasswordConfirmed.setError(getString(R.string.error_password_different));
 
                 }else{
                     // 验证密码是否符合要求
                     boolean result=password.matches(getString(R.string.regex_password));
 
                     if(result==true){
-                        // 获取手机号与密码
-                        String phone=getArguments().getString(Constant.EXTRA_PHONE);
-
-                        // 创建用户对象
-                        User user=new User();
-                        user.setUserName(phone);
-                        user.setPassword(password);
+                        User user=mUserViewModel.getUser().getValue();
                         user.setRole("passenger");
-
                         // 注册用户
                         new Thread(new RegisterTask(user,handler)).start();
                     }else{
                         // 清空密码输入框并提示密码不符合要求
-                        mEditTextPassword.setText("");
-                        mEditTextPasswordConfirmed.setText("");
-                        mEditTextPassword.setError(getString(R.string.error_password_not_match));
+                        mBinding.editTextCreatePassword.setText("");
+                        mBinding.editTextCreatePasswordConfirmed.setText("");
+                        mBinding.editTextCreatePassword.setError(getString(R.string.error_password_not_match));
                     }
                 }
             }
         });
+        // 填充布局
+        return mBinding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
     }
 
     /**
@@ -161,12 +161,12 @@ public class CreatePasswordFragment extends Fragment {
     private boolean checkPassword(CharSequence s){
         if(mFlag1&&mFlag2){
             // 两个密码输入框同时符合要求确认按钮可点击
-            mButtonConfirm.setBackgroundColor(getResources().getColor(R.color.colorAccent));
-            mButtonConfirm.setEnabled(true);
+            mBinding.buttonCreatePasswordConfirm.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+            mBinding.buttonCreatePasswordConfirm.setEnabled(true);
         }else{
             // 至少一个密码输入框不符合要求确认按钮不可点击
-            mButtonConfirm.setBackgroundColor(getResources().getColor(R.color.colorDisabledButton));
-            mButtonConfirm.setEnabled(false);
+            mBinding.buttonCreatePasswordConfirm.setBackgroundColor(getResources().getColor(R.color.colorDisabledButton));
+            mBinding.buttonCreatePasswordConfirm.setEnabled(false);
         }
 
         if(s.length()<8){
@@ -185,7 +185,6 @@ public class CreatePasswordFragment extends Fragment {
         @Override
         public boolean handleMessage(Message msg) {
             Bundle bundle = msg.getData();
-            String password=mEditTextPassword.getText().toString();
 
             // 提示异常信息
             if(bundle.getString(Constant.EXTRA_ERROR)!=null){
@@ -197,20 +196,8 @@ public class CreatePasswordFragment extends Fragment {
             boolean isAuthorized=bundle.getBoolean(Constant.EXTRA_IS_AUTHORIZED);
 
             if(isSuccessful){
-                // 注册成功保存用户信息
-                SharedPreferences sharedPreferences=getActivity().getSharedPreferences(Constant.SHARE_PREFERENCE_LOGIN, Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor=sharedPreferences.edit();
-                editor.putString(Constant.USERNAME,bundle.getString(Constant.EXTRA_PHONE));
-                editor.putString(Constant.PASSWORD,bundle.getString(Constant.EXTRA_PASSWORD));
-                editor.commit();
-
-                // 获取手机号与密码
-                String phone=getArguments().getString(Constant.EXTRA_PHONE);
-
-                // 创建用户对象
-                User user=new User();
-                user.setUserName(phone);
-                user.setPassword(password);
+                // 获取用户对象
+                User user=mUserViewModel.getUser().getValue();
                 user.setRememberMe(true);
 
                 // 登陆
@@ -218,7 +205,6 @@ public class CreatePasswordFragment extends Fragment {
 
                 // 跳转主界面
                 Intent intent = new Intent(getContext(), MainActivity.class);
-                intent.putExtras(bundle);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }else if(isAuthorized==false){

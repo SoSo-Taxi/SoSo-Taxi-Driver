@@ -1,98 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.driverOrder.ReceiveOrderFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <TextView
-        android:id="@+id/textViewDriverOrderReceiveOrderHint"
-        style="@style/DriverOrder.Hint"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/driver_order_receive_order_vertical_margin"
-        app:layout_constraintBottom_toTopOf="@+id/buttonDriverOrderReceiveOrder"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+    <data>
+        <variable
+            name="viewModel"
+            type="com.sosotaxi.driver.viewModel.OrderViewModel" />
+    </data>
 
-    <TextView
-        android:id="@+id/textViewDriverReceiveOrderFrom"
-        style="@style/DriverOrder.FromTo"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/driver_order_receive_order_horizontal_margin"
-        android:layout_marginTop="@dimen/driver_order_receive_order_vertical_margin"
-        android:layout_marginEnd="@dimen/driver_order_receive_order_horizontal_margin"
-        android:drawableStart="@drawable/dot_green"
-        android:drawablePadding="@dimen/driver_order_receive_order_dot_from_spacing"
-        android:maxWidth="@dimen/driver_order_detail_card_address_width"
-        android:singleLine="false"
-        android:text="奥体中心"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="match_parent"
+        tools:context=".ui.driverOrder.ReceiveOrderFragment">
 
-    <TextView
-        android:id="@+id/textViewDriverOrderReceiveOrderTo"
-        style="@style/DriverOrder.FromTo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/driver_order_receive_order_horizontal_margin"
-        android:layout_marginTop="@dimen/driver_order_receive_order_from_to_spacing"
-        android:layout_marginEnd="@dimen/driver_order_receive_order_horizontal_margin"
-        android:drawableStart="@drawable/dot_red"
-        android:drawablePadding="@dimen/driver_order_receive_order_dot_from_spacing"
-        android:text="天安门广场"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewDriverReceiveOrderFrom" />
+        <TextView
+            android:id="@+id/textViewDriverOrderReceiveOrderHint"
+            style="@style/DriverOrder.Hint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/driver_order_receive_order_vertical_margin"
+            app:layout_constraintBottom_toTopOf="@+id/buttonDriverOrderReceiveOrder"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
-    <Button
-        android:id="@+id/buttonDriverOrderReceiveOrder"
-        style="@style/DriverOrder.Button"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:height="@dimen/driver_order_button_height"
-        android:background="@color/colorAccent"
-        android:text="开始订单"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/buttonDriverOrderDenyOrder" />
-
-    <Button
-        android:id="@+id/buttonDriverOrderDenyOrder"
-        style="@style/DriverOrder.DisableButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:height="@dimen/driver_order_button_height"
-        android:background="@color/colorDisabledButton"
-        android:text="拒绝"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardView"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginStart="@dimen/driver_order_receive_order_horizontal_margin"
-        android:layout_marginTop="@dimen/driver_order_receive_order_vertical_margin"
-        android:layout_marginEnd="@dimen/driver_order_receive_order_horizontal_margin"
-        android:layout_marginBottom="@dimen/driver_order_receive_order_vertical_margin"
-        app:cardCornerRadius="10dp"
-        app:cardElevation="3dp"
-        app:layout_constraintBottom_toTopOf="@+id/textViewDriverOrderReceiveOrderHint"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewDriverOrderReceiveOrderTo">
-
-        <com.baidu.mapapi.map.MapView
-            android:id="@+id/mapViewReceiveOrder"
+        <TextView
+            android:id="@+id/textViewDriverReceiveOrderFrom"
+            style="@style/DriverOrder.FromTo"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/driver_order_receive_order_horizontal_margin"
+            android:layout_marginTop="@dimen/driver_order_receive_order_vertical_margin"
+            android:layout_marginEnd="@dimen/driver_order_receive_order_horizontal_margin"
+            android:drawableStart="@drawable/dot_green"
+            android:drawablePadding="@dimen/driver_order_receive_order_dot_from_spacing"
+            android:maxWidth="@dimen/driver_order_detail_card_address_width"
+            android:singleLine="false"
+            android:text="@{viewModel.order.departName}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        </com.baidu.mapapi.map.MapView>
-    </androidx.cardview.widget.CardView>
+        <TextView
+            android:id="@+id/textViewDriverOrderReceiveOrderTo"
+            style="@style/DriverOrder.FromTo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/driver_order_receive_order_horizontal_margin"
+            android:layout_marginTop="@dimen/driver_order_receive_order_from_to_spacing"
+            android:layout_marginEnd="@dimen/driver_order_receive_order_horizontal_margin"
+            android:drawableStart="@drawable/dot_red"
+            android:drawablePadding="@dimen/driver_order_receive_order_dot_from_spacing"
+            android:text="@{viewModel.order.destName}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewDriverReceiveOrderFrom" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <Button
+            android:id="@+id/buttonDriverOrderReceiveOrder"
+            style="@style/DriverOrder.Button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:height="@dimen/driver_order_button_height"
+            android:background="@color/colorAccent"
+            android:text="@string/btn_start_order"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/buttonDriverOrderDenyOrder" />
+
+        <Button
+            android:id="@+id/buttonDriverOrderDenyOrder"
+            style="@style/DriverOrder.DisableButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:height="@dimen/driver_order_button_height"
+            android:background="@color/colorDisabledButton"
+            android:text="@string/btn_deny_order"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginStart="@dimen/driver_order_receive_order_horizontal_margin"
+            android:layout_marginTop="@dimen/driver_order_receive_order_vertical_margin"
+            android:layout_marginEnd="@dimen/driver_order_receive_order_horizontal_margin"
+            android:layout_marginBottom="@dimen/driver_order_receive_order_vertical_margin"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="3dp"
+            app:layout_constraintBottom_toTopOf="@+id/textViewDriverOrderReceiveOrderHint"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewDriverOrderReceiveOrderTo">
+
+            <com.baidu.mapapi.map.MapView
+                android:id="@+id/mapViewReceiveOrder"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            </com.baidu.mapapi.map.MapView>
+        </androidx.cardview.widget.CardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -9,6 +9,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -23,8 +24,11 @@ import android.widget.Toast;
 import com.sosotaxi.driver.R;
 import com.sosotaxi.driver.common.Constant;
 import com.sosotaxi.driver.common.TTSUtility;
+import com.sosotaxi.driver.databinding.FragmentArriveStartingPointBinding;
+import com.sosotaxi.driver.databinding.FragmentConfirmBillBinding;
 import com.sosotaxi.driver.ui.widget.OnSlideListener;
 import com.sosotaxi.driver.ui.widget.SlideButton;
+import com.sosotaxi.driver.viewModel.OrderViewModel;
 
 /**
  * 确认账单界面
@@ -32,14 +36,19 @@ import com.sosotaxi.driver.ui.widget.SlideButton;
 public class ConfirmBillFragment extends Fragment {
 
     /**
+     * 订单ViewModel
+     */
+    private OrderViewModel mOrderViewModel;
+
+    /**
+     * 数据绑定对象
+     */
+    private FragmentConfirmBillBinding mBinding;
+
+    /**
      * 语音播报对象
      */
     private TTSUtility mTtsUtility;
-
-    private TextView mTextViewAmount;
-    private EditText mEditTextRoadToll;
-    private EditText mEditTextParkingRate;
-    private SlideButton mSlideButton;
 
     public ConfirmBillFragment() {
         // 获取语音播报对象
@@ -54,34 +63,21 @@ public class ConfirmBillFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // 填充布局
-        return inflater.inflate(R.layout.fragment_confirm_bill, container, false);
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        // 语音播报信息
-        mTtsUtility.speaking("已到达目的地，请提醒乘客带好随身物品。请确认账单金额并发起收款。");
-
-        // 获取控件
-        mTextViewAmount=getActivity().findViewById(R.id.textViewDriverOrderBillAmount);
-        mEditTextRoadToll=getActivity().findViewById(R.id.editTextDriverOrderBillItemRoadToll);
-        mEditTextParkingRate=getActivity().findViewById(R.id.editTextDriverOrderBillItemParkingRate);
-        mSlideButton=getActivity().findViewById(R.id.slideButtonConfirmBill);
+        mBinding= DataBindingUtil.inflate(inflater,R.layout.fragment_confirm_bill, container, false);
+        mBinding.setViewModel(mOrderViewModel);
+        mBinding.setLifecycleOwner(getActivity());
 
         // 设置滑动监听器
-        mSlideButton.addSlideListener(new OnSlideListener() {
+        mBinding.slideButtonConfirmBill.addSlideListener(new OnSlideListener() {
             @Override
             public void onSlideSuccess() {
                 // 获取账单项金额
                 double amount=0;
                 double roadToll=0;
                 double parkingRate=0;
-                String amountString=mTextViewAmount.getText().toString();
-                String roadTollString=mEditTextRoadToll.getText().toString();
-                String parkingRateString=mEditTextParkingRate.getText().toString();
+                String amountString=mBinding.textViewDriverOrderBillAmount.getText().toString();
+                String roadTollString=mBinding.editTextDriverOrderBillItemRoadToll.getText().toString();
+                String parkingRateString=mBinding.editTextDriverOrderBillItemParkingRate.getText().toString();
                 if(amountString.isEmpty()==false){
                     amount=Double.parseDouble(amountString);
                 }
@@ -117,5 +113,16 @@ public class ConfirmBillFragment extends Fragment {
                 fragmentTransaction.commit();
             }
         });
+
+        // 填充布局
+        return mBinding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        // 语音播报信息
+        mTtsUtility.speaking("已到达目的地，请提醒乘客带好随身物品。请确认账单金额并发起收款。");
     }
 }

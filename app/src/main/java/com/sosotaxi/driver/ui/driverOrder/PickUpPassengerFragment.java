@@ -14,6 +14,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -42,11 +43,14 @@ import com.baidu.mapapi.search.route.WalkingRouteResult;
 import com.sosotaxi.driver.R;
 import com.sosotaxi.driver.common.Constant;
 import com.sosotaxi.driver.common.TTSUtility;
+import com.sosotaxi.driver.databinding.FragmentArriveStartingPointBinding;
+import com.sosotaxi.driver.databinding.FragmentPickUpPassengerBinding;
 import com.sosotaxi.driver.ui.overlay.DrivingRouteOverlay;
 import com.sosotaxi.driver.ui.widget.OnSlideListener;
 import com.sosotaxi.driver.ui.widget.SlideButton;
 import com.sosotaxi.driver.utils.ContactHelper;
 import com.sosotaxi.driver.utils.PermissionHelper;
+import com.sosotaxi.driver.viewModel.OrderViewModel;
 
 import java.util.List;
 
@@ -54,6 +58,17 @@ import java.util.List;
  * 接到乘客界面
  */
 public class PickUpPassengerFragment extends Fragment {
+
+    /**
+     * 订单ViewModel
+     */
+    private OrderViewModel mOrderViewModel;
+
+    /**
+     * 数据绑定对象
+     */
+    private FragmentPickUpPassengerBinding mBinding;
+
     /**
      * 百度地图对象
      */
@@ -64,14 +79,10 @@ public class PickUpPassengerFragment extends Fragment {
      */
     private TTSUtility mTtsUtility;
 
-    private MapView mBaiduMapView;
-    private ImageButton mImageButtonText;
-    private ImageButton mImageButtonPhone;
-    private TextView mTextViewNumber;
-    private TextView mTextViewFrom;
-    private TextView mTextViewTo;
+    /**
+     * 路径规划对象
+     */
     private RoutePlanSearch mSearch;
-    private SlideButton mSlideButton;
 
     public PickUpPassengerFragment() {
         // 获取语音播报对象
@@ -86,38 +97,16 @@ public class PickUpPassengerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // 填充布局
-        return inflater.inflate(R.layout.fragment_pick_up_passenger, container, false);
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        // 获取控件
-        mBaiduMapView=getActivity().findViewById(R.id.baiduMapViewDriverPickUpPassenger);
-        mTextViewNumber=getActivity().findViewById(R.id.textViewDriverPickUpPassengerNumber);
-        mTextViewFrom=getActivity().findViewById(R.id.textViewDriverPickUpPassengerDetailFrom);
-        mTextViewTo=getActivity().findViewById(R.id.textViewDriverPickUpPassengerDetailTo);
-        mImageButtonText=getActivity().findViewById(R.id.buttonDriverPickUpPassengerText);
-        mImageButtonPhone=getActivity().findViewById(R.id.buttonDriverPickUpPassengerPhone);
-        mSlideButton=getActivity().findViewById(R.id.slideButtonPickUpPassenger);
+        mBinding= DataBindingUtil.inflate(inflater,R.layout.fragment_pick_up_passenger, container, false);
+        mBinding.setViewModel(mOrderViewModel);
+        mBinding.setLifecycleOwner(getActivity());
 
         // 不显示地图比例尺及缩放控件
-        mBaiduMapView.showZoomControls(false);
-        mBaiduMapView.showScaleControl(false);
-
-        // 获取百度地图对象
-        mBaiduMap = mBaiduMapView.getMap();
-
-        // 获取路径规划对象
-        mSearch = RoutePlanSearch.newInstance();
-
-        // 设置路径规划结果监听器
-        mSearch.setOnGetRoutePlanResultListener(listener);
+        mBinding.baiduMapViewDriverPickUpPassenger.showZoomControls(false);
+        mBinding.baiduMapViewDriverPickUpPassenger.showScaleControl(false);
 
         // 设置短信按钮监听器
-        mImageButtonText.setOnClickListener(new View.OnClickListener() {
+        mBinding.buttonDriverPickUpPassengerText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // 检查权限
@@ -138,7 +127,7 @@ public class PickUpPassengerFragment extends Fragment {
         });
 
         // 设置电话按钮监听器
-        mImageButtonPhone.setOnClickListener(new View.OnClickListener() {
+        mBinding.buttonDriverPickUpPassengerPhone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // 检查权限
@@ -158,7 +147,7 @@ public class PickUpPassengerFragment extends Fragment {
         });
 
         // 设置滑动按钮监听器
-        mSlideButton.addSlideListener(new OnSlideListener() {
+        mBinding.slideButtonPickUpPassenger.addSlideListener(new OnSlideListener() {
             @Override
             public void onSlideSuccess() {
                 Toast.makeText(getContext(), "确认成功!", Toast.LENGTH_SHORT).show();
@@ -176,6 +165,23 @@ public class PickUpPassengerFragment extends Fragment {
             }
         });
 
+        // 填充布局
+        return mBinding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        // 获取百度地图对象
+        mBaiduMap = mBinding.baiduMapViewDriverPickUpPassenger.getMap();
+
+        // 获取路径规划对象
+        mSearch = RoutePlanSearch.newInstance();
+
+        // 设置路径规划结果监听器
+        mSearch.setOnGetRoutePlanResultListener(listener);
+
         // 路径规划
         initRoutePlan();
     }
@@ -184,21 +190,21 @@ public class PickUpPassengerFragment extends Fragment {
     public void onResume() {
         super.onResume();
         //在activity执行onResume时执行mMapView. onResume ()，实现地图生命周期管理
-        mBaiduMapView.onResume();
+        mBinding.baiduMapViewDriverPickUpPassenger.onResume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
         //在activity执行onPause时执行mMapView. onPause ()，实现地图生命周期管理
-        mBaiduMapView.onPause();
+        mBinding.baiduMapViewDriverPickUpPassenger.onPause();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         //在activity执行onDestroy时执行mMapView.onDestroy()，实现地图生命周期管理
-        mBaiduMapView.onDestroy();
+        mBinding.baiduMapViewDriverPickUpPassenger.onDestroy();
         if (mSearch != null) {
             mSearch.destroy();
         }

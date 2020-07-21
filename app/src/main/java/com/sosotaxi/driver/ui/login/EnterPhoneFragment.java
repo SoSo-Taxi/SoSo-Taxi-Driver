@@ -10,8 +10,11 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Handler;
 import android.os.Message;
@@ -27,7 +30,10 @@ import android.widget.Toast;
 
 import com.sosotaxi.driver.R;
 import com.sosotaxi.driver.common.Constant;
+import com.sosotaxi.driver.databinding.FragmentEnterPhoneBinding;
+import com.sosotaxi.driver.model.User;
 import com.sosotaxi.driver.service.net.IsRegisteredTask;
+import com.sosotaxi.driver.viewModel.UserViewModel;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -36,9 +42,12 @@ import static android.app.Activity.RESULT_OK;
  */
 public class EnterPhoneFragment extends Fragment {
 
-    private TextView mTextViewAreaCode;
-    private EditText mEditTextPhone;
-    private Button mButtonContinue;
+    /**
+     * 用户ViewModel
+     */
+    private UserViewModel mUserViewModel;
+
+    private FragmentEnterPhoneBinding mBinding;
 
     public EnterPhoneFragment() {
         // 所需空构造器
@@ -47,42 +56,34 @@ public class EnterPhoneFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        // 获取用户ViewModel
+        mUserViewModel=new ViewModelProvider(getActivity()).get(UserViewModel.class);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // 填充布局
-        return inflater.inflate(R.layout.fragment_enter_phone, container, false);
-    }
+        mBinding= DataBindingUtil.inflate(inflater,R.layout.fragment_enter_phone, container, false);
+        mBinding.setViewModel(mUserViewModel);
+        mBinding.setLifecycleOwner(getActivity());
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+        // 设置继续按钮点击事件
+        mBinding.buttonContinue.setOnClickListener(new View.OnClickListener() {
+              @Override
+              public void onClick(View v) {
+                  // 获取手机号
+                  String areaCodeString=mBinding.textViewAreaCode.getText().toString();
+                  String areaCode=areaCodeString.substring(0,areaCodeString.length()-1);
+                  String phone=mBinding.editTextEnterPhone.getText().toString();
+                  String fullPhone=areaCode+phone;
 
-        //获取控件
-        mEditTextPhone=getActivity().findViewById(R.id.editTextEnterPhone);
-        mButtonContinue=getActivity().findViewById(R.id.buttonContinue);
-        mTextViewAreaCode=getActivity().findViewById(R.id.textViewAreaCode);
-
-        //设置继续按钮点击事件
-        mButtonContinue.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // 获取手机号
-                String areaCodeString=mTextViewAreaCode.getText().toString();
-                String areaCode=areaCodeString.substring(0,areaCodeString.length()-1);
-                String phone=mEditTextPhone.getText().toString();
-                String fullPhone=areaCode+phone;
-
-                //查询手机号是否已注册
-                new Thread(new IsRegisteredTask(fullPhone,handler)).start();
-            }
+                  //查询手机号是否已注册
+                  new Thread(new IsRegisteredTask(fullPhone,handler)).start();
+              }
         });
 
         // 设置区号点击监听器
-        mTextViewAreaCode.setOnClickListener(new View.OnClickListener() {
+        mBinding.textViewAreaCode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // 跳转区号选择界面
@@ -92,7 +93,7 @@ public class EnterPhoneFragment extends Fragment {
         });
 
         // 设置手机号输入框字数监听
-        mEditTextPhone.addTextChangedListener(new TextWatcher() {
+        mBinding.editTextEnterPhone.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -102,12 +103,12 @@ public class EnterPhoneFragment extends Fragment {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if(s.length()==0){
                     //未输入时继续按钮不可用
-                    mButtonContinue.setBackgroundColor(getResources().getColor(R.color.colorDisabledButton));
-                    mButtonContinue.setEnabled(false);
+                    mBinding.buttonContinue.setBackgroundColor(getResources().getColor(R.color.colorDisabledButton));
+                    mBinding.buttonContinue.setEnabled(false);
                 }else{
                     //输入后才可用
-                    mButtonContinue.setBackgroundColor(getResources().getColor(R.color.colorAccent));
-                    mButtonContinue.setEnabled(true);
+                    mBinding.buttonContinue.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+                    mBinding.buttonContinue.setEnabled(true);
                 }
             }
 
@@ -116,6 +117,14 @@ public class EnterPhoneFragment extends Fragment {
 
             }
         });
+
+        // 填充布局
+        return mBinding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
     }
 
     @Override
@@ -127,7 +136,7 @@ public class EnterPhoneFragment extends Fragment {
                 case Constant.SELECT_AREA_CODE_REQUEST:
                     int areaCode=data.getIntExtra(Constant.EXTRA_AREA_CODE,86);
                     String areaCodeString="+"+areaCode+" ▼";
-                    mTextViewAreaCode.setText(areaCodeString);
+                    mBinding.editTextEnterPhone.setText(areaCodeString);
                     break;
             }
         }
@@ -140,6 +149,7 @@ public class EnterPhoneFragment extends Fragment {
         @Override
         public boolean handleMessage(Message msg) {
             Bundle bundle = msg.getData();
+            mUserViewModel.getUser().getValue().setUserName(bundle.getString(Constant. EXTRA_PHONE));
 
             // 提示异常信息
             if(bundle.getString(Constant.EXTRA_ERROR)!=null){

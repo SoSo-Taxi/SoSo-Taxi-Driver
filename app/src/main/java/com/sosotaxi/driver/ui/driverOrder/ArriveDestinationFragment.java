@@ -12,6 +12,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -41,12 +42,15 @@ import com.baidu.navisdk.adapter.BaiduNaviManagerFactory;
 import com.sosotaxi.driver.R;
 import com.sosotaxi.driver.common.Constant;
 import com.sosotaxi.driver.common.TTSUtility;
+import com.sosotaxi.driver.databinding.FragmentArriveDestinationBinding;
+import com.sosotaxi.driver.databinding.FragmentArriveStartingPointBinding;
 import com.sosotaxi.driver.ui.overlay.DrivingRouteOverlay;
 import com.sosotaxi.driver.ui.widget.OnSlideListener;
 import com.sosotaxi.driver.ui.widget.SlideButton;
 import com.sosotaxi.driver.utils.ContactHelper;
 import com.sosotaxi.driver.utils.NavigationHelper;
 import com.sosotaxi.driver.utils.PermissionHelper;
+import com.sosotaxi.driver.viewModel.OrderViewModel;
 
 import java.util.List;
 
@@ -80,12 +84,15 @@ public class ArriveDestinationFragment extends Fragment {
      */
     private TTSUtility mTtsUtility;
 
-    private MapView mBaiduMapView;
-    private ConstraintLayout mConstraintLayoutNavigation;
-    private TextView mTextViewNavigation;
-    private TextView mTextViewHint;
-    private ImageButton mImageButtonNavigation;
-    private SlideButton mSlideButton;
+    /**
+     * 订单ViewModel
+     */
+    private OrderViewModel mOrderViewModel;
+
+    /**
+     * 数据绑定对象
+     */
+    private FragmentArriveDestinationBinding mBinding;
 
     public ArriveDestinationFragment() {
         // 获取语音播报对象
@@ -100,37 +107,22 @@ public class ArriveDestinationFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // 填充布局
-        return inflater.inflate(R.layout.fragment_arrive_destination, container, false);
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        // 获取控件
-        mBaiduMapView=getActivity().findViewById(R.id.baiduMapViewDriverArriveDestination);
-        mConstraintLayoutNavigation = getActivity().findViewById(R.id.constraintLayoutArriveDestinationNavigation);
-        mTextViewNavigation=getActivity().findViewById(R.id.textViewDriverOrderArriveDestinationNavigation);
-        mTextViewHint=getActivity().findViewById(R.id.textViewDriverArriveDestinationHint);
-        mImageButtonNavigation = getActivity().findViewById(R.id.imageButtonDriverArriveDestinationNavigation);
-        mSlideButton=getActivity().findViewById(R.id.slideButtonArriveDestination);
+        mBinding= DataBindingUtil.inflate(inflater,R.layout.fragment_arrive_destination, container, false);
+        mBinding.setViewModel(mOrderViewModel);
+        mBinding.setLifecycleOwner(getActivity());
 
         // 不显示地图比例尺及缩放控件
-        mBaiduMapView.showZoomControls(false);
+        mBinding.baiduMapViewDriverArriveDestination.showZoomControls(false);
         // 不显示比例尺
-        mBaiduMapView.showScaleControl(false);
-
-        // 获取百度地图对象
-        mBaiduMap = mBaiduMapView.getMap();
+        mBinding.baiduMapViewDriverArriveDestination.showScaleControl(false);
 
         // 设置点击监听器
-        mConstraintLayoutNavigation.setOnClickListener(onClickListener);
-        mImageButtonNavigation.setOnClickListener(onClickListener);
-        mTextViewNavigation.setOnClickListener(onClickListener);
+        mBinding.constraintLayoutArriveDestinationNavigation.setOnClickListener(onClickListener);
+        mBinding.imageButtonDriverArriveDestinationNavigation.setOnClickListener(onClickListener);
+        mBinding.textViewDriverOrderArriveDestinationNavigation.setOnClickListener(onClickListener);
 
         // 设置滑动监听器
-        mSlideButton.addSlideListener(new OnSlideListener() {
+        mBinding.slideButtonArriveDestination.addSlideListener(new OnSlideListener() {
             @Override
             public void onSlideSuccess() {
                 Toast.makeText(getContext(), "确认成功!", Toast.LENGTH_SHORT).show();
@@ -149,6 +141,19 @@ public class ArriveDestinationFragment extends Fragment {
             }
         });
 
+        // 填充布局
+        return mBinding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+
+
+        // 获取百度地图对象
+        mBaiduMap = mBinding.baiduMapViewDriverArriveDestination.getMap();
+
         // 获取路径规划对象
         mSearch = RoutePlanSearch.newInstance();
 
@@ -166,26 +171,27 @@ public class ArriveDestinationFragment extends Fragment {
     public void onResume() {
         super.onResume();
         //在activity执行onResume时执行mMapView. onResume ()，实现地图生命周期管理
-        mBaiduMapView.onResume();
+        mBinding.baiduMapViewDriverArriveDestination.onResume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
         //在activity执行onPause时执行mMapView. onPause ()，实现地图生命周期管理
-        mBaiduMapView.onPause();
+        mBinding.baiduMapViewDriverArriveDestination.onPause();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         //在activity执行onDestroy时执行mMapView.onDestroy()，实现地图生命周期管理
-        mBaiduMapView.onDestroy();
+        mBinding.baiduMapViewDriverArriveDestination.onDestroy();
         if (mSearch != null) {
             mSearch.destroy();
         }
-        //TraceHelper.stopGather();
-        //TraceHelper.stopTrace();
+        if(mBaiduMap!=null){
+            mBaiduMap.clear();
+        }
     }
 
     // 请求权限结果处理
@@ -284,9 +290,9 @@ public class ArriveDestinationFragment extends Fragment {
                     timeBuffer.append(second+"秒");
                 }
                 // 设置提示
-                mTextViewHint.setText("行程"+String.format("%.1f",distance)+"公里  预计"+timeBuffer.toString());
+                mBinding.textViewDriverArriveDestinationHint.setText("行程"+String.format("%.1f",distance)+"公里  预计"+timeBuffer.toString());
                 // 语音播报信息
-                mTtsUtility.speaking("已接到乘客，请前往目的地 天安门广场。"+mTextViewHint.getText().toString());
+                mTtsUtility.speaking("已接到乘客，请前往目的地 天安门广场。"+mBinding.textViewDriverArriveDestinationHint.getText().toString());
                 // 设置数据
                 overlay.setData(drivingRouteLine);
                 // 在地图上绘制路线

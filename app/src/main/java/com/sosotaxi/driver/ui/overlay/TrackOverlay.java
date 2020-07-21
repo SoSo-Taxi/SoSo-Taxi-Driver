@@ -6,6 +6,7 @@
 package com.sosotaxi.driver.ui.overlay;
 
 import android.graphics.Color;
+import android.os.Handler;
 
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
@@ -19,7 +20,6 @@ import com.baidu.mapapi.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Handler;
 
 /**
  * 轨迹覆盖类
@@ -28,7 +28,7 @@ public class TrackOverlay {
     /**
      * 间隔时间
      */
-    private static final int TIME_INTERVAL = 80;
+    private static final int TIME_INTERVAL = 100;
 
     /**
      * 图标移动距离
@@ -62,10 +62,23 @@ public class TrackOverlay {
 
     private MapView mBaiduMapView;
 
+    public void setLatlngs(List<LatLng> latlngs) {
+        this.latlngs = latlngs;
+    }
+
+    public void setHandler(Handler handler) {
+        this.mHandler = handler;
+    }
+
+    public void setBaiduMapView(MapView baiduMapView) {
+        this.mBaiduMapView = baiduMapView;
+        this.mBaiduMap=baiduMapView.getMap();
+    }
+
     /**
      * 绘制路径
      */
-    private void drawPolyLine() {
+    public void drawPolyLine() {
         if(latlngs.size()==0){
             return;
         }
@@ -75,14 +88,16 @@ public class TrackOverlay {
             polylines.add(latlngs.get(index));
         }
 
-
-        polylines.add(latlngs.get(0));
-        PolylineOptions polylineOptions = new PolylineOptions().points(polylines).width(10).color(Color.RED);
+        PolylineOptions polylineOptions = new PolylineOptions().
+                points(polylines).
+                width(25).
+                color(Color.argb(255, 65, 194, 130))
+        ;
 
         mPolyline = (Polyline) mBaiduMap.addOverlay(polylineOptions);
         OverlayOptions markerOptions;
         markerOptions = new MarkerOptions().flat(true).anchor(0.5f, 0.5f)
-                .icon(BitmapDescriptorFactory.fromAsset("Icon_line_node.png")).position(polylines.get(0))
+                .icon(BitmapDescriptorFactory.fromAsset("Icon_current_marker.png")).position(polylines.get(0))
                 .rotate((float) getAngle(0));
         mMoveMarker = (Marker) mBaiduMap.addOverlay(markerOptions);
 
@@ -160,26 +175,21 @@ public class TrackOverlay {
             public void run() {
 
                 while (true) {
-
                     for (int i = 0; i < latlngs.size() - 1; i++) {
-
-
                         final LatLng startPoint = latlngs.get(i);
                         final LatLng endPoint = latlngs.get(i+1);
-                        mMoveMarker
-                                .setPosition(startPoint);
-
-//                        mHandler.post(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                // refresh marker's rotate
-//                                if (mBaiduMapView == null) {
-//                                    return;
-//                                }
-//                                mMoveMarker.setRotate((float) getAngle(startPoint,
-//                                        endPoint));
-//                            }
-//                        });
+                        mMoveMarker.setPosition(startPoint);
+                        mHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                // 刷新标记角度
+                                if (mBaiduMapView == null) {
+                                    return;
+                                }
+                                mMoveMarker.setRotate((float) getAngle(startPoint,
+                                        endPoint));
+                            }
+                        });
                         double slope = getSlope(startPoint, endPoint);
                         // 是不是正向的标示
                         boolean isReverse = (startPoint.latitude > endPoint.latitude);
@@ -199,22 +209,23 @@ public class TrackOverlay {
                             }
 
                             final LatLng finalLatLng = latLng;
-//                            mHandler.post(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    if (mBaiduMapView == null) {
-//                                        return;
-//                                    }
-//                                    mMoveMarker.setPosition(finalLatLng);
-//                                }
-//                            });
+                            mHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (mBaiduMapView == null) {
+                                        return;
+                                    }
+                                    mMoveMarker.setPosition(finalLatLng);
+                                }
+                            });
                             try {
+                                List<LatLng> tempLatlngs=latlngs.subList(i,latlngs.size());
+                                mPolyline.setPoints(tempLatlngs);
                                 Thread.sleep(TIME_INTERVAL);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
                         }
-
                     }
                 }
             }
