@@ -152,7 +152,9 @@ public class Constant {
      */
     public static final long SERVICE_ID=222372;
 
-
+    /**
+     * 广播过滤器
+     */
     public static final String FILTER_CONTENT="com.sosotaxi.driver.service.callback.content";
 
 }

@@ -242,7 +242,7 @@
                         android:ellipsize="end"
                         android:maxWidth="@dimen/driver_order_detail_card_address_width"
                         android:singleLine="true"
-                        android:text="@{viewModel.order.destName}" />
+                        android:text="@{viewModel.order.destinationName}" />
                 </LinearLayout>
 
                 <ImageButton

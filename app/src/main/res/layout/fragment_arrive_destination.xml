@@ -53,7 +53,7 @@
                         android:ellipsize="end"
                         android:maxWidth="@dimen/driver_order_destination_width"
                         android:singleLine="true"
-                        android:text="@{viewModel.order.destName}"
+                        android:text="@{viewModel.order.destinationName}"
                         app:layout_constraintBottom_toBottomOf="@+id/textViewDriverArriveDestinationTo"
                         app:layout_constraintStart_toEndOf="@+id/textViewDriverArriveDestinationTo" />
 

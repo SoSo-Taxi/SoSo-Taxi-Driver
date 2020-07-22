@@ -1,9 +1,6 @@
 package com.sosotaxi.driver.model;
 
-import com.baidu.mapapi.model.LatLng;
 import com.google.gson.annotations.SerializedName;
-
-import java.util.Date;
 
 /**
  * @Author 范承祥
@@ -12,54 +9,123 @@ import java.util.Date;
  */
 public class Order {
     private long orderId;
+    private long createTime;
+    private OrderStatus status;
     private String city;
     @SerializedName("passengerNum")
-    private short passengerNumber;
-    private Point departPoint;
-    private Point destPoint;
-    private Date departTime;
+    private int passengerNumber;
+    @SerializedName("departPoint")
+    private LocationPoint departPoint;
+    @SerializedName("destPoint")
+    private LocationPoint destinationPoint;
+    private long departTime;
     private String departName;
-    private String destName;
-    private short serviceType;
+    private String destinationName;
+    private int serviceType;
     private long passengerId;
+    private String passengerName;
 
     public long getOrderId() {
         return orderId;
+    }
+
+    public void setOrderId(long orderId) {
+        this.orderId = orderId;
+    }
+
+    public long getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(long createTime) {
+        this.createTime = createTime;
+    }
+
+    public OrderStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(OrderStatus status) {
+        this.status = status;
     }
 
     public String getCity() {
         return city;
     }
 
-    public short getPassengerNumber() {
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public int getPassengerNumber() {
         return passengerNumber;
     }
 
-    public Point getDepartPoint() {
+    public void setPassengerNumber(int passengerNumber) {
+        this.passengerNumber = passengerNumber;
+    }
+
+    public LocationPoint getDepartPoint() {
         return departPoint;
     }
 
-    public Point getDestPoint() {
-        return destPoint;
+    public void setDepartPoint(LocationPoint departPoint) {
+        this.departPoint = departPoint;
     }
 
-    public Date getDepartTime() {
+    public LocationPoint getDestinationPoint() {
+        return destinationPoint;
+    }
+
+    public void setDestinationPoint(LocationPoint destinationPoint) {
+        this.destinationPoint = destinationPoint;
+    }
+
+    public long getDepartTime() {
         return departTime;
+    }
+
+    public void setDepartTime(long departTime) {
+        this.departTime = departTime;
     }
 
     public String getDepartName() {
         return departName;
     }
 
-    public String getDestName() {
-        return destName;
+    public void setDepartName(String departName) {
+        this.departName = departName;
     }
 
-    public short getServiceType() {
+    public String getDestinationName() {
+        return destinationName;
+    }
+
+    public void setDestinationName(String destinationName) {
+        this.destinationName = destinationName;
+    }
+
+    public int getServiceType() {
         return serviceType;
+    }
+
+    public void setServiceType(int serviceType) {
+        this.serviceType = serviceType;
     }
 
     public long getPassengerId() {
         return passengerId;
+    }
+
+    public void setPassengerId(long passengerId) {
+        this.passengerId = passengerId;
+    }
+
+    public String getPassengerName() {
+        return passengerName;
+    }
+
+    public void setPassengerName(String passengerName) {
+        this.passengerName = passengerName;
     }
 }

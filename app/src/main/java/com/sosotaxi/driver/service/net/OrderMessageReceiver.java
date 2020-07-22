@@ -16,6 +16,6 @@ import com.sosotaxi.driver.common.Constant;
 public class OrderMessageReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        Toast.makeText(context,intent.getStringExtra(Constant.EXTRA_RESPONSE_MESSAGE), Toast.LENGTH_SHORT).show();
+        Toast.makeText(context,intent.getStringExtra(Constant.EXTRA_RESPONSE_MESSAGE), Toast.LENGTH_LONG).show();
     }
 }

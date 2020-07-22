@@ -52,7 +52,7 @@
             android:layout_marginEnd="@dimen/driver_order_receive_order_horizontal_margin"
             android:drawableStart="@drawable/dot_red"
             android:drawablePadding="@dimen/driver_order_receive_order_dot_from_spacing"
-            android:text="@{viewModel.order.destName}"
+            android:text="@{viewModel.order.destinationName}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textViewDriverReceiveOrderFrom" />

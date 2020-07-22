@@ -16,6 +16,7 @@ import com.baidu.trace.api.entity.EntityListRequest;
 import com.baidu.trace.api.entity.FilterCondition;
 import com.baidu.trace.api.entity.OnEntityListener;
 import com.baidu.trace.api.track.HistoryTrackRequest;
+import com.baidu.trace.api.track.LatestPointRequest;
 import com.baidu.trace.api.track.OnTrackListener;
 import com.baidu.trace.api.track.SupplementMode;
 import com.baidu.trace.model.CoordType;
@@ -41,10 +42,10 @@ public class TraceHelper {
      */
     private static LBSTraceClient sTraceClient;
 
-	
+    /**
+     * 序列生成器
+     */
 	private static AtomicInteger mSequenceGenerator;
-
-	private static Context mContext;
 
     /**
      * 设置路径
@@ -146,12 +147,13 @@ public class TraceHelper {
     public static void queryEntity(List<String> entityNames, long activeTime, OnEntityListener entityListener){
         // 创建查询
         EntityListRequest entityListRequest=new EntityListRequest();
+        // 设置服务号
         entityListRequest.setServiceId(Constant.SERVICE_ID);
-        entityListRequest.setPageSize(100);
-        entityListRequest.setPageIndex(1);
 
         FilterCondition filterCondition=new FilterCondition();
+        // 设置实体名
         filterCondition.setEntityNames(entityNames);
+        // 设置活跃时间
         filterCondition.setActiveTime(activeTime);
 
         entityListRequest.setFilterCondition(filterCondition);
@@ -168,19 +170,42 @@ public class TraceHelper {
      */
     public static void queryHistoryTrack(String entityName, long startTime, long endTime, OnTrackListener onTrackListener){
         HistoryTrackRequest historyTrackRequest=new HistoryTrackRequest();
+        // 设置标签
         historyTrackRequest.setTag(getTag());
+        // 设置服务号
         historyTrackRequest.setServiceId(Constant.SERVICE_ID);
+        // 设置实体名
         historyTrackRequest.setEntityName(entityName);
         // 设置开始时间
         historyTrackRequest.setStartTime(startTime);
         // 设置结束时间
         historyTrackRequest.setEndTime(endTime);
-
         //查询历史轨迹
         sTraceClient.queryHistoryTrack(historyTrackRequest,onTrackListener);
     }
-	
-	public static int getTag(){
+
+    /**
+     * 构建查询最新点请求
+     * @param entityName 实体名
+     * @return 最新点查询请求
+     */
+    public static LatestPointRequest buildLatestPointRequest(String entityName){
+        LatestPointRequest latestPointRequest=new LatestPointRequest();
+        // 设置标签
+        latestPointRequest.setTag(getTag());
+        // 设置实体名
+        latestPointRequest.setEntityName(entityName);
+        // 设置服务号
+        latestPointRequest.setServiceId(Constant.SERVICE_ID);
+
+        return latestPointRequest;
+    }
+
+    /**
+     * 获取标签
+     * @return 标签
+     */
+	private static int getTag(){
 		return mSequenceGenerator.incrementAndGet();
 	}
 }
