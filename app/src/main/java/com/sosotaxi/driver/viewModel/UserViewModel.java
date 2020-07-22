@@ -46,6 +46,7 @@ public class UserViewModel extends AndroidViewModel {
         User user=new User();
         user.setUserName(username);
         user.setPassword(password);
+        user.setToken(token);
         mUser.setValue(user);
     }
 

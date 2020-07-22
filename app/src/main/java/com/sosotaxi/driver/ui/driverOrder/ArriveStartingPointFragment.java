@@ -71,6 +71,7 @@ import com.baidu.trace.api.entity.SearchResponse;
 import com.baidu.trace.api.entity.UpdateEntityResponse;
 import com.baidu.trace.api.track.HistoryTrackRequest;
 import com.baidu.trace.api.track.HistoryTrackResponse;
+import com.baidu.trace.api.track.LatestPoint;
 import com.baidu.trace.api.track.LatestPointResponse;
 import com.baidu.trace.api.track.OnTrackListener;
 import com.baidu.trace.api.track.TrackPoint;
@@ -84,11 +85,17 @@ import com.sosotaxi.driver.common.Constant;
 import com.sosotaxi.driver.common.OnToolbarListener;
 import com.sosotaxi.driver.common.TTSUtility;
 import com.sosotaxi.driver.databinding.FragmentArriveStartingPointBinding;
+import com.sosotaxi.driver.model.LocationPoint;
+import com.sosotaxi.driver.model.message.BaseMessage;
+import com.sosotaxi.driver.model.message.MessageType;
+import com.sosotaxi.driver.model.message.UpdateDriverBody;
+import com.sosotaxi.driver.service.net.QueryLatestPointTask;
 import com.sosotaxi.driver.ui.overlay.DrivingRouteOverlay;
 import com.sosotaxi.driver.ui.overlay.TrackOverlay;
 import com.sosotaxi.driver.ui.widget.OnSlideListener;
 import com.sosotaxi.driver.ui.widget.SlideButton;
 import com.sosotaxi.driver.utils.ContactHelper;
+import com.sosotaxi.driver.utils.MessageHelper;
 import com.sosotaxi.driver.utils.NavigationHelper;
 import com.sosotaxi.driver.utils.PermissionHelper;
 import com.sosotaxi.driver.utils.TraceHelper;
@@ -141,6 +148,10 @@ public class ArriveStartingPointFragment extends Fragment {
 
     private Handler mHandler;
 
+    private MessageHelper mMessageHelper;
+
+    private Thread mQueryThread;
+
     /**
      * 订单ViewModel
      */
@@ -156,8 +167,10 @@ public class ArriveStartingPointFragment extends Fragment {
         latlngs= new LinkedList<LatLng>();
         // 获取语音播报对象
         mTtsUtility=TTSUtility.getInstance(getContext());
-
+        // 获取控制器
         mHandler=new Handler(Looper.getMainLooper());
+        // 获取消息帮助对象
+        mMessageHelper=MessageHelper.getInstance();
     }
 
     @Override
@@ -266,9 +279,12 @@ public class ArriveStartingPointFragment extends Fragment {
         // 路径规划
         initRoutePlan();
         // 初始化轨迹记录
-        TraceHelper.initTrace("8613823831820",2,15,onTraceListener);
+        TraceHelper.initTrace("8613189925361",2,15,onTraceListener);
         // 开始记录轨迹
-        //TraceHelper.startTrace();
+        TraceHelper.startTrace();
+
+        //TraceHelper.getTraceClient().queryLatestPoint(TraceHelper.buildLatestPointRequest("8613189925361"),onTrackListener);
+
 
     }
 
@@ -299,6 +315,9 @@ public class ArriveStartingPointFragment extends Fragment {
         }
         TraceHelper.stopGather();
         TraceHelper.stopTrace();
+        if(mQueryThread.isInterrupted()==false){
+            mQueryThread.interrupt();
+        }
     }
 
     @Override
@@ -308,6 +327,11 @@ public class ArriveStartingPointFragment extends Fragment {
             OnToolbarListener onToolbarListener=((OnToolbarListener) getActivity());
             // 改变工具栏标题
             onToolbarListener.setTitle(getString(R.string.title_driver_order_processing));
+        }
+        if(getActivity() instanceof DriverOrderActivity){
+            DriverOrderActivity activity=(DriverOrderActivity)getActivity();
+            // 设置连接器
+            mMessageHelper.setClient(activity.getClient());
         }
     }
 
@@ -436,6 +460,9 @@ public class ArriveStartingPointFragment extends Fragment {
         @Override
         public void onStartGatherCallback(int status, String message) {
             Toast.makeText(getContext(), "开始收集", Toast.LENGTH_SHORT).show();
+            // 开始上传定位
+            mQueryThread=new Thread(new QueryLatestPointTask(2000,"8613189925361",onTrackListener));
+            mQueryThread.start();
         }
         // 停止采集回调
         @Override
@@ -490,7 +517,23 @@ public class ArriveStartingPointFragment extends Fragment {
 
         @Override
         public void onLatestPointCallback(LatestPointResponse latestPointResponse) {
-            int status=latestPointResponse.status;
+            if(latestPointResponse.status!=StatusCodes.SUCCESS){
+                return;
+            }
+
+            // 封装消息
+            com.baidu.trace.model.LatLng location=latestPointResponse.getLatestPoint().getLocation();
+            UpdateDriverBody body=new UpdateDriverBody();
+            body.setMessageId(mMessageHelper.getMessageId());
+            body.setDispatched(true);
+            body.setStartListening(true);
+            body.setServerType(1);
+            body.setLatitude(location.getLatitude());
+            body.setLongitude(location.getLongitude());
+            BaseMessage message=mMessageHelper.build(MessageType.UPDATE_REQUEST,body);
+
+            // 发送消息
+            mMessageHelper.send(message);
         }
     };
 

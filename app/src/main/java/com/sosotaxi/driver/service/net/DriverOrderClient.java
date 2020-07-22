@@ -28,9 +28,6 @@ public class DriverOrderClient extends WebSocketClient {
     @Override
     public void onMessage(String message) {
         Log.d("WSTEST",message);
-        Intent intent=new Intent();
-        intent.setAction(Constant.FILTER_CONTENT);
-        intent.putExtra(Constant.EXTRA_RESPONSE_MESSAGE,message);
     }
 
     @Override

@@ -8,6 +8,8 @@ import android.os.IBinder;
 
 import androidx.annotation.Nullable;
 
+import com.sosotaxi.driver.common.Constant;
+
 import java.net.URI;
 
 /**
@@ -21,17 +23,25 @@ public class DriverOrderService extends Service {
     private DriverOrderClient mDriverOrderClient;
     private DriverOrderBinder mDriverOrderBinder;
 
-    public DriverOrderService(String uri){
-        if(uri.isEmpty()){
-            return;
-        }
-        mUri=URI.create(uri);
-        mDriverOrderClient=new DriverOrderClient(mUri);
+    public DriverOrderService(){
         mDriverOrderBinder=new DriverOrderBinder();
     }
 
     public DriverOrderClient getClient(){
         return mDriverOrderClient;
+    }
+
+    private void connect(){
+        new Thread(){
+            @Override
+            public void run() {
+                try{
+                    mDriverOrderClient.connectBlocking();
+                }catch (InterruptedException e){
+                    e.printStackTrace();
+                }
+            }
+        }.start();
     }
 
     @Nullable
@@ -41,7 +51,20 @@ public class DriverOrderService extends Service {
     }
 
     public class DriverOrderBinder extends Binder {
-        public DriverOrderService getService(){
+        public DriverOrderService getService(String token){
+            mUri=URI.create(Constant.WEB_SOCKET_URI+token);
+            mDriverOrderClient = new DriverOrderClient(mUri){
+                @Override
+                public void onMessage(String message) {
+                    Intent intent=new Intent();
+                    intent.setAction(Constant.FILTER_CONTENT);
+                    intent.putExtra(Constant.EXTRA_RESPONSE_MESSAGE,message);
+
+                    sendBroadcast(intent);
+                }
+            };
+
+            connect();
             return DriverOrderService.this;
         }
     }

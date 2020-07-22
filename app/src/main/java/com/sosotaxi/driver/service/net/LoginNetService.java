@@ -109,6 +109,7 @@ public class LoginNetService extends BaseNetService {
 
         // 生成JSON
         Gson gson=new Gson();
+        user.setToken(null);
         String json=gson.toJson(user);
 
         // POST请求

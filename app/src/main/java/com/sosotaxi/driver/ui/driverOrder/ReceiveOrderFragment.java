@@ -5,11 +5,6 @@
  */
 package com.sosotaxi.driver.ui.driverOrder;
 
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,18 +14,12 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.os.IBinder;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baidu.mapapi.map.BaiduMap;
-import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.search.route.BikingRouteResult;
 import com.baidu.mapapi.search.route.DrivingRouteLine;
 import com.baidu.mapapi.search.route.DrivingRoutePlanOption;
@@ -42,22 +31,18 @@ import com.baidu.mapapi.search.route.PlanNode;
 import com.baidu.mapapi.search.route.RoutePlanSearch;
 import com.baidu.mapapi.search.route.TransitRouteResult;
 import com.baidu.mapapi.search.route.WalkingRouteResult;
+import com.google.gson.Gson;
 import com.sosotaxi.driver.R;
-import com.sosotaxi.driver.common.Constant;
 import com.sosotaxi.driver.common.OnToolbarListener;
-import com.sosotaxi.driver.databinding.FragmentArriveStartingPointBinding;
 import com.sosotaxi.driver.databinding.FragmentReceiveOrderBinding;
+import com.sosotaxi.driver.model.message.BaseMessage;
+import com.sosotaxi.driver.model.message.MessageType;
+import com.sosotaxi.driver.model.message.UpdateDriverBody;
 import com.sosotaxi.driver.service.net.DriverOrderClient;
-import com.sosotaxi.driver.service.net.DriverOrderService;
 import com.sosotaxi.driver.ui.overlay.DrivingRouteOverlay;
-import com.sosotaxi.driver.ui.widget.OnSlideListener;
-import com.sosotaxi.driver.ui.widget.SlideButton;
 import com.sosotaxi.driver.viewModel.OrderViewModel;
 
-import java.net.URI;
 import java.util.List;
-
-import static android.content.Context.BIND_AUTO_CREATE;
 
 /**
  * 接单界面
@@ -83,6 +68,8 @@ public class ReceiveOrderFragment extends Fragment {
      * 路径规划对象
      */
     private RoutePlanSearch mSearch;
+
+    private DriverOrderClient mDriverOrderClient;
 
     public ReceiveOrderFragment() {
         // 所需空构造器
@@ -110,6 +97,21 @@ public class ReceiveOrderFragment extends Fragment {
         mBinding.buttonDriverOrderReceiveOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                DriverOrderActivity activity=(DriverOrderActivity) getActivity();
+                mDriverOrderClient=activity.getClient();
+                if(mDriverOrderClient!=null){
+                    UpdateDriverBody body=new UpdateDriverBody();
+                    body.setMessageId(1);
+                    body.setLatitude(40);
+                    body.setLongitude(40);
+                    body.setDispatched(false);
+                    body.setStartListening(true);
+                    body.setServerType(1);
+                    BaseMessage updateDriverMessage=new BaseMessage(MessageType.UPDATE_REQUEST,body);
+                    Gson gson=new Gson();
+                    String json=gson.toJson(updateDriverMessage);
+                    mDriverOrderClient.send(json);
+                }
                 Toast.makeText(getContext(), "接单成功!", Toast.LENGTH_SHORT).show();
                 // 跳转到达上车点界面
                 FragmentManager fragmentManager=getActivity().getSupportFragmentManager();

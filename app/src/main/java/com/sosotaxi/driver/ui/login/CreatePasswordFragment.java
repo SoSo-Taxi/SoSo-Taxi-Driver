@@ -132,7 +132,7 @@ public class CreatePasswordFragment extends Fragment {
 
                     if(result==true){
                         User user=mUserViewModel.getUser().getValue();
-                        user.setRole("passenger");
+                        user.setRole("driver");
                         // 注册用户
                         new Thread(new RegisterTask(user,handler)).start();
                     }else{

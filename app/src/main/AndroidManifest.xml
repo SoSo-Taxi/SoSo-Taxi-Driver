@@ -101,6 +101,7 @@
             android:name="com.baidu.trace.LBSTraceService"
             android:enabled="true"
             android:process=":remote" />
+        <service android:name=".service.net.DriverOrderService"/>
 
         <uses-library
             android:name="org.apache.http.legacy"
