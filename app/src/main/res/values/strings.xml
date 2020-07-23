@@ -22,8 +22,6 @@
     <string name="placeholder_area_code">+86 ▼</string>
     <string name="placeholder_search_area_code">点击此处搜索</string>
     <string name="title_select_area_code">选择区号</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <!-- 登陆界面 -->
     <string name="btn_confirm">确认</string>
@@ -92,7 +90,14 @@
     <string name="app_id">5f1251ac</string>
     <string name="title_driver_order_detail">订单详情</string>
     <string name="btn_start_order">开始订单</string>
+    <string name="btn_reserve_order">抢单</string>
+    <string name="btn_reserve_order_successful">抢单成功</string>
+    <string name="btn_reserve_order_failed">单已被抢</string>
     <string name="btn_deny_order">拒绝</string>
+    <string name="title_toolbar_reserve_order">预约订单</string>
+    <string name="sms_template_part_one">您好，我已接单，预计在</string>
+    <string name="sms_template_part_two">内到达上车点，请做好上车准备。</string>
+    <string name="sms_pick_up_passenger">您好，我已到达上车点，请您尽快上车。</string>
 
 
 </resources>

@@ -1,23 +1,38 @@
+/**
+ * @Author 范承祥
+ * @CreateTime 2020/7/23
+ * @UpdateTime 2020/7/23
+ */
 package com.sosotaxi.driver.model.message;
 
 import com.sosotaxi.driver.model.Driver;
+import com.sosotaxi.driver.model.DriverVo;
 import com.sosotaxi.driver.model.Order;
 
 /**
- * @Author 范承祥
- * @CreateTime 2020/7/22
- * @UpdateTime 2020/7/22
+ * 司机响应订单请求主体
  */
 public class DriverAnswerOrderBody extends BaseBody{
-    private boolean takeOrder;
-    private Order order;
-    private Driver driver;
+    /**
+     * 是否接单
+     */
+    private Boolean takeOrder;
 
-    public boolean isTakeOrder() {
+    /**
+     * 订单
+     */
+    private Order order;
+
+    /**
+     * 司机
+     */
+    private DriverVo driver;
+
+    public Boolean isTakeOrder() {
         return takeOrder;
     }
 
-    public void setTakeOrder(boolean takeOrder) {
+    public void setTakeOrder(Boolean takeOrder) {
         this.takeOrder = takeOrder;
     }
 
@@ -29,11 +44,15 @@ public class DriverAnswerOrderBody extends BaseBody{
         this.order = order;
     }
 
-    public Driver getDriver() {
+    public Boolean getTakeOrder() {
+        return takeOrder;
+    }
+
+    public DriverVo getDriver() {
         return driver;
     }
 
-    public void setDriver(Driver driver) {
+    public void setDriver(DriverVo driver) {
         this.driver = driver;
     }
 }

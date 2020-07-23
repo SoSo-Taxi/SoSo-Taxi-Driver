@@ -86,6 +86,8 @@ import com.sosotaxi.driver.common.OnToolbarListener;
 import com.sosotaxi.driver.common.TTSUtility;
 import com.sosotaxi.driver.databinding.FragmentArriveStartingPointBinding;
 import com.sosotaxi.driver.model.LocationPoint;
+import com.sosotaxi.driver.model.Order;
+import com.sosotaxi.driver.model.message.ArriveDepartPointBody;
 import com.sosotaxi.driver.model.message.BaseMessage;
 import com.sosotaxi.driver.model.message.MessageType;
 import com.sosotaxi.driver.model.message.UpdateDriverBody;
@@ -99,6 +101,7 @@ import com.sosotaxi.driver.utils.MessageHelper;
 import com.sosotaxi.driver.utils.NavigationHelper;
 import com.sosotaxi.driver.utils.PermissionHelper;
 import com.sosotaxi.driver.utils.TraceHelper;
+import com.sosotaxi.driver.viewModel.DriverViewModel;
 import com.sosotaxi.driver.viewModel.OrderViewModel;
 
 import java.util.ArrayList;
@@ -157,6 +160,8 @@ public class ArriveStartingPointFragment extends Fragment {
      */
     private OrderViewModel mOrderViewModel;
 
+    private DriverViewModel mDriverViewModel;
+
     /**
      * 数据绑定对象
      */
@@ -171,13 +176,15 @@ public class ArriveStartingPointFragment extends Fragment {
         mHandler=new Handler(Looper.getMainLooper());
         // 获取消息帮助对象
         mMessageHelper=MessageHelper.getInstance();
+        // 获取订单ViewModel
+        mOrderViewModel=new ViewModelProvider(getActivity()).get(OrderViewModel.class);
+        // 获取司机ViewModel
+        mDriverViewModel=new ViewModelProvider(getActivity()).get(DriverViewModel.class);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // 获取订单ViewModel
-        mOrderViewModel=new ViewModelProvider(getActivity()).get(OrderViewModel.class);
     }
 
     @Override
@@ -204,10 +211,9 @@ public class ArriveStartingPointFragment extends Fragment {
                         return;
                     }
                 }
-                // TODO:与订单对接获取乘客联系方式
-                // 测试用数据
-                String phone="+86 10086";
-                String content="您好，我已接单，预计在5分01秒内到达上车点，请做好上车准备。";
+                // 获取乘客联系方式
+                String phone=mOrderViewModel.getOrder().getValue().getPassengerPhoneNumber();
+                String content=getString(R.string.sms_template_part_one)+mBinding.textViewDriverOrderArriveStartingPointTime+getString(R.string.sms_template_part_two);
                 //发送短信
                 ContactHelper.sendMessage(getContext(),phone,content);
             }
@@ -225,9 +231,8 @@ public class ArriveStartingPointFragment extends Fragment {
                         return;
                     }
                 }
-                // TODO:与订单对接获取乘客联系方式
-                // 测试用数据
-                String phone="+86 10086";
+                // 获取乘客联系方式
+                String phone=mOrderViewModel.getOrder().getValue().getPassengerPhoneNumber();
                 // 拨打电话
                 ContactHelper.makeCall(getContext(),phone);
             }
@@ -237,6 +242,14 @@ public class ArriveStartingPointFragment extends Fragment {
         mBinding.slideButtonArriveStartingPoint.addSlideListener(new OnSlideListener() {
             @Override
             public void onSlideSuccess() {
+                // 封装消息
+                ArriveDepartPointBody body=new ArriveDepartPointBody();
+                body.setOrder(mOrderViewModel.getOrder().getValue());
+                BaseMessage message=new BaseMessage(MessageType.ARRIVE_DEPART_POINT_MESSAGE,body);
+
+                //发送消息
+                mMessageHelper.send(message);
+
                 Toast.makeText(getContext(), "确认成功!", Toast.LENGTH_SHORT).show();
                 // 跳转接到乘客界面
                 FragmentManager fragmentManager=getActivity().getSupportFragmentManager();
@@ -278,14 +291,6 @@ public class ArriveStartingPointFragment extends Fragment {
 
         // 路径规划
         initRoutePlan();
-        // 初始化轨迹记录
-        TraceHelper.initTrace("8613189925361",2,15,onTraceListener);
-        // 开始记录轨迹
-        TraceHelper.startTrace();
-
-        //TraceHelper.getTraceClient().queryLatestPoint(TraceHelper.buildLatestPointRequest("8613189925361"),onTrackListener);
-
-
     }
 
     @Override
@@ -313,11 +318,6 @@ public class ArriveStartingPointFragment extends Fragment {
         if(mBaiduMap!=null){
             mBaiduMap.clear();
         }
-        TraceHelper.stopGather();
-        TraceHelper.stopTrace();
-        if(mQueryThread.isInterrupted()==false){
-            mQueryThread.interrupt();
-        }
     }
 
     @Override
@@ -337,10 +337,9 @@ public class ArriveStartingPointFragment extends Fragment {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        // TODO:与订单对接获取乘客联系方式
-        // 测试用数据
-        String phone="+86 10086";
-        String content="您好，我已接单，预计在5分01秒内到达上车点，请做好上车准备。";
+        // 获取乘客联系方式
+        String phone=mOrderViewModel.getOrder().getValue().getPassengerPhoneNumber();
+        String content=getString(R.string.sms_template_part_one)+mBinding.textViewDriverOrderArriveStartingPointTime+getString(R.string.sms_template_part_two);
         switch (requestCode){
             case Constant.PERMISSION_SEND_SMS_REQUEST:
                 if(PermissionHelper.hasBaseAuth(getContext(),Manifest.permission.SEND_SMS)==false){
@@ -370,20 +369,22 @@ public class ArriveStartingPointFragment extends Fragment {
                 // 初始化导航
                 NavigationHelper.init();
                 if (BaiduNaviManagerFactory.getBaiduNaviManager().isInited()) {
-                    // TODO: 与订单对接获取起始点
-                    // 测试用数据
+                    Order order=mOrderViewModel.getOrder().getValue();
+                    LocationPoint departPoint=order.getDepartPoint();
+                    LocationPoint destinationPoint=order.getDestinationPoint();
+                    // 设置起始点数据
                     mStartNode = new BNRoutePlanNode.Builder()
-                            .latitude(40.05087)
-                            .longitude(116.30142)
-                            .name("西二旗地铁站")
-                            .description("西二旗地铁站")
+                            .latitude(departPoint.getLatitude())
+                            .longitude(departPoint.getLongitude())
+                            .name(order.getDepartName())
+                            .description(order.getDepartName())
                             .coordinateType(BNRoutePlanNode.CoordinateType.BD09LL)
                             .build();
                     mEndNode = new BNRoutePlanNode.Builder()
-                            .latitude(39.98340)
-                            .longitude(116.42532)
-                            .name("奥体中心")
-                            .description("奥体中心")
+                            .latitude(destinationPoint.getLatitude())
+                            .longitude(destinationPoint.getLongitude())
+                            .name(order.getDestinationName())
+                            .description(order.getDestinationName())
                             .coordinateType(BNRoutePlanNode.CoordinateType.BD09LL)
                             .build();
 
@@ -410,130 +411,24 @@ public class ArriveStartingPointFragment extends Fragment {
             // 初始化导航
             NavigationHelper.init();
             if (BaiduNaviManagerFactory.getBaiduNaviManager().isInited()) {
-                // TODO: 与订单对接获取起始点
-                // 测试用数据
-                mStartNode = new BNRoutePlanNode.Builder()
-                        .latitude(40.05087)
-                        .longitude(116.30142)
-                        .name("西二旗地铁站")
-                        .description("西二旗地铁站")
+                Order order=mOrderViewModel.getOrder().getValue();
+                LocationPoint currentPoint=mDriverViewModel.getDriver().getValue().getCurrentPoint();
+                LocationPoint departPoint=order.getDepartPoint();
+
+                // 设置起始点数据
+                mEndNode = new BNRoutePlanNode.Builder()
+                        .latitude(departPoint.getLatitude())
+                        .longitude(departPoint.getLongitude())
                         .coordinateType(BNRoutePlanNode.CoordinateType.BD09LL)
                         .build();
-                mEndNode = new BNRoutePlanNode.Builder()
-                        .latitude(39.98340)
-                        .longitude(116.42532)
-                        .name("奥体中心")
-                        .description("奥体中心")
+                mStartNode = new BNRoutePlanNode.Builder()
+                        .latitude(currentPoint.getLatitude())
+                        .longitude(currentPoint.getLongitude())
                         .coordinateType(BNRoutePlanNode.CoordinateType.BD09LL)
                         .build();
 
                 NavigationHelper.routePlanToNavigation(getContext(),mStartNode, mEndNode, null);
             }
-        }
-    };
-
-    // 初始化轨迹服务监听器
-    OnTraceListener onTraceListener = new OnTraceListener() {
-        @Override
-        public void onBindServiceCallback(int i, String s) {
-
-        }
-
-        // 开启服务回调
-        @Override
-        public void onStartTraceCallback(int status, String message) {
-            if(status==0){
-                Toast.makeText(getContext(), "开启鹰眼服务成功", Toast.LENGTH_SHORT).show();
-                TraceHelper.startGather();
-
-            }else{
-                Toast.makeText(getContext(), "开启鹰眼服务失败", Toast.LENGTH_SHORT).show();
-            }
-
-        }
-        // 停止服务回调
-        @Override
-        public void onStopTraceCallback(int status, String message) {
-            //Toast.makeText(getContext(), "停止鹰眼服务", Toast.LENGTH_SHORT).show();
-        }
-        // 开启采集回调
-        @Override
-        public void onStartGatherCallback(int status, String message) {
-            Toast.makeText(getContext(), "开始收集", Toast.LENGTH_SHORT).show();
-            // 开始上传定位
-            mQueryThread=new Thread(new QueryLatestPointTask(2000,"8613189925361",onTrackListener));
-            mQueryThread.start();
-        }
-        // 停止采集回调
-        @Override
-        public void onStopGatherCallback(int status, String message) {
-            //Toast.makeText(getContext(), "停止收集", Toast.LENGTH_SHORT).show();
-        }
-
-        // 推送回调
-        @Override
-        public void onPushCallback(byte messageNo, PushMessage message) {
-
-        }
-
-        @Override
-        public void onInitBOSCallback(int i, String s) {
-
-        }
-    };
-
-    // 轨迹查询结果监听器
-    OnTrackListener onTrackListener=new OnTrackListener() {
-        @Override
-        public void onHistoryTrackCallback(HistoryTrackResponse historyTrackResponse) {
-            // 判断是否响应成功
-            if(historyTrackResponse.getStatus()!= StatusCodes.SUCCESS){
-                // 失败打印原因
-                Toast.makeText(getContext(),historyTrackResponse.getMessage(),Toast.LENGTH_SHORT).show();
-                return;
-            }
-            // 获取轨迹
-            List<TrackPoint> trackPoints=historyTrackResponse.trackPoints;
-            if(trackPoints==null||trackPoints.size()==0){
-                return;
-            }
-
-            latlngs.clear();
-            for(TrackPoint trackPoint : trackPoints){
-                com.baidu.trace.model.LatLng location=trackPoint.getLocation();
-                double latitude=location.getLatitude();
-                double longitude=location.getLongitude();
-                latlngs.add(new LatLng(latitude,longitude));
-            }
-
-            // 绘制轨迹
-            TrackOverlay trackOverlay=new TrackOverlay();
-            trackOverlay.setBaiduMapView(mBinding.baiduMapViewDriverOrderArriveStartingPoint);
-            trackOverlay.setLatlngs(latlngs);
-            trackOverlay.setHandler(mHandler);
-            trackOverlay.drawPolyLine();
-            trackOverlay.moveLooper();
-        }
-
-        @Override
-        public void onLatestPointCallback(LatestPointResponse latestPointResponse) {
-            if(latestPointResponse.status!=StatusCodes.SUCCESS){
-                return;
-            }
-
-            // 封装消息
-            com.baidu.trace.model.LatLng location=latestPointResponse.getLatestPoint().getLocation();
-            UpdateDriverBody body=new UpdateDriverBody();
-            body.setMessageId(mMessageHelper.getMessageId());
-            body.setDispatched(true);
-            body.setStartListening(true);
-            body.setServerType(1);
-            body.setLatitude(location.getLatitude());
-            body.setLongitude(location.getLongitude());
-            BaseMessage message=mMessageHelper.build(MessageType.UPDATE_REQUEST,body);
-
-            // 发送消息
-            mMessageHelper.send(message);
         }
     };
 
@@ -605,73 +500,16 @@ public class ArriveStartingPointFragment extends Fragment {
         }
     };
 
-    // 实体监听器
-    OnEntityListener entityListener = new OnEntityListener() {
-        @Override
-        public void onUpdateEntityCallback(UpdateEntityResponse updateEntityResponse) {
-            super.onUpdateEntityCallback(updateEntityResponse);
-        }
-
-        @Override
-        public void onDeleteEntityCallback(DeleteEntityResponse deleteEntityResponse) {
-            super.onDeleteEntityCallback(deleteEntityResponse);
-        }
-
-        @Override
-        public void onEntityListCallback(EntityListResponse entityListResponse) {
-            // 判断是否响应成功
-            if(entityListResponse.getStatus()!= StatusCodes.SUCCESS){
-                // 失败打印原因
-                Toast.makeText(getContext(),entityListResponse.getMessage(),Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            // 获取定位
-            List<EntityInfo> entityInfos=entityListResponse.getEntities();
-            if(entityInfos==null||entityInfos.size()==0){
-                return;
-            }
-            // 清除原路定位息
-            latlngs.clear();
-            // 获取定位信息
-            for(EntityInfo entityInfo : entityInfos){
-                com.baidu.trace.model.LatLng location=entityInfo.getLatestLocation().getLocation();
-                double latitude=location.getLatitude();
-                double longitude=location.getLongitude();
-                // TODO: 发送定位给服务端
-
-                latlngs.add(new LatLng(latitude,longitude));
-            }
-            // 绘制历史轨迹
-            TrackOverlay trackOverlay=new TrackOverlay();
-            trackOverlay.setBaiduMapView(mBinding.baiduMapViewDriverOrderArriveStartingPoint);
-            trackOverlay.setLatlngs(latlngs);
-            trackOverlay.setHandler(mHandler);
-            trackOverlay.drawPolyLine();
-            trackOverlay.moveLooper();
-        }
-
-        @Override
-        public void onSearchEntityCallback(SearchResponse searchResponse) {
-            super.onSearchEntityCallback(searchResponse);
-        }
-
-        @Override
-        public void onReceiveLocation(TraceLocation traceLocation) {
-            super.onReceiveLocation(traceLocation);
-        }
-    };
-
     /**
      * 路径规划
      */
     private void initRoutePlan() {
-        // TODO: 与订单对接获取起始点
-        // TODO: 定位模块获取当前位置
-        // 测试用数据
-        Toast.makeText(getContext(), R.string.hint_route_planning, Toast.LENGTH_SHORT).show();
-        PlanNode stNode = PlanNode.withCityNameAndPlaceName("北京", "西二旗地铁站");
-        PlanNode enNode = PlanNode.withCityNameAndPlaceName("北京", "奥体中心");
+        Order order=mOrderViewModel.getOrder().getValue();
+        LocationPoint currentPoint=mDriverViewModel.getDriver().getValue().getCurrentPoint();
+        LocationPoint departPoint=order.getDepartPoint();
+        // 设置起始点数据
+        PlanNode stNode = PlanNode.withLocation(new LatLng(currentPoint.getLatitude(),currentPoint.getLongitude()));
+        PlanNode enNode = PlanNode.withLocation(new LatLng(departPoint.getLatitude(),departPoint.getLongitude()));
         mSearch.drivingSearch((new DrivingRoutePlanOption())
                 .from(stNode)
                 .to(enNode));

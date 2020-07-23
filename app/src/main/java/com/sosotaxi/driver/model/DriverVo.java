@@ -1,14 +1,13 @@
-/**
- * @Author 范承祥
- * @CreateTime 2020/7/21
- * @UpdateTime 2020/7/21
- */
 package com.sosotaxi.driver.model;
 
 /**
- * 司机
+ * @Author 范承祥
+ * @CreateTime 2020/7/23
+ * @UpdateTime 2020/7/23
  */
-public class Driver extends User{
+public class DriverVo {
+    /** 用户id */
+    private Long userId;
 
     /** 车品牌 */
     private String carBrand;
@@ -31,30 +30,12 @@ public class Driver extends User{
     /** 行驶证中的车辆识别代码 */
     private String vin;
 
-    /**
-     * 司机是否接单
-     */
-    private transient Boolean isAvailable;
-
-    /**
-     * 当前位置
-     */
-    private transient LocationPoint currentPoint;
-
-    public Boolean getAvailable() {
-        return isAvailable;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setAvailable(Boolean available) {
-        isAvailable = available;
-    }
-
-    public LocationPoint getCurrentPoint() {
-        return currentPoint;
-    }
-
-    public void setCurrentPoint(LocationPoint currentPoint) {
-        this.currentPoint = currentPoint;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public String getCarBrand() {

@@ -9,13 +9,11 @@ package com.sosotaxi.driver.model;
  * 用户类
  */
 public class User {
+    /** 用户id */
+    private Long userId;
+
     /** 用户名 */
     private String userName;
-
-    /**
-     * 手机号
-     */
-    private String Phone;
 
     /** 密码 */
     private String password;
@@ -29,12 +27,30 @@ public class User {
     /** 令牌 */
     private String token;
 
+    /** 电话号码 */
+    private transient String phoneNumber;
+
+    /** 性别 */
+    private String gender;
+
+    /** 年龄 */
+    private Short birthYear;
+
+    /** 头像路径 */
+    private String avatarPath;
+
+    /** 真实姓名 */
+    private String realName;
+
+    /** 身份证号 */
+    private String idCardNumber;
 
     public String getUserName() {
         return userName;
     }
 
     public void setUserName(String userName) {
+        phoneNumber=userName;
         // 去除加号
         if(userName.startsWith("+")){
             userName=userName.substring(1);
@@ -47,6 +63,14 @@ public class User {
             userName=code+phone;
         }
         this.userName = userName;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public String getPassword() {
@@ -79,5 +103,53 @@ public class User {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public Short getBirthYear() {
+        return birthYear;
+    }
+
+    public void setBirthYear(Short birthYear) {
+        this.birthYear = birthYear;
+    }
+
+    public String getAvatarPath() {
+        return avatarPath;
+    }
+
+    public void setAvatarPath(String avatarPath) {
+        this.avatarPath = avatarPath;
+    }
+
+    public String getRealName() {
+        return realName;
+    }
+
+    public void setRealName(String realName) {
+        this.realName = realName;
+    }
+
+    public String getIdCardNumber() {
+        return idCardNumber;
+    }
+
+    public void setIdCardNumber(String idCardNumber) {
+        this.idCardNumber = idCardNumber;
     }
 }

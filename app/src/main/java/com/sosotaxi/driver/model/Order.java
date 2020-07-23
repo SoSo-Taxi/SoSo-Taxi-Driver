@@ -2,51 +2,96 @@ package com.sosotaxi.driver.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Date;
+
 /**
  * @Author 范承祥
  * @CreateTime 2020/7/21
  * @UpdateTime 2020/7/21
  */
 public class Order {
-    private long orderId;
-    private long createTime;
-    private OrderStatus status;
+
+    /** 订单Id */
+    private Long orderId;
+
+    /** 城市 */
     private String city;
-    @SerializedName("passengerNum")
-    private int passengerNumber;
-    @SerializedName("departPoint")
+
+    /** 出发地 */
     private LocationPoint departPoint;
+
+    /** 目的地 */
     @SerializedName("destPoint")
     private LocationPoint destinationPoint;
-    private long departTime;
-    private String departName;
-    private String destinationName;
-    private int serviceType;
-    private long passengerId;
-    private String passengerName;
 
-    public long getOrderId() {
+    /** 订单创建时间 */
+    private Date createTime;
+
+    /** 用户预约的时间 */
+    private Date appointedTime;
+
+    /** 出发时间 */
+    private Date departTime;
+
+    /** 到达时间 */
+    private Date arriveTime;
+
+    /** 起点名称 */
+    private String departName;
+
+    /** 目的地名称 */
+    @SerializedName("destName")
+    private String destinationName;
+
+    /** 服务类型，经济型、舒适型等 */
+    private Short serviceType;
+
+    /** 原始费用 */
+    private Double cost;
+
+    /** 积分减免 */
+    private Double pointDiscount;
+
+    /** 优惠券减免 */
+    private Double couponDiscount;
+
+    /** 订单状态 */
+    private int status;
+
+    /** 订单中，司机获得的评分 */
+    private Double driverRate;
+
+    /** 订单中，乘客获得的评分 */
+    private Double passengerRate;
+
+    /** 订单路程 */
+    private Double distance;
+
+    /** 司机Id */
+    private Long driverId;
+
+    /** 乘客Id */
+    private Long passengerId;
+
+    /**
+     * 乘客手机号
+     */
+    private transient String passengerPhoneNumber;
+
+    public String getPassengerPhoneNumber() {
+        return passengerPhoneNumber;
+    }
+
+    public void setPassengerPhoneNumber(String passengerPhoneNumber) {
+        this.passengerPhoneNumber = passengerPhoneNumber;
+    }
+
+    public Long getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(long orderId) {
+    public void setOrderId(Long orderId) {
         this.orderId = orderId;
-    }
-
-    public long getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(long createTime) {
-        this.createTime = createTime;
-    }
-
-    public OrderStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(OrderStatus status) {
-        this.status = status;
     }
 
     public String getCity() {
@@ -55,14 +100,6 @@ public class Order {
 
     public void setCity(String city) {
         this.city = city;
-    }
-
-    public int getPassengerNumber() {
-        return passengerNumber;
-    }
-
-    public void setPassengerNumber(int passengerNumber) {
-        this.passengerNumber = passengerNumber;
     }
 
     public LocationPoint getDepartPoint() {
@@ -77,16 +114,40 @@ public class Order {
         return destinationPoint;
     }
 
-    public void setDestinationPoint(LocationPoint destinationPoint) {
-        this.destinationPoint = destinationPoint;
+    public void setDestinationPoint(LocationPoint destPoint) {
+        this.destinationPoint = destPoint;
     }
 
-    public long getDepartTime() {
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public Date getAppointedTime() {
+        return appointedTime;
+    }
+
+    public void setAppointedTime(Date appointedTime) {
+        this.appointedTime = appointedTime;
+    }
+
+    public Date getDepartTime() {
         return departTime;
     }
 
-    public void setDepartTime(long departTime) {
+    public void setDepartTime(Date departTime) {
         this.departTime = departTime;
+    }
+
+    public Date getArriveTime() {
+        return arriveTime;
+    }
+
+    public void setArriveTime(Date arriveTime) {
+        this.arriveTime = arriveTime;
     }
 
     public String getDepartName() {
@@ -105,27 +166,83 @@ public class Order {
         this.destinationName = destinationName;
     }
 
-    public int getServiceType() {
+    public Short getServiceType() {
         return serviceType;
     }
 
-    public void setServiceType(int serviceType) {
+    public void setServiceType(Short serviceType) {
         this.serviceType = serviceType;
     }
 
-    public long getPassengerId() {
+    public Double getCost() {
+        return cost;
+    }
+
+    public void setCost(Double cost) {
+        this.cost = cost;
+    }
+
+    public Double getPointDiscount() {
+        return pointDiscount;
+    }
+
+    public void setPointDiscount(Double pointDiscount) {
+        this.pointDiscount = pointDiscount;
+    }
+
+    public Double getCouponDiscount() {
+        return couponDiscount;
+    }
+
+    public void setCouponDiscount(Double couponDiscount) {
+        this.couponDiscount = couponDiscount;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public Double getDriverRate() {
+        return driverRate;
+    }
+
+    public void setDriverRate(Double driverRate) {
+        this.driverRate = driverRate;
+    }
+
+    public Double getPassengerRate() {
+        return passengerRate;
+    }
+
+    public void setPassengerRate(Double passengerRate) {
+        this.passengerRate = passengerRate;
+    }
+
+    public Double getDistance() {
+        return distance;
+    }
+
+    public void setDistance(Double distance) {
+        this.distance = distance;
+    }
+
+    public Long getDriverId() {
+        return driverId;
+    }
+
+    public void setDriverId(Long driverId) {
+        this.driverId = driverId;
+    }
+
+    public Long getPassengerId() {
         return passengerId;
     }
 
-    public void setPassengerId(long passengerId) {
+    public void setPassengerId(Long passengerId) {
         this.passengerId = passengerId;
-    }
-
-    public String getPassengerName() {
-        return passengerName;
-    }
-
-    public void setPassengerName(String passengerName) {
-        this.passengerName = passengerName;
     }
 }

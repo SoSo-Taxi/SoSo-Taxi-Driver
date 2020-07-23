@@ -13,6 +13,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,8 +27,12 @@ import com.sosotaxi.driver.common.Constant;
 import com.sosotaxi.driver.common.TTSUtility;
 import com.sosotaxi.driver.databinding.FragmentArriveStartingPointBinding;
 import com.sosotaxi.driver.databinding.FragmentConfirmBillBinding;
+import com.sosotaxi.driver.model.message.ArriveDestPointBody;
+import com.sosotaxi.driver.model.message.BaseMessage;
+import com.sosotaxi.driver.model.message.MessageType;
 import com.sosotaxi.driver.ui.widget.OnSlideListener;
 import com.sosotaxi.driver.ui.widget.SlideButton;
+import com.sosotaxi.driver.utils.MessageHelper;
 import com.sosotaxi.driver.viewModel.OrderViewModel;
 
 /**
@@ -50,9 +55,15 @@ public class ConfirmBillFragment extends Fragment {
      */
     private TTSUtility mTtsUtility;
 
+    private MessageHelper mMessageHelper;
+
     public ConfirmBillFragment() {
         // 获取语音播报对象
         mTtsUtility=TTSUtility.getInstance(getContext());
+        // 获取消息帮助对象
+        mMessageHelper=MessageHelper.getInstance();
+        // 获取订单ViewModel
+        mOrderViewModel=new ViewModelProvider(getActivity()).get(OrderViewModel.class);
     }
 
     @Override
@@ -98,6 +109,17 @@ public class ConfirmBillFragment extends Fragment {
                 RankPassengerFragment rankPassengerFragment=new RankPassengerFragment();
                 rankPassengerFragment.setArguments(bundle);
 
+                // 封装消息
+                ArriveDestPointBody body=new ArriveDestPointBody();
+                body.setOrder(mOrderViewModel.getOrder().getValue());
+                body.setBasicCost(amount);
+                body.setFreewayCost(roadToll);
+                body.setParkingCost(parkingRate);
+                BaseMessage message=new BaseMessage(MessageType.ARRIVE_DEST_POINT_MESSAGE,body);
+
+                //发送消息
+                mMessageHelper.send(message);
+
                 Toast.makeText(getContext(), "确认成功!", Toast.LENGTH_SHORT).show();
 
                 // 跳转评价乘客界面
@@ -124,5 +146,9 @@ public class ConfirmBillFragment extends Fragment {
 
         // 语音播报信息
         mTtsUtility.speaking("已到达目的地，请提醒乘客带好随身物品。请确认账单金额并发起收款。");
+    }
+
+    private void initAmount(){
+        //TODO:与服务器对接获取消息
     }
 }

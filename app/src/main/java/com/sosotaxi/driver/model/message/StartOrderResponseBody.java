@@ -6,17 +6,11 @@
 package com.sosotaxi.driver.model.message;
 
 import com.google.gson.annotations.SerializedName;
-import com.sosotaxi.driver.model.message.BaseBody;
 
 /**
- * 更新司机信息响应主体
+ * 开始订单响应主体
  */
-public class UpdateDriverResponseBody extends BaseBody {
-    /**
-     * 消息ID
-     */
-    private long messageId;
-
+public class StartOrderResponseBody extends BaseBody {
     /**
      * 消息
      */
@@ -26,15 +20,7 @@ public class UpdateDriverResponseBody extends BaseBody {
     /**
      * 状态码
      */
-    private int statusCode;
-
-    public long getMessageId() {
-        return messageId;
-    }
-
-    public void setMessageId(long messageId) {
-        this.messageId = messageId;
-    }
+    private Integer statusCode;
 
     public String getMessage() {
         return message;
@@ -44,11 +30,11 @@ public class UpdateDriverResponseBody extends BaseBody {
         this.message = message;
     }
 
-    public int getStatusCode() {
+    public Integer getStatusCode() {
         return statusCode;
     }
 
-    public void setStatusCode(int statusCode) {
+    public void setStatusCode(Integer statusCode) {
         this.statusCode = statusCode;
     }
 }

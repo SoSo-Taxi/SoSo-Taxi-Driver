@@ -36,8 +36,9 @@ public class MapApplication extends Application {
      */
     private LBSTraceClient mTraceClient;
 
-    private AtomicInteger mSequenceGenerator;
-
+    /**
+     * 上下文
+     */
     private Context mContext;
 
     @Override
@@ -74,7 +75,6 @@ public class MapApplication extends Application {
     private void initTrace(){
         mTrace = new Trace(Constant.SERVICE_ID,"");
         mTraceClient = new LBSTraceClient(mContext);
-        mSequenceGenerator=new AtomicInteger();
         TraceHelper.setTrace(mTrace);
         TraceHelper.setTraceClient(mTraceClient);
     }

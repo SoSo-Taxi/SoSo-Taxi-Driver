@@ -78,6 +78,19 @@
 
     </style>
 
+    <style name="DriverOrder.ReserveOrderDate">
+        <item name="android:textSize">24sp</item>
+        <item name="android:textColor">@color/colorDriverOrderTitle</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="DriverOrder.ReserveOrderTime">
+        <item name="android:textSize">40sp</item>
+        <item name="android:textColor">@color/colorDriverOrderTitle</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+
     <style name="DriverOrder.Title">
         <item name="android:textSize">28sp</item>
         <item name="android:textColor">@color/colorDriverOrderTitle</item>

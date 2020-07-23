@@ -52,6 +52,7 @@ public class DriverOrderService extends Service {
 
     public class DriverOrderBinder extends Binder {
         public DriverOrderService getService(String token){
+
             mUri=URI.create(Constant.WEB_SOCKET_URI+token);
             mDriverOrderClient = new DriverOrderClient(mUri){
                 @Override

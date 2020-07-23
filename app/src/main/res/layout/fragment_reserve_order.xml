@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.sosotaxi.driver.viewModel.OrderViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.driverOrder.ReserveOrderFragment">
+
+        <TextView
+            android:id="@+id/textViewReserveOrderDate"
+            style="@style/DriverOrder.ReserveOrderDate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/driver_order_reserve_order_horizontal_margin"
+            android:layout_marginTop="@dimen/driver_order_receive_order_vertical_margin"
+            android:text="今天"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textViewReserveOrderTime"
+            style="@style/DriverOrder.ReserveOrderTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/driver_order_reserve_order_horizontal_margin"
+            android:text="19:00"
+            app:layout_constraintBaseline_toBaselineOf="@+id/textViewReserveOrderDate"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textViewReserveOrderDate" />
+
+        <TextView
+            android:id="@+id/textViewDriverOrderReserveOrderHint"
+            style="@style/DriverOrder.Hint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/driver_order_receive_order_vertical_margin"
+            app:layout_constraintBottom_toTopOf="@+id/buttonDriverOrderReceiveReserveOrder"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/textViewDriverReserveOrderFrom"
+            style="@style/DriverOrder.FromTo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/driver_order_receive_order_horizontal_margin"
+            android:layout_marginTop="@dimen/driver_order_receive_order_vertical_margin"
+            android:layout_marginEnd="@dimen/driver_order_receive_order_horizontal_margin"
+            android:drawableStart="@drawable/dot_green"
+            android:drawablePadding="@dimen/driver_order_receive_order_dot_from_spacing"
+            android:maxWidth="@dimen/driver_order_detail_card_address_width"
+            android:singleLine="false"
+            android:text="@{viewModel.order.departName}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewReserveOrderTime" />
+
+        <TextView
+            android:id="@+id/textViewDriverOrderReserveOrderTo"
+            style="@style/DriverOrder.FromTo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/driver_order_receive_order_horizontal_margin"
+            android:layout_marginTop="@dimen/driver_order_receive_order_from_to_spacing"
+            android:layout_marginEnd="@dimen/driver_order_receive_order_horizontal_margin"
+            android:drawableStart="@drawable/dot_red"
+            android:drawablePadding="@dimen/driver_order_receive_order_dot_from_spacing"
+            android:text="@{viewModel.order.destinationName}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewDriverReserveOrderFrom" />
+
+        <Button
+            android:id="@+id/buttonDriverOrderReceiveReserveOrder"
+            style="@style/DriverOrder.Button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:height="@dimen/driver_order_button_height"
+            android:background="@color/colorAccent"
+            android:text="@string/btn_reserve_order"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/buttonDriverOrderDenyReserveOrder" />
+
+        <Button
+            android:id="@+id/buttonDriverOrderDenyReserveOrder"
+            style="@style/DriverOrder.DisableButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:height="@dimen/driver_order_button_height"
+            android:background="@color/colorDisabledButton"
+            android:text="@string/btn_deny_order"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginStart="@dimen/driver_order_receive_order_horizontal_margin"
+            android:layout_marginTop="@dimen/driver_order_receive_order_vertical_margin"
+            android:layout_marginEnd="@dimen/driver_order_receive_order_horizontal_margin"
+            android:layout_marginBottom="@dimen/driver_order_receive_order_vertical_margin"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="3dp"
+            app:layout_constraintBottom_toTopOf="@+id/textViewDriverOrderReserveOrderHint"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewDriverOrderReserveOrderTo">
+
+            <com.baidu.mapapi.map.MapView
+                android:id="@+id/mapViewReserveOrder"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            </com.baidu.mapapi.map.MapView>
+        </androidx.cardview.widget.CardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

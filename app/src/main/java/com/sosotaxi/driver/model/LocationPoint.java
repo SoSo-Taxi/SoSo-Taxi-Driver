@@ -1,16 +1,26 @@
+/**
+ * @Author 范承祥
+ * @CreateTime 2020/7/21
+ * @UpdateTime 2020/7/21
+ */
 package com.sosotaxi.driver.model;
 
 import com.baidu.trace.model.LatLng;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * @Author 范承祥
- * @CreateTime 2020/7/21
- * @UpdateTime 2020/7/21
+ * 位置
  */
 public class LocationPoint {
+    /**
+     * 纬度
+     */
     @SerializedName("lat")
     private double latitude;
+
+    /**
+     * 经度
+     */
     @SerializedName("lng")
     private double longitude;
 
