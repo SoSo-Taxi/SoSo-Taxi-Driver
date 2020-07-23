@@ -61,6 +61,7 @@ public class UndoneOrderRecycleViewAdapter extends RecyclerView.Adapter<UndoneOr
         return new ViewHolder(LayoutInflater.from(mContext).inflate(R.layout.adapter_undone_order_recycleview,parent,false));
     }
 
+    //todo:可以通过构造方法传入出发点、目的地、时间、距离等相关参数
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
 
