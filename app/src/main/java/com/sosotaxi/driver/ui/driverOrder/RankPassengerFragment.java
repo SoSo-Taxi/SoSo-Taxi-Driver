@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -100,5 +101,7 @@ public class RankPassengerFragment extends Fragment {
             // 改变标题栏标题
             ((OnToolbarListener)getActivity()).setTitle(getString(R.string.title_order_finish));
         }
+        // 获取订单ViewModel
+        mOrderViewModel=new ViewModelProvider(getActivity()).get(OrderViewModel.class);
     }
 }

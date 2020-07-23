@@ -1,22 +1,47 @@
 /**
  * @Author 范承祥
  * @CreateTime 2020/7/22
- * @UpdateTime 2020/7/22
+ * @UpdateTime 2020/7/23
  */
 package com.sosotaxi.driver.model.message;
 
 import com.google.gson.annotations.SerializedName;
 import com.sosotaxi.driver.model.message.BaseBody;
 
-
+/**
+ * 更新司机信息请求主体
+ */
 public class UpdateDriverBody extends BaseBody {
+    /**
+     * 消息ID
+     */
     private long messageId;
+
+    /**
+     * 纬度
+     */
     @SerializedName("lat")
     private double latitude;
+
+    /**
+     * 经度
+     */
     @SerializedName("lng")
     private double longitude;
+
+    /**
+     * 是否接单
+     */
     private boolean isDispatched;
+
+    /**
+     * 是否听单
+     */
     private boolean startListening;
+
+    /**
+     * 服务类型
+     */
     private int serverType;
 
     public void setServerType(int serverType) {

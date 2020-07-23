@@ -18,6 +18,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.telephony.SmsManager;
 import android.view.LayoutInflater;
@@ -29,6 +30,7 @@ import android.widget.Toast;
 
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.MapView;
+import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.search.route.BikingRouteResult;
 import com.baidu.mapapi.search.route.DrivingRouteLine;
 import com.baidu.mapapi.search.route.DrivingRoutePlanOption;
@@ -40,18 +42,28 @@ import com.baidu.mapapi.search.route.PlanNode;
 import com.baidu.mapapi.search.route.RoutePlanSearch;
 import com.baidu.mapapi.search.route.TransitRouteResult;
 import com.baidu.mapapi.search.route.WalkingRouteResult;
+import com.baidu.navisdk.adapter.BNRoutePlanNode;
 import com.sosotaxi.driver.R;
 import com.sosotaxi.driver.common.Constant;
 import com.sosotaxi.driver.common.TTSUtility;
 import com.sosotaxi.driver.databinding.FragmentArriveStartingPointBinding;
 import com.sosotaxi.driver.databinding.FragmentPickUpPassengerBinding;
+import com.sosotaxi.driver.model.LocationPoint;
+import com.sosotaxi.driver.model.Order;
+import com.sosotaxi.driver.model.message.ArriveDepartPointBody;
+import com.sosotaxi.driver.model.message.BaseMessage;
+import com.sosotaxi.driver.model.message.MessageType;
+import com.sosotaxi.driver.model.message.PickUpPassengerBody;
 import com.sosotaxi.driver.ui.overlay.DrivingRouteOverlay;
 import com.sosotaxi.driver.ui.widget.OnSlideListener;
 import com.sosotaxi.driver.ui.widget.SlideButton;
 import com.sosotaxi.driver.utils.ContactHelper;
+import com.sosotaxi.driver.utils.MessageHelper;
 import com.sosotaxi.driver.utils.PermissionHelper;
 import com.sosotaxi.driver.viewModel.OrderViewModel;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -84,9 +96,15 @@ public class PickUpPassengerFragment extends Fragment {
      */
     private RoutePlanSearch mSearch;
 
+    private MessageHelper mMessageHelper;
+
     public PickUpPassengerFragment() {
         // 获取语音播报对象
         mTtsUtility=TTSUtility.getInstance(getContext());
+        // 获取消息帮助对象
+        mMessageHelper= MessageHelper.getInstance();
+        // 获取订单ViewModel
+        mOrderViewModel=new ViewModelProvider(getActivity()).get(OrderViewModel.class);
     }
 
     @Override
@@ -117,10 +135,9 @@ public class PickUpPassengerFragment extends Fragment {
                         return;
                     }
                 }
-                // TODO:与订单对接获取乘客联系方式
-                // 测试用数据
-                String phone="+86 10086";
-                String content="您好，我已到达上车点，请您尽快上车。";
+                // 获取乘客联系方式
+                String phone=mOrderViewModel.getOrder().getValue().getPassengerPhoneNumber();
+                String content=getString(R.string.sms_pick_up_passenger);
                 //发送短信
                 ContactHelper.sendMessage(getContext(),phone,content);
             }
@@ -138,9 +155,8 @@ public class PickUpPassengerFragment extends Fragment {
                         return;
                     }
                 }
-                // TODO:与订单对接获取乘客联系方式
-                // 测试用数据
-                String phone="+86 10086";
+                // 获取乘客联系方式
+                String phone=mOrderViewModel.getOrder().getValue().getPassengerPhoneNumber();
                 // 拨打电话
                 ContactHelper.makeCall(getContext(),phone);
             }
@@ -150,6 +166,18 @@ public class PickUpPassengerFragment extends Fragment {
         mBinding.slideButtonPickUpPassenger.addSlideListener(new OnSlideListener() {
             @Override
             public void onSlideSuccess() {
+                // 封装消息
+                PickUpPassengerBody body=new PickUpPassengerBody();
+                Order order=mOrderViewModel.getOrder().getValue();
+                Calendar calendar=Calendar.getInstance();
+                Date currentDate=calendar.getTime();
+                order.setDepartTime(currentDate);
+                body.setOrder(mOrderViewModel.getOrder().getValue());
+                BaseMessage message=new BaseMessage(MessageType.ARRIVE_DEPART_POINT_MESSAGE,body);
+
+                //发送消息
+                mMessageHelper.send(message);
+
                 Toast.makeText(getContext(), "确认成功!", Toast.LENGTH_SHORT).show();
                 // 跳转到达目的地界面
                 FragmentManager fragmentManager=getActivity().getSupportFragmentManager();
@@ -215,10 +243,9 @@ public class PickUpPassengerFragment extends Fragment {
     // 权限请求结果处理
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        // TODO:与订单对接获取乘客联系方式
-        // 测试用数据
-        String phone="+86 10086";
-        String content="您好，我已到达上车点，请您尽快上车。";
+        // 获取乘客联系方式
+        String phone=mOrderViewModel.getOrder().getValue().getPassengerPhoneNumber();
+        String content=getString(R.string.sms_pick_up_passenger);
         switch (requestCode){
             case Constant.PERMISSION_SEND_SMS_REQUEST:
                 if(PermissionHelper.hasBaseAuth(getContext(),Manifest.permission.SEND_SMS)==false){
@@ -293,10 +320,12 @@ public class PickUpPassengerFragment extends Fragment {
     // 路径规划
     private void initRoutePlan() {
         Toast.makeText(getContext(), R.string.hint_route_planning, Toast.LENGTH_SHORT).show();
-        // TODO: 与订单对接获取起始点
-        // 测试用数据
-        PlanNode stNode = PlanNode.withCityNameAndPlaceName("北京", "奥体中心");
-        PlanNode enNode = PlanNode.withCityNameAndPlaceName("北京", "天安门广场");
+        Order order=mOrderViewModel.getOrder().getValue();
+        LocationPoint departPoint=order.getDepartPoint();
+        LocationPoint destinationPoint=order.getDestinationPoint();
+        // 设置起始点数据
+        PlanNode stNode = PlanNode.withLocation(new LatLng(departPoint.getLatitude(),departPoint.getLongitude()));
+        PlanNode enNode = PlanNode.withLocation(new LatLng(destinationPoint.getLatitude(),destinationPoint.getLongitude()));
         mSearch.drivingSearch((new DrivingRoutePlanOption())
                 .from(stNode)
                 .to(enNode));

@@ -16,6 +16,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +27,7 @@ import android.widget.Toast;
 
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.MapView;
+import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.search.route.BikingRouteResult;
 import com.baidu.mapapi.search.route.DrivingRouteLine;
 import com.baidu.mapapi.search.route.DrivingRoutePlanOption;
@@ -44,12 +46,17 @@ import com.sosotaxi.driver.common.Constant;
 import com.sosotaxi.driver.common.TTSUtility;
 import com.sosotaxi.driver.databinding.FragmentArriveDestinationBinding;
 import com.sosotaxi.driver.databinding.FragmentArriveStartingPointBinding;
+import com.sosotaxi.driver.model.LocationPoint;
+import com.sosotaxi.driver.model.Order;
+import com.sosotaxi.driver.model.message.ArriveDestPointBody;
 import com.sosotaxi.driver.ui.overlay.DrivingRouteOverlay;
 import com.sosotaxi.driver.ui.widget.OnSlideListener;
 import com.sosotaxi.driver.ui.widget.SlideButton;
 import com.sosotaxi.driver.utils.ContactHelper;
+import com.sosotaxi.driver.utils.MessageHelper;
 import com.sosotaxi.driver.utils.NavigationHelper;
 import com.sosotaxi.driver.utils.PermissionHelper;
+import com.sosotaxi.driver.viewModel.DriverViewModel;
 import com.sosotaxi.driver.viewModel.OrderViewModel;
 
 import java.util.List;
@@ -94,9 +101,15 @@ public class ArriveDestinationFragment extends Fragment {
      */
     private FragmentArriveDestinationBinding mBinding;
 
+    private MessageHelper mMessageHelper;
+
     public ArriveDestinationFragment() {
         // 获取语音播报对象
         mTtsUtility=TTSUtility.getInstance(getContext());
+        // 获取消息帮助对象
+        mMessageHelper=MessageHelper.getInstance();
+        // 获取订单ViewModel
+        mOrderViewModel=new ViewModelProvider(getActivity()).get(OrderViewModel.class);;
     }
 
     @Override
@@ -125,6 +138,7 @@ public class ArriveDestinationFragment extends Fragment {
         mBinding.slideButtonArriveDestination.addSlideListener(new OnSlideListener() {
             @Override
             public void onSlideSuccess() {
+                // 发送消息
                 Toast.makeText(getContext(), "确认成功!", Toast.LENGTH_SHORT).show();
 
                 // 跳转确认账单界面
@@ -224,20 +238,22 @@ public class ArriveDestinationFragment extends Fragment {
             }
 
             if (BaiduNaviManagerFactory.getBaiduNaviManager().isInited()) {
-                // TODO: 与订单对接获取起始点
-                // 测试用数据
+                Order order=mOrderViewModel.getOrder().getValue();
+                LocationPoint departPoint=order.getDepartPoint();
+                LocationPoint destinationPoint=order.getDestinationPoint();
+                // 设置起始点数据
                 mStartNode = new BNRoutePlanNode.Builder()
-                        .latitude(39.98340)
-                        .longitude(116.42532)
-                        .name("奥体中心")
-                        .description("奥体中心")
+                        .latitude(departPoint.getLatitude())
+                        .longitude(departPoint.getLongitude())
+                        .name(order.getDepartName())
+                        .description(order.getDepartName())
                         .coordinateType(BNRoutePlanNode.CoordinateType.BD09LL)
                         .build();
                 mEndNode = new BNRoutePlanNode.Builder()
-                        .latitude(39.90882)
-                        .longitude(116.39750)
-                        .name("北京天安门")
-                        .description("北京天安门")
+                        .latitude(destinationPoint.getLatitude())
+                        .longitude(destinationPoint.getLongitude())
+                        .name(order.getDestinationName())
+                        .description(order.getDestinationName())
                         .coordinateType(BNRoutePlanNode.CoordinateType.BD09LL)
                         .build();
 
@@ -318,10 +334,12 @@ public class ArriveDestinationFragment extends Fragment {
      */
     private void initRoutePlan() {
         Toast.makeText(getContext(), R.string.hint_route_planning, Toast.LENGTH_SHORT).show();
-        // TODO: 与订单对接获取起始点
-        // 测试用数据
-        PlanNode stNode = PlanNode.withCityNameAndPlaceName("北京", "奥体中心");
-        PlanNode enNode = PlanNode.withCityNameAndPlaceName("北京", "天安门广场");
+        Order order=mOrderViewModel.getOrder().getValue();
+        LocationPoint departPoint=order.getDepartPoint();
+        LocationPoint destinationPoint=order.getDestinationPoint();
+        // 设置起始点数据
+        PlanNode stNode = PlanNode.withLocation(new LatLng(departPoint.getLatitude(),departPoint.getLongitude()));
+        PlanNode enNode = PlanNode.withLocation(new LatLng(destinationPoint.getLatitude(),destinationPoint.getLongitude()));
         mSearch.drivingSearch((new DrivingRoutePlanOption())
                 .from(stNode)
                 .to(enNode));

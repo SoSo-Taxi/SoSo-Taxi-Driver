@@ -60,6 +60,7 @@
     <dimen name="driver_order_receive_order_title_from_spacing">45dp</dimen>
     <dimen name="driver_order_receive_order_from_to_spacing">20dp</dimen>
     <dimen name="driver_order_receive_order_dot_from_spacing">18dp</dimen>
+    <dimen name="driver_order_reserve_order_horizontal_margin">130dp</dimen>
 
     <dimen name="nav_vip_textView">70dp</dimen>
     <dimen name="head_photo_width">55dp</dimen>

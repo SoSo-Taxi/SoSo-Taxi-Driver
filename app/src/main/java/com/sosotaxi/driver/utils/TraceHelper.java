@@ -1,7 +1,7 @@
 /**
  * @Author 范承祥
  * @CreateTime 2020/7/18
- * @UpdateTime 2020/7/18
+ * @UpdateTime 2020/7/13
  */
 package com.sosotaxi.driver.utils;
 
@@ -139,12 +139,12 @@ public class TraceHelper {
     }
 
     /**
-     * 实体查询
+     * 构建查询实体请求
      * @param entityNames 实体名列表
      * @param activeTime 活跃时间
-     * @param entityListener 实体监听器
+     * @return 查询实体请求
      */
-    public static void queryEntity(List<String> entityNames, long activeTime, OnEntityListener entityListener){
+    public static EntityListRequest buildEntityRequest(List<String> entityNames, long activeTime){
         // 创建查询
         EntityListRequest entityListRequest=new EntityListRequest();
         // 设置服务号
@@ -157,18 +157,18 @@ public class TraceHelper {
         filterCondition.setActiveTime(activeTime);
 
         entityListRequest.setFilterCondition(filterCondition);
-        // 查询
-        sTraceClient.queryEntityList(entityListRequest,entityListener);
+
+        return entityListRequest;
     }
 
     /**
-     * 查询历史轨迹
+     * 构建查询历史轨迹请求
      * @param entityName 实体名
      * @param startTime 开始起始
      * @param endTime 截止时间
-     * @param onTrackListener 轨迹监听器
+     * @return 查询历史轨迹请求
      */
-    public static void queryHistoryTrack(String entityName, long startTime, long endTime, OnTrackListener onTrackListener){
+    public static HistoryTrackRequest buildHistoryTrackRequest(String entityName, long startTime, long endTime){
         HistoryTrackRequest historyTrackRequest=new HistoryTrackRequest();
         // 设置标签
         historyTrackRequest.setTag(getTag());
@@ -180,8 +180,8 @@ public class TraceHelper {
         historyTrackRequest.setStartTime(startTime);
         // 设置结束时间
         historyTrackRequest.setEndTime(endTime);
-        //查询历史轨迹
-        sTraceClient.queryHistoryTrack(historyTrackRequest,onTrackListener);
+
+        return historyTrackRequest;
     }
 
     /**

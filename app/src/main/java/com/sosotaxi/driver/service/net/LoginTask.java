@@ -20,6 +20,7 @@ public class LoginTask implements Runnable {
     public LoginTask(User user, Handler handler){
         mUser=user;
         mUser.setRememberMe(true);
+        mUser.setUserId(null);
         mHandler=handler;
     }
 

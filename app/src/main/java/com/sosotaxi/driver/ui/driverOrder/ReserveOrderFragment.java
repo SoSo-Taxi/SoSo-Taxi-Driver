@@ -1,7 +1,7 @@
 /**
  * @Author 范承祥
- * @CreateTime 2020/7/15
- * @UpdateTime 2020/7/18
+ * @CreateTime 2020/7/23
+ * @UpdateTime 2020/7/23
  */
 package com.sosotaxi.driver.ui.driverOrder;
 
@@ -38,10 +38,10 @@ import com.sosotaxi.driver.R;
 import com.sosotaxi.driver.common.OnToolbarListener;
 import com.sosotaxi.driver.common.TTSUtility;
 import com.sosotaxi.driver.databinding.FragmentReceiveOrderBinding;
+import com.sosotaxi.driver.databinding.FragmentReserveOrderBinding;
 import com.sosotaxi.driver.model.LocationPoint;
 import com.sosotaxi.driver.model.Order;
 import com.sosotaxi.driver.model.message.BaseMessage;
-import com.sosotaxi.driver.model.message.DriverAnswerOrderBody;
 import com.sosotaxi.driver.model.message.MessageType;
 import com.sosotaxi.driver.model.message.UpdateDriverBody;
 import com.sosotaxi.driver.service.net.DriverOrderClient;
@@ -49,28 +49,20 @@ import com.sosotaxi.driver.ui.overlay.DrivingRouteOverlay;
 import com.sosotaxi.driver.utils.MessageHelper;
 import com.sosotaxi.driver.viewModel.DriverViewModel;
 import com.sosotaxi.driver.viewModel.OrderViewModel;
+import com.sosotaxi.driver.viewModel.UserViewModel;
 
 import java.util.List;
 
 /**
- * 接单界面
+ * 预定订单界面
  */
-public class ReceiveOrderFragment extends Fragment {
+public class ReserveOrderFragment extends Fragment {
 
-    /**
-     * 订单ViewModel
-     */
+    private FragmentReserveOrderBinding mBinding;
     private OrderViewModel mOrderViewModel;
-
-    /**
-     * 司机ViewModel
-     */
     private DriverViewModel mDriverViewModel;
-
-    /**
-     * 数据绑定对象
-     */
-    private FragmentReceiveOrderBinding mBinding;
+    private DriverOrderClient mDriverOrderClient;
+    private MessageHelper mMessageHelper;
 
     /**
      * 百度地图对象
@@ -88,9 +80,7 @@ public class ReceiveOrderFragment extends Fragment {
     private TTSUtility mTtsUtility;
 
 
-    private MessageHelper mMessageHelper;
-
-    public ReceiveOrderFragment() {
+    public ReserveOrderFragment() {
         // 获取语音播报对象
         mTtsUtility=TTSUtility.getInstance(getContext());
         // 获取消息帮助对象
@@ -105,56 +95,32 @@ public class ReceiveOrderFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mBinding= DataBindingUtil.inflate(inflater,R.layout.fragment_receive_order, container, false);
+        mBinding= DataBindingUtil.inflate(inflater,R.layout.fragment_reserve_order, container, false);
         mBinding.setViewModel(mOrderViewModel);
         mBinding.setLifecycleOwner(getActivity());
 
         // 不显示地图比例尺及缩放控件
-        mBinding.mapViewReceiveOrder.showZoomControls(false);
+        mBinding.mapViewReserveOrder.showZoomControls(false);
         // 不显示比例尺
-        mBinding.mapViewReceiveOrder.showScaleControl(false);
+        mBinding.mapViewReserveOrder.showScaleControl(false);
 
-        //设置点击监听器
-        mBinding.buttonDriverOrderReceiveOrder.setOnClickListener(new View.OnClickListener() {
+        mBinding.buttonDriverOrderReceiveReserveOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               DriverAnswerOrderBody body=new DriverAnswerOrderBody();
-               body.setTakeOrder(true);
-               body.setDriver(mDriverViewModel.getDriverVo().getValue());
-               body.setOrder(mOrderViewModel.getOrder().getValue());
-               // 构造消息
-               BaseMessage message=new BaseMessage(MessageType.DRIVER_ANSWER_ORDER_MESSAGE,body);
-               // 发送消息
-               mMessageHelper.send(message);
+                DriverOrderActivity activity=(DriverOrderActivity) getActivity();
+                mDriverOrderClient=activity.getClient();
+                if(mDriverOrderClient!=null){
 
-                Toast.makeText(getContext(), "接单成功!", Toast.LENGTH_SHORT).show();
-
-                // 跳转到达上车点界面
-                FragmentManager fragmentManager=getActivity().getSupportFragmentManager();
-                fragmentManager.popBackStack();
-                FragmentTransaction fragmentTransaction=fragmentManager.beginTransaction();
-                fragmentTransaction.setCustomAnimations(
-                        R.animator.fragment_slide_left_enter,
-                        R.animator.fragment_slide_left_exit,
-                        R.animator.fragment_slide_right_enter,
-                        R.animator.fragment_slide_right_exit);
-                fragmentTransaction.add(R.id.frameLayoutDriverOrder,new ArriveStartingPointFragment(),null);
-                fragmentTransaction.commit();
+                }
+                Toast.makeText(getContext(), "抢单成功!", Toast.LENGTH_SHORT).show();
+                // 返回首页
+                getActivity().finish();
             }
         });
 
-        mBinding.buttonDriverOrderDenyOrder.setOnClickListener(new View.OnClickListener() {
+        mBinding.buttonDriverOrderDenyReserveOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DriverAnswerOrderBody body=new DriverAnswerOrderBody();
-                body.setTakeOrder(false);
-                body.setDriver(mDriverViewModel.getDriverVo().getValue());
-                body.setOrder(null);
-                // 构造消息
-                BaseMessage message=new BaseMessage(MessageType.DRIVER_ANSWER_ORDER_MESSAGE,body);
-                // 发送消息
-                mMessageHelper.send(message);
-
                 Toast.makeText(getContext(), "拒绝接单!", Toast.LENGTH_SHORT).show();
                 // 返回首页
                 getActivity().finish();
@@ -168,15 +134,17 @@ public class ReceiveOrderFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         // 获取百度地图对象
-        mBaiduMap = mBinding.mapViewReceiveOrder.getMap();
+        mBaiduMap = mBinding.mapViewReserveOrder.getMap();
 
         // 获取路径规划对象
-        mSearch=RoutePlanSearch.newInstance();
+        mSearch= RoutePlanSearch.newInstance();
 
         // 设置路径规划结果监听器
         mSearch.setOnGetRoutePlanResultListener(onGetRoutePlanResultListener);
+
+        // 规划路径
+        initRoutePlan();
     }
 
     @Override
@@ -185,14 +153,12 @@ public class ReceiveOrderFragment extends Fragment {
         if (getActivity() instanceof OnToolbarListener) {
             OnToolbarListener onToolbarListener=((OnToolbarListener) getActivity());
             // 改变工具栏标题
-            onToolbarListener.setTitle(getString(R.string.title_driver_order_detail));
+            onToolbarListener.setTitle(getString(R.string.title_toolbar_reserve_order) );
         }
         // 获取订单ViewModel
         mOrderViewModel=new ViewModelProvider(getActivity()).get(OrderViewModel.class);
         // 获取司机ViewModel
         mDriverViewModel=new ViewModelProvider(getActivity()).get(DriverViewModel.class);
-        // 规划路径
-        initRoutePlan();
     }
 
     // 路径规划结果监听器
@@ -239,9 +205,12 @@ public class ReceiveOrderFragment extends Fragment {
                     timeBuffer.append(second+"秒");
                 }
                 // 设置提示
-                mBinding.textViewDriverOrderReceiveOrderHint.setText("预计行程"+String.format("%.1f",distance)+"公里  预计"+timeBuffer.toString());
-                mTtsUtility.speaking("已为您接到从"+mBinding.textViewDriverReceiveOrderFrom.getText().toString()
-                        +"到"+mBinding.textViewDriverOrderReceiveOrderTo.getText().toString() +"的订单，" +mBinding.textViewDriverOrderReceiveOrderHint.getText().toString());
+                mBinding.textViewDriverOrderReserveOrderHint.setText("预计行程"+String.format("%.1f",distance)+"公里  预计"+timeBuffer.toString());
+                mTtsUtility.speaking("已为您接到从"+mBinding.textViewDriverReserveOrderFrom.getText().toString()
+                        + "到"+mBinding.textViewDriverOrderReserveOrderTo.getText().toString() +"的订单，预约时间"
+                        + mBinding.textViewReserveOrderDate.getText().toString()
+                        + mBinding.textViewReserveOrderTime.getText().toString()
+                        + mBinding.textViewDriverOrderReserveOrderHint.getText().toString());
                 // 设置数据
                 overlay.setData(drivingRouteLine);
                 // 在地图上绘制路线
@@ -266,21 +235,21 @@ public class ReceiveOrderFragment extends Fragment {
     public void onResume() {
         super.onResume();
         //在activity执行onResume时执行mMapView. onResume ()，实现地图生命周期管理
-        mBinding.mapViewReceiveOrder.onResume();
+        mBinding.mapViewReserveOrder.onResume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
         //在activity执行onPause时执行mMapView. onPause ()，实现地图生命周期管理
-        mBinding.mapViewReceiveOrder.onPause();
+        mBinding.mapViewReserveOrder.onPause();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         //在activity执行onDestroy时执行mMapView.onDestroy()，实现地图生命周期管理
-        mBinding.mapViewReceiveOrder.onDestroy();
+        mBinding.mapViewReserveOrder.onDestroy();
         if (mSearch != null) {
             mSearch.destroy();
         }

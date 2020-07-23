@@ -2,20 +2,24 @@
  * @Author 范承祥
  * @CreateTime 2020/7/23
  * @UpdateTime 2020/7/23
- */
-package com.sosotaxi.driver.model.message;
+ */package com.sosotaxi.driver.model.message;
 
 import com.google.gson.annotations.SerializedName;
-import com.sosotaxi.driver.model.message.BaseBody;
+import com.sosotaxi.driver.model.LocationPoint;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * 更新司机信息响应主体
+ * 获取所有司机响应主体
  */
-public class UpdateDriverResponseBody extends BaseBody {
+public class GetAllDriverResponseBody extends BaseBody {
+
     /**
-     * 消息ID
+     * 司机位置列表
      */
-    private long messageId;
+    @SerializedName("geoPoints")
+    List<LocationPoint> locationPoints = new ArrayList<>();
 
     /**
      * 消息
@@ -28,12 +32,12 @@ public class UpdateDriverResponseBody extends BaseBody {
      */
     private int statusCode;
 
-    public long getMessageId() {
-        return messageId;
+    public List<LocationPoint> getLocationPoints() {
+        return locationPoints;
     }
 
-    public void setMessageId(long messageId) {
-        this.messageId = messageId;
+    public void setLocationPoints(List<LocationPoint> locationPoints) {
+        this.locationPoints = locationPoints;
     }
 
     public String getMessage() {

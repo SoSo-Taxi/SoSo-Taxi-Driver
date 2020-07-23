@@ -82,7 +82,6 @@ dependencies {
     implementation files('libs/BaiduLBS_Android.jar')
     implementation files('libs\\Msc.jar')
     implementation files('libs/BaiduTraceSDK_v3_1_7.jar')
-    implementation files('libs/bos-android-sdk-1.0.3.jar')
     implementation 'com.squareup.okio:okio:2.7.0'
     implementation 'org.java-websocket:Java-WebSocket:1.5.1'
     testImplementation 'junit:junit:4.13'

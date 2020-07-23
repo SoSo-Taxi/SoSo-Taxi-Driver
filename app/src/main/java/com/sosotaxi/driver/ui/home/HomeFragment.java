@@ -5,6 +5,7 @@
  */
 package com.sosotaxi.driver.ui.home;
 
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.annotation.SuppressLint;
@@ -48,9 +49,17 @@ import com.sosotaxi.driver.R;
 
 import com.sosotaxi.driver.adapter.UndoneOrderRecycleViewAdapter;
 import com.sosotaxi.driver.common.CircleProgressBar;
+import com.sosotaxi.driver.common.OnToolbarListener;
 import com.sosotaxi.driver.common.ProgressRunnable;
 import com.sosotaxi.driver.common.TTSUtility;
+import com.sosotaxi.driver.model.Driver;
+import com.sosotaxi.driver.model.message.BaseMessage;
+import com.sosotaxi.driver.model.message.MessageType;
+import com.sosotaxi.driver.model.message.UpdateDriverBody;
 import com.sosotaxi.driver.ui.driverOrder.DriverOrderActivity;
+import com.sosotaxi.driver.utils.MessageHelper;
+import com.sosotaxi.driver.viewModel.DriverViewModel;
+import com.sosotaxi.driver.viewModel.OrderViewModel;
 
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
@@ -60,6 +69,9 @@ import java.util.List;
 public class HomeFragment extends Fragment{
 
     private HomeViewModel mViewModel;
+    private OrderViewModel mOrderViewModel;
+    private DriverViewModel mDriverViewModel;
+    private MessageHelper mMessageHelper;
 
     //司机评分
     private TextView mServicePointTextView;
@@ -93,6 +105,11 @@ public class HomeFragment extends Fragment{
     //模拟增加订单
     private Button testBtn;
     private List<String> testOrder = new ArrayList<String>();
+
+    public HomeFragment(){
+        // 获取消息帮手
+        mMessageHelper=MessageHelper.getInstance();
+    }
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -159,15 +176,30 @@ public class HomeFragment extends Fragment{
         mProgressRunnable = new ProgressRunnable(mCircleProgressBar);
         mDrawingCircleThread = new Thread(mProgressRunnable);
 
-        //todo:开始听单听单按钮
+        // 开始听单听单按钮
         mStartOrderTextView.setOnClickListener(new View.OnClickListener() {
             boolean toggle = true;
-            //todo:监听订单的线程，需要在它的run方法里面写入服务器订单逻辑
-           Thread thread = new Thread(new orderHearingRunnable());
+
+           //Thread thread = new Thread(new orderHearingRunnable());
             @Override
             public void onClick(View v) {
-                //todo:开始听单
+                // 开始听单
                 if(toggle || mStartOrderTextView.getText() == "开始听单"){
+                    // 获取当前司机
+                    Driver driver=mDriverViewModel.getDriver().getValue();
+                    driver.setAvailable(true);
+                    // 封装消息
+                    UpdateDriverBody body=new UpdateDriverBody();
+                    body.setMessageId(mMessageHelper.getMessageId());
+                    body.setLatitude(driver.getCurrentPoint().getLatitude());
+                    body.setLongitude(driver.getCurrentPoint().getLongitude());
+                    body.setStartListening(true);
+                    body.setServerType(driver.getServiceType());
+                    BaseMessage message=new BaseMessage(MessageType.UPDATE_REQUEST,body);
+
+                    // 发送消息
+                    mMessageHelper.send(message);
+
                     mStartOrderTextView.setText("听单中");
                     mTtsUtility.speaking("正在为您接受附近的订单");//为您接受附近的订单
 
@@ -177,8 +209,23 @@ public class HomeFragment extends Fragment{
                     setEndWorkTextViewVisible(true);
                     mDrawingCircleThread.start();
                     toggle = false;
-                    //todo:停止听单
                 }else {
+                    // 停止听单
+                    // 获取当前司机
+                    Driver driver=mDriverViewModel.getDriver().getValue();
+                    driver.setAvailable(false);
+                    // 封装消息
+                    UpdateDriverBody body=new UpdateDriverBody();
+                    body.setMessageId(mMessageHelper.getMessageId());
+                    body.setLatitude(driver.getCurrentPoint().getLatitude());
+                    body.setLongitude(driver.getCurrentPoint().getLongitude());
+                    body.setStartListening(false);
+                    body.setServerType(mDriverViewModel.getDriver().getValue().getServiceType());
+                    BaseMessage message=new BaseMessage(MessageType.UPDATE_REQUEST,body);
+
+                    // 发送消息
+                    mMessageHelper.send(message);
+
                     TTSUtility.getInstance(getActivity().getApplicationContext()).speaking("停止听单");
                     setHearingOrderStartState();
                     toggle = true;
@@ -228,64 +275,71 @@ public class HomeFragment extends Fragment{
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        mViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
-        // TODO: Use the ViewModel
+        mViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
+
+        // 获取订单ViewModel
+        mOrderViewModel=new ViewModelProvider(getActivity()).get(OrderViewModel.class);
+        // 获取司机ViewModel
+        mDriverViewModel=new ViewModelProvider(getActivity()).get(DriverViewModel.class);
     }
 
-    //todo:听单线程
-    // run方法中听从服务器派来的单
-    class orderHearingRunnable implements Runnable{
-        private int index = 0;
-        private String mStartingPoint;
-        private String mDestination;
-        private String mDistance;
-        private String mCostTime;
-        public orderHearingRunnable(){}
-        
-        public orderHearingRunnable(String mStartingPoint, String mDestination, String mDistance, String mCostTime) {
-            this.mStartingPoint = mStartingPoint;
-            this.mDestination = mDestination;
-            this.mDistance = mDistance;
-            this.mCostTime = mCostTime;
-        }
 
-        @Override
-        public void run() {
-            //模拟演示
-//            while (index < 5){
-//                try {
-//                    Thread.sleep(1000);
-//                    index ++;
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
+
+
+//    //听单线程
+//    // run方法中听从服务器派来的单
+//    class orderHearingRunnable implements Runnable{
+//        private int index = 0;
+//        private String mStartingPoint;
+//        private String mDestination;
+//        private String mDistance;
+//        private String mCostTime;
+//        public orderHearingRunnable(){}
+//
+//        public orderHearingRunnable(String mStartingPoint, String mDestination, String mDistance, String mCostTime) {
+//            this.mStartingPoint = mStartingPoint;
+//            this.mDestination = mDestination;
+//            this.mDistance = mDistance;
+//            this.mCostTime = mCostTime;
+//        }
+//
+//        @Override
+//        public void run() {
+//            //模拟演示
+////            while (index < 5){
+////                try {
+////                    Thread.sleep(1000);
+////                    index ++;
+////                } catch (InterruptedException e) {
+////                    e.printStackTrace();
+////                }
+////            }
+//            while(true){
+//                // 监听服务器发送过来的订单 监听到订单之后跳转到 DriverOrderActivity
+//                // 然后用 updateUndoneOrder方法更新一下订单列表
+//
+//            }
+////            mTtsUtility.speaking("已为您接到从"+mStartingPoint+"到"+mDestination+"的订单"+"预计行程"
+////                    +mDistance+"公里"+"时间"+mCostTime+"分钟");
+//
+////            Intent intent = new Intent(getActivity().getApplicationContext(), DriverOrderActivity.class);
+////            startActivity(intent);
+//
+//        }
+//    }
+//
+//    class testRunnable implements Runnable{
+//
+//        int length = testOrder.size();
+//        @Override
+//        public void run() {
+//            while (true){
+//                if (testOrder.size() != length){
+//                    length = testOrder.size();
+//                    System.out.println("接单"+length);
+//
 //                }
 //            }
-            while(true){
-                //todo:监听服务器发送过来的订单 监听到订单之后跳转到 DriverOrderActivity
-                // 然后用 updateUndoneOrder方法更新一下订单列表
-
-            }
-//            mTtsUtility.speaking("已为您接到从"+mStartingPoint+"到"+mDestination+"的订单"+"预计行程"
-//                    +mDistance+"公里"+"时间"+mCostTime+"分钟");
-
-//            Intent intent = new Intent(getActivity().getApplicationContext(), DriverOrderActivity.class);
-//            startActivity(intent);
-
-        }
-    }
-
-    class testRunnable implements Runnable{
-
-        int length = testOrder.size();
-        @Override
-        public void run() {
-            while (true){
-                if (testOrder.size() != length){
-                    length = testOrder.size();
-                    System.out.println("接单"+length);
-
-                }
-            }
-        }
-    }
+//        }
+//    }
 }

@@ -6,7 +6,7 @@
 package com.sosotaxi.driver.model.message;
 
 /**
- * 获取所有司机请求主体
+ * 完成订单响应主体
  */
-public class GetAllDriverBody extends BaseBody{
+public class FinishOrderResponseBody extends BaseBody {
 }

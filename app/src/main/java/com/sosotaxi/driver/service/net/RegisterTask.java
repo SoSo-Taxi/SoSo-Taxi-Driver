@@ -19,6 +19,7 @@ public class RegisterTask implements Runnable {
 
     public RegisterTask(User user,Handler handler){
         mUser=user;
+        mUser.setUserId(null);
         mHandler=handler;
     }
 

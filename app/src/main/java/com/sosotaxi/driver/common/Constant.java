@@ -35,6 +35,11 @@ public class Constant {
     public static final int PERMISSION_NAVIGATION_REQUEST=3;
 
     /**
+     * 订单金额请求
+     */
+    public static final int ASK_AMOUNT_REQUEST=4;
+
+    /**
      * 区号EXTRA
      */
     public static final String EXTRA_AREA_CODE ="com.sosotaxi.driver.ui.login.EXTRA_AREA_CODE";
@@ -99,6 +104,7 @@ public class Constant {
      */
     public static final String LOGIN_URL="http://122.51.162.119:8001/auth/login";
 
+    public static final String QUERY_USER_URL="http://122.51.162.119:8001/driver/getByName?userName=";
     /**
      * WebSocket地址
      */
@@ -156,5 +162,15 @@ public class Constant {
      * 广播过滤器
      */
     public static final String FILTER_CONTENT="com.sosotaxi.driver.service.callback.content";
+
+    /**
+     * 收集时间
+     */
+    public static final int GATHER_INTERVAL=2;
+
+    /**
+     * 打包时间
+     */
+    public static final int PACK_INTERVAL=15;
 
 }
