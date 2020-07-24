@@ -1,7 +1,7 @@
 /**
  * @Author 范承祥
  * @CreateTime 2020/7/15
- * @UpdateTime 2020/7/18
+ * @UpdateTime 2020/7/24
  */
 package com.sosotaxi.driver.ui.driverOrder;
 
@@ -96,6 +96,9 @@ public class PickUpPassengerFragment extends Fragment {
      */
     private RoutePlanSearch mSearch;
 
+    /**
+     * 消息帮手对象
+     */
     private MessageHelper mMessageHelper;
 
     public PickUpPassengerFragment() {
@@ -103,8 +106,6 @@ public class PickUpPassengerFragment extends Fragment {
         mTtsUtility=TTSUtility.getInstance(getContext());
         // 获取消息帮助对象
         mMessageHelper= MessageHelper.getInstance();
-        // 获取订单ViewModel
-        mOrderViewModel=new ViewModelProvider(getActivity()).get(OrderViewModel.class);
     }
 
     @Override
@@ -115,9 +116,15 @@ public class PickUpPassengerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        mOrderViewModel=new ViewModelProvider(getActivity()).get(OrderViewModel.class);
+
         mBinding= DataBindingUtil.inflate(inflater,R.layout.fragment_pick_up_passenger, container, false);
         mBinding.setViewModel(mOrderViewModel);
         mBinding.setLifecycleOwner(getActivity());
+
+        // 显示尾号
+        String phone=mOrderViewModel.getOrder().getValue().getPassengerPhoneNumber();
+        mBinding.textViewDriverPickUpPassengerNumber.setText(phone.substring(phone.length()-4));
 
         // 不显示地图比例尺及缩放控件
         mBinding.baiduMapViewDriverPickUpPassenger.showZoomControls(false);
@@ -171,14 +178,15 @@ public class PickUpPassengerFragment extends Fragment {
                 Order order=mOrderViewModel.getOrder().getValue();
                 Calendar calendar=Calendar.getInstance();
                 Date currentDate=calendar.getTime();
+
                 order.setDepartTime(currentDate);
                 body.setOrder(mOrderViewModel.getOrder().getValue());
-                BaseMessage message=new BaseMessage(MessageType.ARRIVE_DEPART_POINT_MESSAGE,body);
+                BaseMessage message=new BaseMessage(MessageType.PICK_UP_PASSENGER_MESSAGE,body);
 
                 //发送消息
                 mMessageHelper.send(message);
 
-                Toast.makeText(getContext(), "确认成功!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getString(R.string.hint_confirm_successful), Toast.LENGTH_SHORT).show();
                 // 跳转到达目的地界面
                 FragmentManager fragmentManager=getActivity().getSupportFragmentManager();
                 fragmentManager.popBackStack();
@@ -240,6 +248,13 @@ public class PickUpPassengerFragment extends Fragment {
         //TraceHelper.stopTrace();
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        // 获取订单ViewModel
+        mOrderViewModel=new ViewModelProvider(getActivity()).get(OrderViewModel.class);
+    }
+
     // 权限请求结果处理
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -298,7 +313,7 @@ public class PickUpPassengerFragment extends Fragment {
                 // 设置数据
                 overlay.setData(drivingRouteResult.getRouteLines().get(0));
                 // 语音播报信息
-                mTtsUtility.speaking("已到达上车点，请等待乘客上车。若乘客长时间未上车，请及时联系乘客。");
+                mTtsUtility.speaking(getString(R.string.hint_pick_up_passenger));
                 // 在地图上绘制路线
                 overlay.addToMap(false);
                 // 自动缩放至合适位置

@@ -1,7 +1,7 @@
 /**
  * @Author 范承祥
  * @CreateTime 2020/7/21
- * @UpdateTime 2020/7/21
+ * @UpdateTime 2020/7/24
  */
 package com.sosotaxi.driver.viewModel;
 
@@ -14,49 +14,37 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
 import com.baidu.navisdk.adapter.BNRoutePlanNode;
+import com.google.gson.Gson;
 import com.sosotaxi.driver.common.Constant;
+import com.sosotaxi.driver.model.Driver;
+import com.sosotaxi.driver.model.DriverVo;
 import com.sosotaxi.driver.model.LocationPoint;
 import com.sosotaxi.driver.model.Order;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * 订单ViewModel
  */
 public class OrderViewModel extends AndroidViewModel {
+    /**
+     * 订单对象
+     */
     private MutableLiveData<Order> mOrder;
 
     public OrderViewModel(@NonNull Application application) {
         super(application);
     }
 
+    /**
+     * 获取订单对象
+     * @return 订单对象
+     */
     public MutableLiveData<Order> getOrder(){
         if(mOrder==null){
+            // 初始化对象
             mOrder=new MutableLiveData<Order>();
         }
-        loadOrder();
         return mOrder;
-    }
-
-    private void loadOrder(){
-        Order order=new Order();
-        order.setPassengerPhoneNumber("8613889889889");
-        order.setCity("北京");
-        order.setDepartName("奥体中心");
-        order.setDepartPoint(new LocationPoint(39.98340,116.42532));
-        order.setDestinationName("北京天安门");
-        order.setDestinationPoint(new LocationPoint(39.90882,116.39750));
-
-        mOrder.setValue(order);
-    }
-
-    @Override
-    protected void onCleared() {
-        super.onCleared();
-//        // 保存用户信息
-//        SharedPreferences sharedPreferences=getApplication().getSharedPreferences(Constant.SHARE_PREFERENCE_LOGIN, Context.MODE_PRIVATE);
-//        SharedPreferences.Editor editor=sharedPreferences.edit();
-//        editor.putString(Constant.USERNAME,mUser.getValue().getUserName());
-//        editor.putString(Constant.PASSWORD,mUser.getValue().getPassword());
-//        editor.putString(Constant.TOKEN,mUser.getValue().getToken());
-//        editor.commit();
     }
 }

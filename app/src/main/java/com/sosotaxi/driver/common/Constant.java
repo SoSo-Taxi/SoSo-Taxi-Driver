@@ -90,6 +90,21 @@ public class Constant {
     public static final String EXTRA_ERROR="com.sosotaxi.driver.ui.login.EXTRA_ERROR";
 
     /**
+     * 司机EXTRA
+     */
+    public static final String EXTRA_DRIVER="com.sosotaxi.driver.ui.login.EXTRA_DRIVER";
+
+    /**
+     * 订单EXTRA
+     */
+    public static final String EXTRA_ORDER="com.sosotaxi.driver.ui.login.EXTRA_ORDER";
+
+    /**
+     * 司机EXTRA
+     */
+    public static final String EXTRA_DRIVER_VO="com.sosotaxi.driver.ui.login.EXTRA_DRIVER_VO";
+
+    /**
      * 查询是否已注册URL
      */
     public static final String IS_REGISTERED_URL="http://122.51.162.119:8001/user/isRegistered";
@@ -102,13 +117,17 @@ public class Constant {
     /**
      * 登陆URL
      */
-    public static final String LOGIN_URL="http://122.51.162.119:8001/auth/login";
+    public static final String LOGIN_URL="http://122.51.70.242:8001/auth/login";
 
-    public static final String QUERY_USER_URL="http://122.51.162.119:8001/driver/getByName?userName=";
+    /**
+     * 查询用户信息URL
+     */
+    public static final String QUERY_USER_URL="http://122.51.70.242:8001/driver/getByName?userName=";
+
     /**
      * WebSocket地址
      */
-    public static final String WEB_SOCKET_URI="ws://122.51.162.119:8001/webSocket?accessToken=";
+    public static final String WEB_SOCKET_URI="ws://122.51.70.242:8001/webSocket?accessToken=";
 
     /**
      * BODY类型
@@ -166,11 +185,10 @@ public class Constant {
     /**
      * 收集时间
      */
-    public static final int GATHER_INTERVAL=2;
+    public static final int GATHER_INTERVAL=15;
 
     /**
      * 打包时间
      */
-    public static final int PACK_INTERVAL=15;
-
+    public static final int PACK_INTERVAL=60;
 }

@@ -1,81 +1,80 @@
 /**
  * @Author 范承祥
  * @CreateTime 2020/7/21
- * @UpdateTime 2020/7/21
+ * @UpdateTime 2020/7/24
  */
 package com.sosotaxi.driver.viewModel;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.gson.Gson;
+import com.sosotaxi.driver.R;
 import com.sosotaxi.driver.common.Constant;
 import com.sosotaxi.driver.model.Driver;
 import com.sosotaxi.driver.model.DriverVo;
 import com.sosotaxi.driver.model.LocationPoint;
+import com.sosotaxi.driver.model.User;
 import com.sosotaxi.driver.model.message.ServiceType;
+import com.sosotaxi.driver.service.net.LoginTask;
 import com.sosotaxi.driver.service.net.QueryDriverTask;
+import com.sosotaxi.driver.service.net.UserNetService;
+import com.sosotaxi.driver.ui.main.MainActivity;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * 司机ViewModel
  */
 public class DriverViewModel extends AndroidViewModel {
+    /**
+     * 司机对象
+     */
     private MutableLiveData<Driver> mDriver;
+
+    /**
+     * 司机VO对象
+     */
     private MutableLiveData<DriverVo> mDriverVo;
 
     public DriverViewModel(@NonNull Application application) {
         super(application);
     }
 
+    /**
+     * 获取司机对象
+     * @return 司机对象
+     */
     public MutableLiveData<Driver> getDriver(){
         if(mDriver==null){
+            // 初始化对象
             mDriver=new MutableLiveData<Driver>();
-        }
-        if(mDriverVo==null){
             mDriverVo=new MutableLiveData<DriverVo>();
         }
-        loadDriver();
         return mDriver;
     }
 
+    /**
+     * 获取司机VO对象
+     * @return 司机VO对象
+     */
     public MutableLiveData<DriverVo> getDriverVo(){
         if(mDriver==null){
+            // 初始化对象
             mDriver=new MutableLiveData<Driver>();
-        }
-        if(mDriverVo==null){
             mDriverVo=new MutableLiveData<DriverVo>();
         }
-        loadDriver();
         return mDriverVo;
     }
 
-    private void loadDriver(){
-        Driver driver=new Driver();
-        DriverVo driverVo=new DriverVo();
-//        new Thread(new QueryDriverTask(driver,driverVo)).start();
-        //mDriver.setValue(driver);
-        //mDriverVo.setValue(driverVo);
-        driver.setAvailable(false);
-        driver.setServiceType((short) ServiceType.ECONOMIC.ordinal());
-        driverVo.setServiceType((short) ServiceType.ECONOMIC.ordinal());
-        driver.setCurrentPoint(new LocationPoint(40.05087,116.30142));
-        mDriver.setValue(driver);
-        mDriverVo.setValue(driverVo);
-    }
-
-    @Override
-    protected void onCleared() {
-        super.onCleared();
-//        // 保存用户信息
-//        SharedPreferences sharedPreferences=getApplication().getSharedPreferences(Constant.SHARE_PREFERENCE_LOGIN, Context.MODE_PRIVATE);
-//        SharedPreferences.Editor editor=sharedPreferences.edit();
-//        editor.putString(Constant.USERNAME,mDriver.getValue().get());
-//        editor.putString(Constant.PASSWORD,mDriver.getValue().getPassword());
-//        editor.putString(Constant.TOKEN,mDriver.getValue().getToken());
-//        editor.commit();
-    }
 }

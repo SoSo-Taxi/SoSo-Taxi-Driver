@@ -28,6 +28,7 @@ import com.google.gson.Gson;
 import com.sosotaxi.driver.R;
 import com.sosotaxi.driver.common.Constant;
 import com.sosotaxi.driver.model.Driver;
+import com.sosotaxi.driver.model.DriverVo;
 import com.sosotaxi.driver.model.LocationPoint;
 import com.sosotaxi.driver.model.Order;
 import com.sosotaxi.driver.model.User;
@@ -37,7 +38,6 @@ import com.sosotaxi.driver.model.message.MessageType;
 import com.sosotaxi.driver.model.message.UpdateDriverBody;
 import com.sosotaxi.driver.service.net.DriverOrderClient;
 import com.sosotaxi.driver.service.net.DriverOrderService;
-import com.sosotaxi.driver.service.net.OrderMessageReceiver;
 import com.sosotaxi.driver.service.net.QueryLatestPointTask;
 import com.sosotaxi.driver.ui.driverOrder.DriverOrderActivity;
 import com.sosotaxi.driver.ui.userInformation.order.OrderActivity;
@@ -50,7 +50,6 @@ import com.sosotaxi.driver.viewModel.OrderViewModel;
 import com.sosotaxi.driver.viewModel.UserViewModel;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.core.view.GravityCompat;
 import androidx.lifecycle.ViewModelProvider;
@@ -61,6 +60,9 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -81,10 +83,10 @@ public class MainActivity extends AppCompatActivity
     private DriverOrderClient mDriverOrderClient;
     private DriverOrderService mDriverOrderService;
     private DriverOrderService.DriverOrderBinder mBinder;
-    private OrderMessageReceiver mOrderMessageReceiver;
+    private BroadcastReceiver mBroadcastReceiver;
     private MessageHelper mMessageHelper;
 
-    private Thread mQueryThread;
+    private QueryLatestPointTask mQueryLatestPointTask;
 
     /**
      * 侧边栏用户姓名和
@@ -108,6 +110,8 @@ public class MainActivity extends AppCompatActivity
 
         mMessageHelper=MessageHelper.getInstance();
 
+        mDriverViewModel.getDriver();
+
         // 绑定服务
         startService();
         bindService();
@@ -127,8 +131,6 @@ public class MainActivity extends AppCompatActivity
 
         // 初始化轨迹记录
         TraceHelper.initTrace(mUserViewModel.getUser().getValue().getUserName(),Constant.GATHER_INTERVAL,Constant.PACK_INTERVAL,onTraceListener);
-        // 开始记录轨迹
-        //TraceHelper.startTrace();
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout,toolbar,
                 R.string.navigation_drawer_open,R.string.navigation_drawer_close);
@@ -137,7 +139,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
 
-        //与登录界面对接后修改
+        //TODO: 与登录界面对接后修改
         final View headerView = navigationView.getHeaderView(0);
         mUserName = headerView.findViewById(R.id.username);
         mUserOtherInfo = headerView.findViewById(R.id.user_otherInfo);
@@ -161,16 +163,14 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // 断开连接
-        unbindService(serviceConnection);
-        if(mOrderMessageReceiver!=null){
-            unregisterReceiver(mOrderMessageReceiver);
+        try{
+            // 断开连接
+            unbindService(serviceConnection);
+            unregisterReceiver(mBroadcastReceiver);
+        }catch (Exception e){
+            e.printStackTrace();
         }
         TraceHelper.stopGather();
-        TraceHelper.stopTrace();
-        if(mQueryThread.isInterrupted()==false){
-            mQueryThread.interrupt();
-        }
     }
 
     @Override
@@ -212,22 +212,6 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode==RESULT_OK){
-            switch (requestCode){
-                case Constant.ASK_AMOUNT_REQUEST:
-                    // 获取订单金额
-                    double amount=data.getDoubleExtra(Constant.EXTRA_TOTAL,0.0);
-                    // TODO: 处理订单金额数据
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
-
     /**
      * 开启WebSocket服务
      */
@@ -248,9 +232,8 @@ public class MainActivity extends AppCompatActivity
      * 注册广播接收器
      */
     private void registerReceiver(){
-        mOrderMessageReceiver=new OrderMessageReceiver();
         IntentFilter intentFilter=new IntentFilter(Constant.FILTER_CONTENT);
-        registerReceiver(new BroadcastReceiver() {
+        mBroadcastReceiver =new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 // 解析消息
@@ -259,18 +242,44 @@ public class MainActivity extends AppCompatActivity
                 BaseMessage message=gson.fromJson(json,BaseMessage.class);
                 Log.d("MESSAGE",json);
                 if(message.getType()== MessageType.ASK_FOR_DRIVER_MESSAGE){
-                    AskForDriverBody body =(AskForDriverBody) message.getBody();
-                    String city=body.getCity();
-                    String phone=body.getPassengerPhoneNumber();
-                    Order order=body.getOrder();
-                    order.setPassengerPhoneNumber(phone);
-                    // 设置订单
-                    mOrderViewModel.getOrder().setValue(order);
-                    Intent orderIntent = new Intent(getApplicationContext(), DriverOrderActivity.class);
-                    startActivityForResult(orderIntent,Constant.ASK_AMOUNT_REQUEST);
+                    try {
+                        JSONObject object=new JSONObject(json);
+                        String bodyString=object.getString("body");
+                        AskForDriverBody body =gson.fromJson(bodyString,AskForDriverBody.class);
+                        String city=body.getCity();
+                        String phone=body.getPassengerPhoneNumber();
+                        Order order=body.getOrder();
+                        order.setPassengerPhoneNumber(phone);
+                        // 设置订单
+                        mOrderViewModel.getOrder().setValue(order);
+                        Driver driver=mDriverViewModel.getDriver().getValue();
+                        DriverVo driverVo=mDriverViewModel.getDriverVo().getValue();
+
+                        //填充数据
+                        Bundle bundle=new Bundle();
+                        bundle.putParcelable(Constant.EXTRA_ORDER,order);
+                        bundle.putParcelable(Constant.EXTRA_DRIVER,driver);
+                        bundle.putParcelable(Constant.EXTRA_DRIVER_VO,driverVo);
+                        Intent orderIntent = new Intent(getApplicationContext(), DriverOrderActivity.class);
+                        orderIntent.putExtras(bundle);
+
+                        try{
+                            // 断开连接
+                            unbindService(serviceConnection);
+                            unregisterReceiver(mBroadcastReceiver);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+
+                        startActivityForResult(orderIntent,Constant.ASK_AMOUNT_REQUEST);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
                 }
             }
-        },intentFilter);
+        };
+        registerReceiver(mBroadcastReceiver,intentFilter);
     }
 
     // 服务连接监听器
@@ -318,14 +327,40 @@ public class MainActivity extends AppCompatActivity
         @Override
         public void onStartGatherCallback(int status, String message) {
             Toast.makeText(getApplicationContext(), "开始收集", Toast.LENGTH_SHORT).show();
+            // 获取当前司机
+            Driver driver=mDriverViewModel.getDriver().getValue();
+            driver.setAvailable(true);
+            driver.setStartListening(true);
+
             // 开始上传定位
-            mQueryThread=new Thread(new QueryLatestPointTask(Constant.GATHER_INTERVAL*1000,mUserViewModel.getUser().getValue().getUserName(),onTrackListener));
-            mQueryThread.start();
+            mQueryLatestPointTask=new QueryLatestPointTask(Constant.GATHER_INTERVAL*1000,mUserViewModel.getUser().getValue().getUserName(),onTrackListener);
+            new Thread(mQueryLatestPointTask).start();
         }
         // 停止采集回调
         @Override
         public void onStopGatherCallback(int status, String message) {
             //Toast.makeText(getContext(), "停止收集", Toast.LENGTH_SHORT).show();
+            if(status==0){
+                // 获取当前司机
+                Driver driver=mDriverViewModel.getDriver().getValue();
+                driver.setAvailable(false);
+                driver.setStartListening(false);
+                mQueryLatestPointTask.setIsExit(true);
+
+                // 封装消息
+                UpdateDriverBody body=new UpdateDriverBody();
+                body.setMessageId(mMessageHelper.getMessageId());
+                body.setDispatched(driver.getDispatched());
+                body.setStartListening(driver.getStartListening());
+                body.setServiceType(driver.getServiceType());
+                body.setLatitude(driver.getCurrentPoint().getLatitude());
+                body.setLongitude(driver.getCurrentPoint().getLongitude());
+                BaseMessage updateMessage=mMessageHelper.build(MessageType.UPDATE_REQUEST,body);
+
+                // 发送消息
+                mMessageHelper.send(updateMessage);
+                TraceHelper.stopTrace();
+            }
         }
 
         // 推送回调
@@ -358,9 +393,9 @@ public class MainActivity extends AppCompatActivity
             driver.setCurrentPoint(new LocationPoint(location));
             UpdateDriverBody body=new UpdateDriverBody();
             body.setMessageId(mMessageHelper.getMessageId());
-            body.setDispatched(true);
-            body.setStartListening(true);
-            body.setServerType(driver.getServiceType());
+            body.setDispatched(driver.getDispatched());
+            body.setStartListening(driver.getStartListening());
+            body.setServiceType(driver.getServiceType());
             body.setLatitude(location.getLatitude());
             body.setLongitude(location.getLongitude());
             BaseMessage message=mMessageHelper.build(MessageType.UPDATE_REQUEST,body);

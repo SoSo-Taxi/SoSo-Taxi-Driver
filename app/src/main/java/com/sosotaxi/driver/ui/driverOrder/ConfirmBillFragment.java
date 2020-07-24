@@ -1,7 +1,7 @@
 /**
  * @Author 范承祥
  * @CreateTime 2020/7/15
- * @UpdateTime 2020/7/18
+ * @UpdateTime 2020/7/24
  */
 package com.sosotaxi.driver.ui.driverOrder;
 
@@ -35,6 +35,9 @@ import com.sosotaxi.driver.ui.widget.SlideButton;
 import com.sosotaxi.driver.utils.MessageHelper;
 import com.sosotaxi.driver.viewModel.OrderViewModel;
 
+import java.util.Calendar;
+import java.util.Date;
+
 /**
  * 确认账单界面
  */
@@ -55,6 +58,9 @@ public class ConfirmBillFragment extends Fragment {
      */
     private TTSUtility mTtsUtility;
 
+    /**
+     * 消息帮手对象
+     */
     private MessageHelper mMessageHelper;
 
     public ConfirmBillFragment() {
@@ -62,8 +68,6 @@ public class ConfirmBillFragment extends Fragment {
         mTtsUtility=TTSUtility.getInstance(getContext());
         // 获取消息帮助对象
         mMessageHelper=MessageHelper.getInstance();
-        // 获取订单ViewModel
-        mOrderViewModel=new ViewModelProvider(getActivity()).get(OrderViewModel.class);
     }
 
     @Override
@@ -74,6 +78,9 @@ public class ConfirmBillFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // 获取订单ViewModel
+        mOrderViewModel=new ViewModelProvider(getActivity()).get(OrderViewModel.class);
+
         mBinding= DataBindingUtil.inflate(inflater,R.layout.fragment_confirm_bill, container, false);
         mBinding.setViewModel(mOrderViewModel);
         mBinding.setLifecycleOwner(getActivity());
@@ -112,15 +119,18 @@ public class ConfirmBillFragment extends Fragment {
                 // 封装消息
                 ArriveDestPointBody body=new ArriveDestPointBody();
                 body.setOrder(mOrderViewModel.getOrder().getValue());
+                Calendar calendar=Calendar.getInstance();
+                Date currentDate=calendar.getTime();
                 body.setBasicCost(amount);
                 body.setFreewayCost(roadToll);
                 body.setParkingCost(parkingRate);
+                body.getOrder().setArriveTime(currentDate);
                 BaseMessage message=new BaseMessage(MessageType.ARRIVE_DEST_POINT_MESSAGE,body);
 
                 //发送消息
                 mMessageHelper.send(message);
 
-                Toast.makeText(getContext(), "确认成功!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getString(R.string.hint_confirm_successful), Toast.LENGTH_SHORT).show();
 
                 // 跳转评价乘客界面
                 FragmentManager fragmentManager=getActivity().getSupportFragmentManager();
@@ -145,10 +155,11 @@ public class ConfirmBillFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         // 语音播报信息
-        mTtsUtility.speaking("已到达目的地，请提醒乘客带好随身物品。请确认账单金额并发起收款。");
+        mTtsUtility.speaking(getString(R.string.hint_finish_order_and_confirm_bill));
     }
 
-    private void initAmount(){
-        //TODO:与服务器对接获取消息
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
     }
 }

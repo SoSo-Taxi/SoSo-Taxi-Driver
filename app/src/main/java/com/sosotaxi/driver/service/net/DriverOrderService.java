@@ -69,4 +69,10 @@ public class DriverOrderService extends Service {
             return DriverOrderService.this;
         }
     }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        return super.onUnbind(intent);
+
+    }
 }

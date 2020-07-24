@@ -1,7 +1,7 @@
 /**
  * @Author 范承祥
  * @CreateTime 2020/7/15
- * @UpdateTime 2020/7/18
+ * @UpdateTime 2020/7/24
  */
 package com.sosotaxi.driver.ui.driverOrder;
 
@@ -87,7 +87,9 @@ public class ReceiveOrderFragment extends Fragment {
      */
     private TTSUtility mTtsUtility;
 
-
+    /**
+     * 消息帮手对象
+     */
     private MessageHelper mMessageHelper;
 
     public ReceiveOrderFragment() {
@@ -105,6 +107,11 @@ public class ReceiveOrderFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // 获取订单ViewModel
+        mOrderViewModel=new ViewModelProvider(getActivity()).get(OrderViewModel.class);
+        // 获取司机ViewModel
+        mDriverViewModel=new ViewModelProvider(getActivity()).get(DriverViewModel.class);
+
         mBinding= DataBindingUtil.inflate(inflater,R.layout.fragment_receive_order, container, false);
         mBinding.setViewModel(mOrderViewModel);
         mBinding.setLifecycleOwner(getActivity());
@@ -127,7 +134,7 @@ public class ReceiveOrderFragment extends Fragment {
                // 发送消息
                mMessageHelper.send(message);
 
-                Toast.makeText(getContext(), "接单成功!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), R.string.hint_receive_order, Toast.LENGTH_SHORT).show();
 
                 // 跳转到达上车点界面
                 FragmentManager fragmentManager=getActivity().getSupportFragmentManager();
@@ -155,7 +162,7 @@ public class ReceiveOrderFragment extends Fragment {
                 // 发送消息
                 mMessageHelper.send(message);
 
-                Toast.makeText(getContext(), "拒绝接单!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), R.string.hint_deny_order, Toast.LENGTH_SHORT).show();
                 // 返回首页
                 getActivity().finish();
             }
@@ -177,6 +184,9 @@ public class ReceiveOrderFragment extends Fragment {
 
         // 设置路径规划结果监听器
         mSearch.setOnGetRoutePlanResultListener(onGetRoutePlanResultListener);
+
+        // 规划路径
+        initRoutePlan();
     }
 
     @Override
@@ -187,12 +197,7 @@ public class ReceiveOrderFragment extends Fragment {
             // 改变工具栏标题
             onToolbarListener.setTitle(getString(R.string.title_driver_order_detail));
         }
-        // 获取订单ViewModel
-        mOrderViewModel=new ViewModelProvider(getActivity()).get(OrderViewModel.class);
-        // 获取司机ViewModel
-        mDriverViewModel=new ViewModelProvider(getActivity()).get(DriverViewModel.class);
-        // 规划路径
-        initRoutePlan();
+
     }
 
     // 路径规划结果监听器
@@ -230,18 +235,19 @@ public class ReceiveOrderFragment extends Fragment {
                 int second=drivingRouteLine.getDuration()%60;
                 StringBuffer timeBuffer=new StringBuffer();
                 if(hour!=0){
-                    timeBuffer.append(hour+"时");
+                    timeBuffer.append(hour+getString(R.string.unit_hour));
                 }
                 if(minute!=0){
-                    timeBuffer.append(minute+"分");
+                    timeBuffer.append(minute+getString(R.string.unit_minute));
                 }
                 if(second!=0){
-                    timeBuffer.append(second+"秒");
+                    timeBuffer.append(second+getString(R.string.unit_second));
                 }
                 // 设置提示
-                mBinding.textViewDriverOrderReceiveOrderHint.setText("预计行程"+String.format("%.1f",distance)+"公里  预计"+timeBuffer.toString());
-                mTtsUtility.speaking("已为您接到从"+mBinding.textViewDriverReceiveOrderFrom.getText().toString()
-                        +"到"+mBinding.textViewDriverOrderReceiveOrderTo.getText().toString() +"的订单，" +mBinding.textViewDriverOrderReceiveOrderHint.getText().toString());
+                mBinding.textViewDriverOrderReceiveOrderHint.setText(getString(R.string.hint_estimate_distance)+String.format("%.1f",distance)+getString(R.string.hint_kilometer_estimate)+timeBuffer.toString());
+                mTtsUtility.speaking(getString(R.string.hint_receive)+mBinding.textViewDriverReceiveOrderFrom.getText().toString()
+                        +getString(R.string.hint_to)+mBinding.textViewDriverOrderReceiveOrderTo.getText().toString()
+                        +getString(R.string.hint_order) +mBinding.textViewDriverOrderReceiveOrderHint.getText().toString());
                 // 设置数据
                 overlay.setData(drivingRouteLine);
                 // 在地图上绘制路线

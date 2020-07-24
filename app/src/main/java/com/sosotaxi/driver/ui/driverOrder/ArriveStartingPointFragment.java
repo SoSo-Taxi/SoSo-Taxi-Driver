@@ -85,6 +85,7 @@ import com.sosotaxi.driver.common.Constant;
 import com.sosotaxi.driver.common.OnToolbarListener;
 import com.sosotaxi.driver.common.TTSUtility;
 import com.sosotaxi.driver.databinding.FragmentArriveStartingPointBinding;
+import com.sosotaxi.driver.model.Driver;
 import com.sosotaxi.driver.model.LocationPoint;
 import com.sosotaxi.driver.model.Order;
 import com.sosotaxi.driver.model.message.ArriveDepartPointBody;
@@ -176,10 +177,6 @@ public class ArriveStartingPointFragment extends Fragment {
         mHandler=new Handler(Looper.getMainLooper());
         // 获取消息帮助对象
         mMessageHelper=MessageHelper.getInstance();
-        // 获取订单ViewModel
-        mOrderViewModel=new ViewModelProvider(getActivity()).get(OrderViewModel.class);
-        // 获取司机ViewModel
-        mDriverViewModel=new ViewModelProvider(getActivity()).get(DriverViewModel.class);
     }
 
     @Override
@@ -190,10 +187,18 @@ public class ArriveStartingPointFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // 获取订单ViewModel
+        mOrderViewModel=new ViewModelProvider(getActivity()).get(OrderViewModel.class);
+        // 获取司机ViewModel
+        mDriverViewModel=new ViewModelProvider(getActivity()).get(DriverViewModel.class);
 
         mBinding= DataBindingUtil.inflate(inflater,R.layout.fragment_arrive_starting_point, container, false);
         mBinding.setViewModel(mOrderViewModel);
         mBinding.setLifecycleOwner(getActivity());
+
+        // 显示尾号
+        String phone=mOrderViewModel.getOrder().getValue().getPassengerPhoneNumber();
+        mBinding.textViewDriverOrderArriveStartingPointNumber.setText(phone.substring(phone.length()-4));
 
         // 不显示地图比例尺及缩放控件
         mBinding.baiduMapViewDriverOrderArriveStartingPoint.showZoomControls(false);
@@ -467,19 +472,19 @@ public class ArriveStartingPointFragment extends Fragment {
                 int second=drivingRouteLine.getDuration()%60;
                 StringBuffer timeBuffer=new StringBuffer();
                 if(hour!=0){
-                    timeBuffer.append(hour+"时");
+                    timeBuffer.append(hour+getString(R.string.unit_hour));
                 }
                 if(minute!=0){
-                    timeBuffer.append(minute+"分");
+                    timeBuffer.append(minute+getString(R.string.unit_minute));
                 }
                 if(second!=0){
-                    timeBuffer.append(second+"秒");
+                    timeBuffer.append(second+getString(R.string.unit_second));
                 }
                 // 设置提示
-                mBinding.textViewDriverOrderArriveStartingPointHint.setText("行程"+String.format("%.1f",distance)+"公里  预计"+timeBuffer.toString());
+                mBinding.textViewDriverOrderArriveStartingPointHint.setText(getString(R.string.hint_estimate_distance)+String.format("%.1f",distance)+getString(R.string.hint_kilometer_estimate)+timeBuffer.toString());
                 mBinding.textViewDriverOrderArriveStartingPointTime.setText(timeBuffer.toString());
                 // 语音播报信息
-                mTtsUtility.speaking("订单已开始，请前往上车点 奥体中心。"+mBinding.textViewDriverOrderArriveStartingPointHint.getText().toString());
+                mTtsUtility.speaking(getString(R.string.hint_order_has_started)+mBinding.textViewDriverOrderArriveStartingPointDestination+mBinding.textViewDriverOrderArriveStartingPointHint.getText().toString());
                 // 设置数据
                 overlay.setData(drivingRouteLine);
                 // 在地图上绘制路线
@@ -505,7 +510,8 @@ public class ArriveStartingPointFragment extends Fragment {
      */
     private void initRoutePlan() {
         Order order=mOrderViewModel.getOrder().getValue();
-        LocationPoint currentPoint=mDriverViewModel.getDriver().getValue().getCurrentPoint();
+        Driver driver=mDriverViewModel.getDriver().getValue();
+        LocationPoint currentPoint=driver.getCurrentPoint();
         LocationPoint departPoint=order.getDepartPoint();
         // 设置起始点数据
         PlanNode stNode = PlanNode.withLocation(new LatLng(currentPoint.getLatitude(),currentPoint.getLongitude()));

@@ -95,6 +95,11 @@ public class ReserveOrderFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // 获取订单ViewModel
+        mOrderViewModel=new ViewModelProvider(getActivity()).get(OrderViewModel.class);
+        // 获取司机ViewModel
+        mDriverViewModel=new ViewModelProvider(getActivity()).get(DriverViewModel.class);
+
         mBinding= DataBindingUtil.inflate(inflater,R.layout.fragment_reserve_order, container, false);
         mBinding.setViewModel(mOrderViewModel);
         mBinding.setLifecycleOwner(getActivity());
@@ -155,10 +160,6 @@ public class ReserveOrderFragment extends Fragment {
             // 改变工具栏标题
             onToolbarListener.setTitle(getString(R.string.title_toolbar_reserve_order) );
         }
-        // 获取订单ViewModel
-        mOrderViewModel=new ViewModelProvider(getActivity()).get(OrderViewModel.class);
-        // 获取司机ViewModel
-        mDriverViewModel=new ViewModelProvider(getActivity()).get(DriverViewModel.class);
     }
 
     // 路径规划结果监听器

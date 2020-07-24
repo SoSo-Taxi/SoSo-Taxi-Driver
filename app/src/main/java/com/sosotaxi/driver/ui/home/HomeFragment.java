@@ -5,6 +5,7 @@
  */
 package com.sosotaxi.driver.ui.home;
 
+import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -19,6 +20,9 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -49,26 +53,34 @@ import com.sosotaxi.driver.R;
 
 import com.sosotaxi.driver.adapter.UndoneOrderRecycleViewAdapter;
 import com.sosotaxi.driver.common.CircleProgressBar;
+import com.sosotaxi.driver.common.Constant;
 import com.sosotaxi.driver.common.OnToolbarListener;
 import com.sosotaxi.driver.common.ProgressRunnable;
 import com.sosotaxi.driver.common.TTSUtility;
 import com.sosotaxi.driver.model.Driver;
+import com.sosotaxi.driver.model.DriverVo;
 import com.sosotaxi.driver.model.message.BaseMessage;
 import com.sosotaxi.driver.model.message.MessageType;
 import com.sosotaxi.driver.model.message.UpdateDriverBody;
+import com.sosotaxi.driver.service.net.QueryDriverTask;
 import com.sosotaxi.driver.ui.driverOrder.DriverOrderActivity;
 import com.sosotaxi.driver.utils.MessageHelper;
+import com.sosotaxi.driver.utils.TraceHelper;
 import com.sosotaxi.driver.viewModel.DriverViewModel;
 import com.sosotaxi.driver.viewModel.OrderViewModel;
+import com.sosotaxi.driver.viewModel.UserViewModel;
 
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static android.app.Activity.RESULT_OK;
+
 public class HomeFragment extends Fragment{
 
     private HomeViewModel mViewModel;
+    private UserViewModel mUserViewModel;
     private OrderViewModel mOrderViewModel;
     private DriverViewModel mDriverViewModel;
     private MessageHelper mMessageHelper;
@@ -185,20 +197,8 @@ public class HomeFragment extends Fragment{
             public void onClick(View v) {
                 // 开始听单
                 if(toggle || mStartOrderTextView.getText() == "开始听单"){
-                    // 获取当前司机
-                    Driver driver=mDriverViewModel.getDriver().getValue();
-                    driver.setAvailable(true);
-                    // 封装消息
-                    UpdateDriverBody body=new UpdateDriverBody();
-                    body.setMessageId(mMessageHelper.getMessageId());
-                    body.setLatitude(driver.getCurrentPoint().getLatitude());
-                    body.setLongitude(driver.getCurrentPoint().getLongitude());
-                    body.setStartListening(true);
-                    body.setServerType(driver.getServiceType());
-                    BaseMessage message=new BaseMessage(MessageType.UPDATE_REQUEST,body);
-
-                    // 发送消息
-                    mMessageHelper.send(message);
+                    // 开始记录轨迹
+                    TraceHelper.startTrace();
 
                     mStartOrderTextView.setText("听单中");
                     mTtsUtility.speaking("正在为您接受附近的订单");//为您接受附近的订单
@@ -211,20 +211,8 @@ public class HomeFragment extends Fragment{
                     toggle = false;
                 }else {
                     // 停止听单
-                    // 获取当前司机
-                    Driver driver=mDriverViewModel.getDriver().getValue();
-                    driver.setAvailable(false);
-                    // 封装消息
-                    UpdateDriverBody body=new UpdateDriverBody();
-                    body.setMessageId(mMessageHelper.getMessageId());
-                    body.setLatitude(driver.getCurrentPoint().getLatitude());
-                    body.setLongitude(driver.getCurrentPoint().getLongitude());
-                    body.setStartListening(false);
-                    body.setServerType(mDriverViewModel.getDriver().getValue().getServiceType());
-                    BaseMessage message=new BaseMessage(MessageType.UPDATE_REQUEST,body);
-
-                    // 发送消息
-                    mMessageHelper.send(message);
+                    // 停止记录轨迹
+                    TraceHelper.stopGather();
 
                     TTSUtility.getInstance(getActivity().getApplicationContext()).speaking("停止听单");
                     setHearingOrderStartState();
@@ -238,12 +226,33 @@ public class HomeFragment extends Fragment{
             @Override
             public void onClick(View v) {
                 setHearingOrderStartState();
+                // 停止记录轨迹
+                TraceHelper.stopGather();
+
                 mTtsUtility.speaking("已收车，停止听单");
                 //Toast.makeText(getActivity().getApplicationContext(),"收车",Toast.LENGTH_SHORT).show();
             }
         });
 
         return root;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode==RESULT_OK){
+            switch (requestCode){
+                case Constant.ASK_AMOUNT_REQUEST:
+                    // 获取订单金额
+                    Bundle bundle=data.getExtras();
+                    double total=bundle.getDouble(Constant.EXTRA_TOTAL);
+                    // TODO: 处理订单金额数据
+                    Log.d("TOTAL",String.valueOf(total));
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     private void updateUndoneOrder(String startingPoint, String destination, String schedule){
@@ -276,14 +285,41 @@ public class HomeFragment extends Fragment{
         super.onActivityCreated(savedInstanceState);
 
         mViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
-
+        // 获取用户ViewModel
+        mUserViewModel=new ViewModelProvider(getActivity()).get(UserViewModel.class);
         // 获取订单ViewModel
         mOrderViewModel=new ViewModelProvider(getActivity()).get(OrderViewModel.class);
         // 获取司机ViewModel
         mDriverViewModel=new ViewModelProvider(getActivity()).get(DriverViewModel.class);
+
+        Driver driver=new Driver();
+        DriverVo driverVo=new DriverVo();
+        driver.setUserName(mUserViewModel.getUser().getValue().getUserName());
+        new Thread(new QueryDriverTask(driver,handler)).start();
     }
 
+    private Handler handler=new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            Bundle bundle=msg.getData();
 
+            if(bundle.getString(Constant.EXTRA_ERROR)!=null){
+                Toast.makeText(getContext(), bundle.getString(Constant.EXTRA_ERROR), Toast.LENGTH_SHORT).show();
+                return false;
+            }
+
+            boolean isSuccessful=bundle.getBoolean(Constant.EXTRA_IS_SUCCESSFUL);
+
+            if(isSuccessful){
+                // 设置司机信息
+                Driver driver=bundle.getParcelable(Constant.EXTRA_DRIVER);
+                DriverVo driverVo=bundle.getParcelable(Constant.EXTRA_DRIVER_VO);
+                mDriverViewModel.getDriver().setValue(driver);
+                mDriverViewModel.getDriverVo().setValue(driverVo);
+            }
+            return false;
+        }
+    });
 
 
 //    //听单线程

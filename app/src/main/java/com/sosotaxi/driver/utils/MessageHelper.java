@@ -5,13 +5,24 @@
  */
 package com.sosotaxi.driver.utils;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
 import com.sosotaxi.driver.model.message.BaseBody;
 import com.sosotaxi.driver.model.message.BaseMessage;
 import com.sosotaxi.driver.model.message.MessageType;
 import com.sosotaxi.driver.service.net.DriverOrderClient;
 
-import java.util.Map;
+import java.lang.reflect.Type;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -22,16 +33,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class MessageHelper {
     /** 消息帮手实例 */
     private static MessageHelper sInstance;
-    /** 待发送消息列表 */
-    private ConcurrentLinkedQueue<BaseMessage> mSendMessageQueue;
-    /** 已发送消息列表 */
-    private ConcurrentHashMap<Integer,BaseMessage> mSentMessageMap;
     /** 序列生成器 */
     private AtomicInteger atomicInteger;
     /** 连接器 */
     private DriverOrderClient mClient;
     /** Gson对象 */
-    private Gson gson;
+    private Gson mGson;
 
     /**
      * 获取实例
@@ -45,10 +52,8 @@ public class MessageHelper {
     }
 
     public MessageHelper(){
-        mSendMessageQueue=new ConcurrentLinkedQueue<>();
-        mSentMessageMap=new ConcurrentHashMap<>();
         atomicInteger=new AtomicInteger();
-        gson=new Gson();
+        mGson = new GsonBuilder().setDateFormat("yyyy-MM-dd' 'HH:mm:ss.SSS").create();
     }
 
     /**
@@ -68,7 +73,7 @@ public class MessageHelper {
      * @return 消息
      */
     public BaseMessage parse(String json){
-        BaseMessage message=gson.fromJson(json,BaseMessage.class);
+        BaseMessage message= mGson.fromJson(json,BaseMessage.class);
         return message;
     }
 
@@ -87,8 +92,8 @@ public class MessageHelper {
      * @param message 消息
      */
     public void send(BaseMessage message){
-        //mSendMessageQueue.add(message);
-        String json=gson.toJson(message);
+        String json= mGson.toJson(message);
+        Log.d("MESSAGE",json);
         if(mClient!=null){
             mClient.send(json);
         }
