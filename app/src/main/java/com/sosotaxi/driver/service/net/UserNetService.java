@@ -21,21 +21,21 @@ import okhttp3.Response;
  * @UpdateTime 2020/7/23
  */
 public class UserNetService extends BaseNetService{
-    public static Pair<Boolean,String> queryDriver(Driver driver, DriverVo driverVo) throws IOException, JSONException {
+    public static Pair<Boolean,String> queryDriver(Driver driver) throws IOException, JSONException {
         String username=driver.getUserName();
         String token=driver.getToken();
         if(username==null||username.isEmpty()){
             return new Pair<>(false,"用户名为空");
         }
-        if(token==null||token.isEmpty()){
-            return new Pair<>(false,"Token为空");
-        }
+//        if(token==null||token.isEmpty()){
+//            return new Pair<>(false,"Token为空");
+//        }
 
         StringBuffer urlBuffer=new StringBuffer();
         urlBuffer.append(Constant.QUERY_USER_URL);
         urlBuffer.append(username);
-        urlBuffer.append("&userToken=");
-        urlBuffer.append(token);
+//        urlBuffer.append("&userToken=");
+//        urlBuffer.append(token);
         String url= urlBuffer.toString();
         Pair<Response,String> result=get(url);
 
@@ -47,11 +47,7 @@ public class UserNetService extends BaseNetService{
             JSONObject jsonObject=new JSONObject(data);
             int code=jsonObject.getInt("code");
             String message=jsonObject.getString("msg");
-            String json=jsonObject.getString("data");
-            Gson gson=new Gson();
-            driver=gson.fromJson(json,Driver.class);
-            driverVo=gson.fromJson(json,DriverVo.class);
-            return code==200?new Pair<Boolean, String>(false,message):new Pair<Boolean, String>(true,message);
+            return code==200?new Pair<Boolean, String>(true,data):new Pair<Boolean, String>(false,data);
         }
         return new Pair<>(false,"连接失败");
     }

@@ -11,21 +11,22 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.baidu.mapapi.model.LatLng;
 import com.baidu.trace.api.track.HistoryTrackResponse;
 import com.baidu.trace.api.track.LatestPointResponse;
 import com.baidu.trace.api.track.OnTrackListener;
-import com.baidu.trace.api.track.TrackPoint;
 import com.baidu.trace.model.OnCustomAttributeListener;
 import com.baidu.trace.model.OnTraceListener;
 import com.baidu.trace.model.PushMessage;
@@ -34,17 +35,15 @@ import com.sosotaxi.driver.R;
 import com.sosotaxi.driver.common.Constant;
 import com.sosotaxi.driver.common.OnToolbarListener;
 import com.sosotaxi.driver.model.Driver;
+import com.sosotaxi.driver.model.DriverVo;
 import com.sosotaxi.driver.model.LocationPoint;
 import com.sosotaxi.driver.model.Order;
 import com.sosotaxi.driver.model.message.BaseMessage;
 import com.sosotaxi.driver.model.message.MessageType;
-import com.sosotaxi.driver.model.message.ServiceType;
 import com.sosotaxi.driver.model.message.UpdateDriverBody;
 import com.sosotaxi.driver.service.net.DriverOrderClient;
 import com.sosotaxi.driver.service.net.DriverOrderService;
-import com.sosotaxi.driver.service.net.OrderMessageReceiver;
 import com.sosotaxi.driver.service.net.QueryLatestPointTask;
-import com.sosotaxi.driver.ui.overlay.TrackOverlay;
 import com.sosotaxi.driver.utils.MessageHelper;
 import com.sosotaxi.driver.utils.TraceHelper;
 import com.sosotaxi.driver.viewModel.DriverViewModel;
@@ -52,40 +51,78 @@ import com.sosotaxi.driver.viewModel.OrderViewModel;
 import com.sosotaxi.driver.viewModel.UserViewModel;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class DriverOrderActivity extends AppCompatActivity implements OnToolbarListener {
 
+    /**
+     * 订单ViewModel
+     */
     private OrderViewModel mOrderViewModel;
 
+    /**
+     * 用户ViewModel
+     */
     private UserViewModel mUserViewModel;
 
+    /**
+     * 司机ViewModel
+     */
     private DriverViewModel mDriverViewModel;
+
+    /**
+     * 订单连接器
+     */
+    private DriverOrderClient mDriverOrderClient;
+
+    /**
+     * 订单服务
+     */
+    private DriverOrderService mDriverOrderService;
+
+    /**
+     * 服务绑定
+     */
+    private DriverOrderService.DriverOrderBinder mBinder;
+
+    /**
+     * 广播接收器
+     */
+    private BroadcastReceiver mBroadcastReceiver;
+
+    /**
+     * 消息帮手对象
+     */
+    private MessageHelper mMessageHelper;
+
+    /**
+     * 实时定位查询
+     */
+    private Thread mQueryThread;
 
     private Toolbar mToolbar;
     private TextView mTextViewTitle;
-
-    private DriverOrderClient mDriverOrderClient;
-    private DriverOrderService mDriverOrderService;
-    private DriverOrderService.DriverOrderBinder mBinder;
-    private OrderMessageReceiver mOrderMessageReceiver;
-    private MessageHelper mMessageHelper;
-
-    private Thread mQueryThread;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_driver_order);
 
+        // 获取ViewModel
         mOrderViewModel=new ViewModelProvider(this).get(OrderViewModel.class);
         mUserViewModel=new ViewModelProvider(this).get(UserViewModel.class);
         mDriverViewModel=new ViewModelProvider(this).get(DriverViewModel.class);
 
-        Driver driver=mDriverViewModel.getDriver().getValue();
-        Order order=mOrderViewModel.getOrder().getValue();
+        // 获取数据
+        Bundle bundle=getIntent().getExtras();
+        Order order=bundle.getParcelable(Constant.EXTRA_ORDER);
+        Driver driver=bundle.getParcelable(Constant.EXTRA_DRIVER);
+        DriverVo driverVo=bundle.getParcelable(Constant.EXTRA_DRIVER_VO);
+
+        // 设置初值
+        mOrderViewModel.getOrder().setValue(order);
+        mDriverViewModel.getDriver().setValue(driver);
+        mDriverViewModel.getDriverVo().setValue(driverVo);
 
         mMessageHelper=MessageHelper.getInstance();
 
@@ -101,9 +138,9 @@ public class DriverOrderActivity extends AppCompatActivity implements OnToolbarL
         mTextViewTitle=findViewById(R.id.textViewDriverOrderToolbarTitle);
 
         // 初始化轨迹记录
-        TraceHelper.initTrace(mUserViewModel.getUser().getValue().getUserName(),Constant.GATHER_INTERVAL,Constant.PACK_INTERVAL,onTraceListener);
+        //TraceHelper.initTrace(mUserViewModel.getUser().getValue().getUserName(),Constant.GATHER_INTERVAL,Constant.PACK_INTERVAL,onTraceListener);
         // 开始记录轨迹
-        TraceHelper.startTrace();
+        //TraceHelper.startTrace();
 
         // 跳转到达上车地点界面
         FragmentManager fragmentManager=getSupportFragmentManager();
@@ -131,15 +168,12 @@ public class DriverOrderActivity extends AppCompatActivity implements OnToolbarL
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // 断开连接
-        unbindService(serviceConnection);
-        if(mOrderMessageReceiver!=null){
-            unregisterReceiver(mOrderMessageReceiver);
-        }
-        TraceHelper.stopGather();
-        TraceHelper.stopTrace();
-        if(mQueryThread.isInterrupted()==false){
-            mQueryThread.interrupt();
+        try{
+            // 断开连接
+            unbindService(serviceConnection);
+            unregisterReceiver(mBroadcastReceiver);
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
@@ -194,9 +228,16 @@ public class DriverOrderActivity extends AppCompatActivity implements OnToolbarL
      * 注册广播接收器
      */
     private void registerReceiver(){
-        mOrderMessageReceiver=new OrderMessageReceiver();
         IntentFilter intentFilter=new IntentFilter(Constant.FILTER_CONTENT);
-        registerReceiver(mOrderMessageReceiver,intentFilter);
+        mBroadcastReceiver =new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String message=intent.getStringExtra(Constant.EXTRA_RESPONSE_MESSAGE);
+                Log.d("MESSAGE",message);
+            }
+        };
+
+        registerReceiver(mBroadcastReceiver,intentFilter);
     }
 
     // 服务连接监听器
@@ -216,109 +257,109 @@ public class DriverOrderActivity extends AppCompatActivity implements OnToolbarL
         }
     };
 
-    // 初始化轨迹服务监听器
-    OnTraceListener onTraceListener = new OnTraceListener() {
-        @Override
-        public void onBindServiceCallback(int i, String s) {
+//    // 初始化轨迹服务监听器
+//    OnTraceListener onTraceListener = new OnTraceListener() {
+//        @Override
+//        public void onBindServiceCallback(int i, String s) {
+//
+//        }
+//
+//        // 开启服务回调
+//        @Override
+//        public void onStartTraceCallback(int status, String message) {
+//            if(status==0){
+//                Toast.makeText(getApplicationContext(), "开启鹰眼服务成功", Toast.LENGTH_SHORT).show();
+//                TraceHelper.startGather();
+//
+//            }else{
+//                Toast.makeText(getApplicationContext(), "开启鹰眼服务失败", Toast.LENGTH_SHORT).show();
+//            }
+//
+//        }
+//        // 停止服务回调
+//        @Override
+//        public void onStopTraceCallback(int status, String message) {
+//            //Toast.makeText(getContext(), "停止鹰眼服务", Toast.LENGTH_SHORT).show();
+//        }
+//        // 开启采集回调
+//        @Override
+//        public void onStartGatherCallback(int status, String message) {
+//            Toast.makeText(getApplicationContext(), "开始收集", Toast.LENGTH_SHORT).show();
+//            // 开始上传定位
+//            mQueryThread=new Thread(new QueryLatestPointTask(Constant.GATHER_INTERVAL*1000,mUserViewModel.getUser().getValue().getUserName(),onTrackListener));
+//            mQueryThread.start();
+//        }
+//        // 停止采集回调
+//        @Override
+//        public void onStopGatherCallback(int status, String message) {
+//            //Toast.makeText(getContext(), "停止收集", Toast.LENGTH_SHORT).show();
+//        }
+//
+//        // 推送回调
+//        @Override
+//        public void onPushCallback(byte messageNo, PushMessage message) {
+//
+//        }
+//
+//        @Override
+//        public void onInitBOSCallback(int i, String s) {
+//
+//        }
+//    };
+//
+//    // 轨迹查询结果监听器
+//    OnTrackListener onTrackListener=new OnTrackListener() {
+//        @Override
+//        public void onHistoryTrackCallback(HistoryTrackResponse historyTrackResponse) {
+//        }
+//
+//        @Override
+//        public void onLatestPointCallback(LatestPointResponse latestPointResponse) {
+//            if(latestPointResponse.status!=StatusCodes.SUCCESS){
+//                return;
+//            }
+//
+//            // 封装消息
+//            com.baidu.trace.model.LatLng location=latestPointResponse.getLatestPoint().getLocation();
+//            Driver driver=mDriverViewModel.getDriver().getValue();
+//            driver.setCurrentPoint(new LocationPoint(location));
+//            UpdateDriverBody body=new UpdateDriverBody();
+//            body.setMessageId(mMessageHelper.getMessageId());
+//            body.setDispatched(true);
+//            body.setStartListening(true);
+//            body.setServiceType(driver.getServiceType());
+//            body.setLatitude(location.getLatitude());
+//            body.setLongitude(location.getLongitude());
+//            BaseMessage message=mMessageHelper.build(MessageType.UPDATE_REQUEST,body);
+//
+//            // 发送消息
+//            mMessageHelper.send(message);
+//        }
+//    };
 
-        }
-
-        // 开启服务回调
-        @Override
-        public void onStartTraceCallback(int status, String message) {
-            if(status==0){
-                Toast.makeText(getApplicationContext(), "开启鹰眼服务成功", Toast.LENGTH_SHORT).show();
-                TraceHelper.startGather();
-
-            }else{
-                Toast.makeText(getApplicationContext(), "开启鹰眼服务失败", Toast.LENGTH_SHORT).show();
-            }
-
-        }
-        // 停止服务回调
-        @Override
-        public void onStopTraceCallback(int status, String message) {
-            //Toast.makeText(getContext(), "停止鹰眼服务", Toast.LENGTH_SHORT).show();
-        }
-        // 开启采集回调
-        @Override
-        public void onStartGatherCallback(int status, String message) {
-            Toast.makeText(getApplicationContext(), "开始收集", Toast.LENGTH_SHORT).show();
-            // 开始上传定位
-            mQueryThread=new Thread(new QueryLatestPointTask(Constant.GATHER_INTERVAL*1000,mUserViewModel.getUser().getValue().getUserName(),onTrackListener));
-            mQueryThread.start();
-        }
-        // 停止采集回调
-        @Override
-        public void onStopGatherCallback(int status, String message) {
-            //Toast.makeText(getContext(), "停止收集", Toast.LENGTH_SHORT).show();
-        }
-
-        // 推送回调
-        @Override
-        public void onPushCallback(byte messageNo, PushMessage message) {
-
-        }
-
-        @Override
-        public void onInitBOSCallback(int i, String s) {
-
-        }
-    };
-
-    // 轨迹查询结果监听器
-    OnTrackListener onTrackListener=new OnTrackListener() {
-        @Override
-        public void onHistoryTrackCallback(HistoryTrackResponse historyTrackResponse) {
-        }
-
-        @Override
-        public void onLatestPointCallback(LatestPointResponse latestPointResponse) {
-            if(latestPointResponse.status!=StatusCodes.SUCCESS){
-                return;
-            }
-
-            // 封装消息
-            com.baidu.trace.model.LatLng location=latestPointResponse.getLatestPoint().getLocation();
-            Driver driver=mDriverViewModel.getDriver().getValue();
-            driver.setCurrentPoint(new LocationPoint(location));
-            UpdateDriverBody body=new UpdateDriverBody();
-            body.setMessageId(mMessageHelper.getMessageId());
-            body.setDispatched(true);
-            body.setStartListening(true);
-            body.setServerType(driver.getServiceType());
-            body.setLatitude(location.getLatitude());
-            body.setLongitude(location.getLongitude());
-            BaseMessage message=mMessageHelper.build(MessageType.UPDATE_REQUEST,body);
-
-            // 发送消息
-            mMessageHelper.send(message);
-        }
-    };
-
-    // 自定义属性监听器
-    OnCustomAttributeListener mCustomAttributeListener = new OnCustomAttributeListener() {
-        @Override
-        public Map<String, String> onTrackAttributeCallback() {
-            Map<String, String> trackAttrs = new HashMap<String, String>();
-
-            //获取司机是否接单
-            String isAvailable = String.valueOf(mDriverViewModel.getDriver().getValue().getAvailable());
-            //随轨迹上传接单信息
-            trackAttrs.put("is_available", isAvailable);
-
-            //获取司机是否接单
-            String serviceType = String.valueOf(mDriverViewModel.getDriver().getValue().getServiceType());
-            trackAttrs.put("service_type", serviceType);
-
-            return trackAttrs;
-        }
-
-        @Override
-        public Map<String, String> onTrackAttributeCallback(long l) {
-            return null;
-        }
-    };
+//    // 自定义属性监听器
+//    OnCustomAttributeListener mCustomAttributeListener = new OnCustomAttributeListener() {
+//        @Override
+//        public Map<String, String> onTrackAttributeCallback() {
+//            Map<String, String> trackAttrs = new HashMap<String, String>();
+//
+//            //获取司机是否接单
+//            String isAvailable = String.valueOf(mDriverViewModel.getDriver().getValue().getAvailable());
+//            //随轨迹上传接单信息
+//            trackAttrs.put("is_available", isAvailable);
+//
+//            //获取司机是否接单
+//            String serviceType = String.valueOf(mDriverViewModel.getDriver().getValue().getServiceType());
+//            trackAttrs.put("service_type", serviceType);
+//
+//            return trackAttrs;
+//        }
+//
+//        @Override
+//        public Map<String, String> onTrackAttributeCallback(long l) {
+//            return null;
+//        }
+//    };
 
     public DriverOrderClient getClient(){
         return mDriverOrderClient;

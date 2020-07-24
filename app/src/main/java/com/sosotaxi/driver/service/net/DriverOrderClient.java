@@ -22,21 +22,21 @@ public class DriverOrderClient extends WebSocketClient {
 
     @Override
     public void onOpen(ServerHandshake handshakedata) {
-        Log.d("WSTEST",handshakedata.getHttpStatusMessage());
+        Log.d("MESSAGE",handshakedata.getHttpStatusMessage());
     }
 
     @Override
     public void onMessage(String message) {
-        Log.d("WSTEST",message);
+        Log.d("MESSAGE",message);
     }
 
     @Override
     public void onClose(int code, String reason, boolean remote) {
-        Log.d("WSTEST",code+", "+reason+", "+remote);
+        Log.d("MESSAGE",code+", "+reason+", "+remote);
     }
 
     @Override
     public void onError(Exception ex) {
-        Log.d("WSTEST",ex.getMessage());
+        Log.d("MESSAGE",ex.getMessage());
     }
 }

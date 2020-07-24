@@ -1,7 +1,7 @@
 /**
  * @Author 范承祥
  * @CreateTime 2020/7/15
- * @UpdateTime 2020/7/18
+ * @UpdateTime 2020/7/24
  */
 package com.sosotaxi.driver.ui.driverOrder;
 
@@ -101,6 +101,9 @@ public class ArriveDestinationFragment extends Fragment {
      */
     private FragmentArriveDestinationBinding mBinding;
 
+    /**
+     * 消息帮手对象
+     */
     private MessageHelper mMessageHelper;
 
     public ArriveDestinationFragment() {
@@ -108,8 +111,6 @@ public class ArriveDestinationFragment extends Fragment {
         mTtsUtility=TTSUtility.getInstance(getContext());
         // 获取消息帮助对象
         mMessageHelper=MessageHelper.getInstance();
-        // 获取订单ViewModel
-        mOrderViewModel=new ViewModelProvider(getActivity()).get(OrderViewModel.class);;
     }
 
     @Override
@@ -120,6 +121,9 @@ public class ArriveDestinationFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // 获取订单ViewModel
+        mOrderViewModel=new ViewModelProvider(getActivity()).get(OrderViewModel.class);
+
         mBinding= DataBindingUtil.inflate(inflater,R.layout.fragment_arrive_destination, container, false);
         mBinding.setViewModel(mOrderViewModel);
         mBinding.setLifecycleOwner(getActivity());
@@ -139,7 +143,7 @@ public class ArriveDestinationFragment extends Fragment {
             @Override
             public void onSlideSuccess() {
                 // 发送消息
-                Toast.makeText(getContext(), "确认成功!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), R.string.hint_confirm_successful, Toast.LENGTH_SHORT).show();
 
                 // 跳转确认账单界面
                 FragmentManager fragmentManager=getActivity().getSupportFragmentManager();
@@ -162,9 +166,6 @@ public class ArriveDestinationFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-
-
         // 获取百度地图对象
         mBaiduMap = mBinding.baiduMapViewDriverArriveDestination.getMap();
 
@@ -221,6 +222,11 @@ public class ArriveDestinationFragment extends Fragment {
                 break;
 
         }
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
     }
 
     // 点击监听器
@@ -297,16 +303,16 @@ public class ArriveDestinationFragment extends Fragment {
                 int second=drivingRouteLine.getDuration()%60;
                 StringBuffer timeBuffer=new StringBuffer();
                 if(hour!=0){
-                    timeBuffer.append(hour+"时");
+                    timeBuffer.append(hour+getString(R.string.unit_hour));
                 }
                 if(minute!=0){
-                    timeBuffer.append(minute+"分");
+                    timeBuffer.append(minute+getString(R.string.unit_minute));
                 }
                 if(second!=0){
-                    timeBuffer.append(second+"秒");
+                    timeBuffer.append(second+getString(R.string.unit_second));
                 }
                 // 设置提示
-                mBinding.textViewDriverArriveDestinationHint.setText("行程"+String.format("%.1f",distance)+"公里  预计"+timeBuffer.toString());
+                mBinding.textViewDriverArriveDestinationHint.setText(getString(R.string.hint_estimate_distance)+String.format("%.1f",distance)+getString(R.string.hint_kilometer_estimate)+timeBuffer.toString());
                 // 语音播报信息
                 mTtsUtility.speaking("已接到乘客，请前往目的地 天安门广场。"+mBinding.textViewDriverArriveDestinationHint.getText().toString());
                 // 设置数据

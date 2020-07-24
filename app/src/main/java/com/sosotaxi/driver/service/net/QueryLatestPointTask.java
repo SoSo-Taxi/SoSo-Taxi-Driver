@@ -22,16 +22,21 @@ public class QueryLatestPointTask implements Runnable {
     private OnTrackListener mOnTrackListener;
     /** 轨迹连接器 */
     private LBSTraceClient mTraceClient;
+    /**
+     * 退出标志位
+     */
+    private boolean mIsExit;
 
     public QueryLatestPointTask(long timeInterval, String entityName, OnTrackListener onTrackListener){
         mTimeInterval=timeInterval;
         mEntityName=entityName;
         mOnTrackListener=onTrackListener;
+        mIsExit=false;
     }
 
     @Override
     public void run() {
-        while (true){
+        while (mIsExit==false){
             try {
                 Thread.sleep(mTimeInterval);
                 // 获取轨迹客户端
@@ -43,5 +48,13 @@ public class QueryLatestPointTask implements Runnable {
             }
 
         }
+    }
+
+    public Boolean siExit() {
+        return mIsExit;
+    }
+
+    public void setIsExit(boolean isExit) {
+        this.mIsExit = isExit;
     }
 }

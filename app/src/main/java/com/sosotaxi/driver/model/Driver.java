@@ -5,10 +5,15 @@
  */
 package com.sosotaxi.driver.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.io.Serializable;
+
 /**
  * 司机
  */
-public class Driver extends User{
+public class Driver extends User implements Parcelable{
 
     /** 车品牌 */
     private String carBrand;
@@ -34,18 +39,54 @@ public class Driver extends User{
     /**
      * 司机是否接单
      */
-    private transient Boolean isAvailable;
+    private boolean isAvailable;
 
     /**
      * 当前位置
      */
-    private transient LocationPoint currentPoint;
+    private LocationPoint currentPoint;
 
-    public Boolean getAvailable() {
+    /**
+     * 是否听单
+     */
+    private boolean startListening;
+
+    private boolean isDispatched;
+
+    public Driver(){}
+
+    protected Driver(Parcel in) {
+        carBrand = in.readString();
+        carModel = in.readString();
+        carColor = in.readString();
+        licensePlate = in.readString();
+        int tmpServiceType = in.readInt();
+        serviceType = tmpServiceType != Integer.MAX_VALUE ? (short) tmpServiceType : null;
+        driverLicenseNumber = in.readString();
+        vin = in.readString();
+        isAvailable = in.readByte() != 0;
+        currentPoint = in.readParcelable(LocationPoint.class.getClassLoader());
+        startListening = in.readByte() != 0;
+        isDispatched = in.readByte() != 0;
+    }
+
+    public static final Creator<Driver> CREATOR = new Creator<Driver>() {
+        @Override
+        public Driver createFromParcel(Parcel in) {
+            return new Driver(in);
+        }
+
+        @Override
+        public Driver[] newArray(int size) {
+            return new Driver[size];
+        }
+    };
+
+    public boolean getAvailable() {
         return isAvailable;
     }
 
-    public void setAvailable(Boolean available) {
+    public void setAvailable(boolean available) {
         isAvailable = available;
     }
 
@@ -111,5 +152,41 @@ public class Driver extends User{
 
     public void setVin(String vin) {
         this.vin = vin;
+    }
+
+    public boolean getStartListening() {
+        return startListening;
+    }
+
+    public void setStartListening(boolean startListening) {
+        this.startListening = startListening;
+    }
+
+    public boolean getDispatched() {
+        return isDispatched;
+    }
+
+    public void setDispatched(boolean dispatched) {
+        isDispatched = dispatched;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(carBrand);
+        dest.writeString(carModel);
+        dest.writeString(carColor);
+        dest.writeString(licensePlate);
+        dest.writeInt(serviceType != null ? (int) serviceType : Integer.MAX_VALUE);
+        dest.writeString(driverLicenseNumber);
+        dest.writeString(vin);
+        dest.writeByte((byte) (isAvailable ? 1 : 0));
+        dest.writeParcelable(currentPoint, flags);
+        dest.writeByte((byte) (startListening ? 1 : 0));
+        dest.writeByte((byte) (isDispatched ? 1 : 0));
     }
 }

@@ -1,7 +1,7 @@
 /**
  * @Author 范承祥
  * @CreateTime 2020/7/21
- * @UpdateTime 2020/7/21
+ * @UpdateTime 2020/7/24
  */
 package com.sosotaxi.driver.viewModel;
 
@@ -22,21 +22,36 @@ import static android.content.Context.MODE_PRIVATE;
  * 用户ViewModel
  */
 public class UserViewModel extends AndroidViewModel {
+    /**
+     * 共享偏好
+     */
     private SharedPreferences mSharedPreferences;
+
+    /**
+     * 用户对象
+     */
     private MutableLiveData<User> mUser;
 
     public UserViewModel(@NonNull Application application) {
         super(application);
     }
 
+    /**
+     * 获取用户对象
+     * @return 用户对象
+     */
     public MutableLiveData<User> getUser(){
         if(mUser==null){
+            // 初始化对象
             mUser= new MutableLiveData<User>();
             loadUser();
         }
         return mUser;
     }
 
+    /**
+     * 加载用户
+     */
     private void loadUser(){
         // 获取已登录用户信息
         mSharedPreferences =getApplication().getSharedPreferences(Constant.SHARE_PREFERENCE_LOGIN, MODE_PRIVATE);
@@ -56,9 +71,15 @@ public class UserViewModel extends AndroidViewModel {
         // 保存用户信息
         SharedPreferences sharedPreferences=getApplication().getSharedPreferences(Constant.SHARE_PREFERENCE_LOGIN, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor=sharedPreferences.edit();
-        editor.putString(Constant.USERNAME,mUser.getValue().getUserName());
-        editor.putString(Constant.PASSWORD,mUser.getValue().getPassword());
-        editor.putString(Constant.TOKEN,mUser.getValue().getToken());
-        editor.commit();
+        if(mUser.getValue().getUserName().isEmpty()==false){
+            editor.putString(Constant.USERNAME,mUser.getValue().getUserName());
+        }
+        if(mUser.getValue().getPassword().isEmpty()==false){
+            editor.putString(Constant.PASSWORD,mUser.getValue().getPassword());
+        }
+        if(mUser.getValue().getToken().isEmpty()==false){
+            editor.putString(Constant.TOKEN,mUser.getValue().getToken());
+        }
+        editor.apply();
     }
 }

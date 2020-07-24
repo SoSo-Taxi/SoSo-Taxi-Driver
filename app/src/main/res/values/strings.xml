@@ -98,6 +98,20 @@
     <string name="sms_template_part_one">您好，我已接单，预计在</string>
     <string name="sms_template_part_two">内到达上车点，请做好上车准备。</string>
     <string name="sms_pick_up_passenger">您好，我已到达上车点，请您尽快上车。</string>
+    <string name="unit_hour">时</string>
+    <string name="unit_minute">分</string>
+    <string name="unit_second">秒</string>
+    <string name="hint_estimate_distance">预计行程</string>
+    <string name="hint_kilometer_estimate">公里  预计</string>
+    <string name="hint_receive">已为您接到从</string>
+    <string name="hint_to">到</string>
+    <string name="hint_order">的订单，</string>
+    <string name="hint_deny_order">拒绝接单!</string>
+    <string name="hint_receive_order">接单成功!</string>
+    <string name="hint_confirm_successful">确认成功!</string>
+    <string name="hint_order_has_started">订单已开始，请前往上车点</string>
+    <string name="hint_finish_order_and_confirm_bill">已到达目的地，请提醒乘客带好随身物品。请确认账单金额并发起收款。</string>
+    <string name="hint_pick_up_passenger">已到达上车点，请等待乘客上车。若乘客长时间未上车，请及时联系乘客。</string>
 
 
 </resources>

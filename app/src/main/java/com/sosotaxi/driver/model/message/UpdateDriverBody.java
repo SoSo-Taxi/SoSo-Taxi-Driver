@@ -42,10 +42,14 @@ public class UpdateDriverBody extends BaseBody {
     /**
      * 服务类型
      */
-    private int serverType;
+    private Short serviceType;
 
-    public void setServerType(int serverType) {
-        this.serverType = serverType;
+    public Short getServiceType() {
+        return serviceType;
+    }
+
+    public void setServiceType(Short serviceType) {
+        this.serviceType = serviceType;
     }
 
     public long getMessageId() {

@@ -5,6 +5,8 @@
  */
 package com.sosotaxi.driver.ui.driverOrder;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -64,12 +66,15 @@ public class RankPassengerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // 获取订单ViewModel
+        mOrderViewModel=new ViewModelProvider(getActivity()).get(OrderViewModel.class);
+
         mBinding= DataBindingUtil.inflate(inflater,R.layout.fragment_rank_passenger, container, false);
         mBinding.setViewModel(mOrderViewModel);
         mBinding.setLifecycleOwner(getActivity());
 
         // 获取账单总额
-        Bundle bundle=getArguments();
+        final Bundle bundle=getArguments();
         double total=bundle.getDouble(Constant.EXTRA_TOTAL);
         mBinding.textViewDriverOrderRankPassengerAmount.setText(String.valueOf(total));
 
@@ -78,6 +83,9 @@ public class RankPassengerFragment extends Fragment {
             @Override
             public void onSlideSuccess() {
                 Toast.makeText(getContext(), "确认成功!", Toast.LENGTH_SHORT).show();
+                Intent intent=new Intent();
+                intent.putExtras(bundle);
+                getActivity().setResult(Activity.RESULT_OK,intent);
                 // 跳转首页
                 getActivity().finish();
             }
@@ -101,7 +109,5 @@ public class RankPassengerFragment extends Fragment {
             // 改变标题栏标题
             ((OnToolbarListener)getActivity()).setTitle(getString(R.string.title_order_finish));
         }
-        // 获取订单ViewModel
-        mOrderViewModel=new ViewModelProvider(getActivity()).get(OrderViewModel.class);
     }
 }
