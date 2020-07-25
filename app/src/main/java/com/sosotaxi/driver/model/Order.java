@@ -1,3 +1,8 @@
+/**
+ * @Author 范承祥
+ * @CreateTime 2020/7/21
+ * @UpdateTime 2020/7/25
+ */
 package com.sosotaxi.driver.model;
 
 import android.os.Parcel;
@@ -5,13 +10,10 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.io.Serializable;
 import java.util.Date;
 
 /**
- * @Author 范承祥
- * @CreateTime 2020/7/21
- * @UpdateTime 2020/7/21
+ * 订单类
  */
 public class Order implements Parcelable {
 

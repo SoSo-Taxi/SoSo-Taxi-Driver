@@ -1,3 +1,8 @@
+/**
+ * @Author 范承祥
+ * @CreateTime 2020/7/19
+ * @UpdateTime 2020/7/25
+ */
 package com.sosotaxi.driver.service.net;
 
 import android.app.Service;
@@ -16,14 +21,23 @@ import org.java_websocket.enums.ReadyState;
 import java.net.URI;
 
 /**
- * @Author 范承祥
- * @CreateTime 2020/7/19
- * @UpdateTime 2020/7/19
+ * 司机订单服务
  */
 public class DriverOrderService extends Service {
 
+    /**
+     * URI
+     */
     private URI mUri;
+
+    /**
+     * 司机订单连接器
+     */
     private DriverOrderClient mDriverOrderClient;
+
+    /**
+     * 服务绑定
+     */
     private DriverOrderBinder mDriverOrderBinder;
 
     public DriverOrderService(){
@@ -42,7 +56,7 @@ public class DriverOrderService extends Service {
 
     public class DriverOrderBinder extends Binder {
         public DriverOrderService getService(String token){
-
+            // 初始化连接器
             mUri=URI.create(Constant.WEB_SOCKET_URI+token);
             mDriverOrderClient = new DriverOrderClient(mUri){
                 @Override
@@ -55,6 +69,7 @@ public class DriverOrderService extends Service {
                 }
             };
 
+            // 连接
             connect();
             return DriverOrderService.this;
         }

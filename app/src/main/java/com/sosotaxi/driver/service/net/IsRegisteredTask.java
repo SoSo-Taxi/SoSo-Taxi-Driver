@@ -16,7 +16,14 @@ import com.sosotaxi.driver.common.Constant;
  */
 public class IsRegisteredTask implements Runnable {
 
+    /**
+     * 用户名
+     */
     private String mUsername;
+
+    /**
+     * 处理器
+     */
     private Handler mHandler;
 
     public IsRegisteredTask(String username, Handler handler){

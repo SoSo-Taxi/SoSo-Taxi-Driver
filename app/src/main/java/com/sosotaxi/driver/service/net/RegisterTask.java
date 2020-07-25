@@ -1,3 +1,8 @@
+/**
+ * @Author 范承祥
+ * @CreateTime 2020/7/13
+ * @UpdateTime 2020/7/25
+ */
 package com.sosotaxi.driver.service.net;
 
 import android.os.Bundle;
@@ -8,9 +13,7 @@ import com.sosotaxi.driver.common.Constant;
 import com.sosotaxi.driver.model.User;
 
 /**
- * @Author 范承祥
- * @CreateTime 2020/7/13
- * @UpdateTime 2020/7/13
+ * 注册任务
  */
 public class RegisterTask implements Runnable {
 

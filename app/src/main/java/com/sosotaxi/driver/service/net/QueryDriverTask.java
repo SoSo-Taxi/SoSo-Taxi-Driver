@@ -1,3 +1,8 @@
+/**
+ * @Author 范承祥
+ * @CreateTime 2020/7/23
+ * @UpdateTime 2020/7/25
+ */
 package com.sosotaxi.driver.service.net;
 
 import android.os.Bundle;
@@ -13,13 +18,22 @@ import com.sosotaxi.driver.model.DriverVo;
 import org.json.JSONObject;
 
 /**
- * @Author 范承祥
- * @CreateTime 2020/7/23
- * @UpdateTime 2020/7/23
+ * 查询司机信息任务
  */
 public class QueryDriverTask implements Runnable {
+    /**
+     * 司机
+     */
     private Driver mDriver;
+
+    /**
+     * 司机VO
+     */
     private DriverVo mDriverVo;
+
+    /**
+     * 处理器
+     */
     private Handler mHandler;
 
     public QueryDriverTask(Driver driver,Handler handler){

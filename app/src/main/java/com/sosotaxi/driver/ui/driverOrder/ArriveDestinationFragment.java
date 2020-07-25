@@ -1,7 +1,7 @@
 /**
  * @Author 范承祥
  * @CreateTime 2020/7/15
- * @UpdateTime 2020/7/24
+ * @UpdateTime 2020/7/25
  */
 package com.sosotaxi.driver.ui.driverOrder;
 
@@ -227,6 +227,11 @@ public class ArriveDestinationFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        if(getActivity() instanceof DriverOrderActivity){
+            DriverOrderActivity activity=(DriverOrderActivity)getActivity();
+            // 设置地图视图
+            activity.getTrackOverlay().setBaiduMapView(mBinding.baiduMapViewDriverArriveDestination);
+        }
     }
 
     // 点击监听器
@@ -314,7 +319,9 @@ public class ArriveDestinationFragment extends Fragment {
                 // 设置提示
                 mBinding.textViewDriverArriveDestinationHint.setText(getString(R.string.hint_estimate_distance)+String.format("%.1f",distance)+getString(R.string.hint_kilometer_estimate)+timeBuffer.toString());
                 // 语音播报信息
-                mTtsUtility.speaking("已接到乘客，请前往目的地 天安门广场。"+mBinding.textViewDriverArriveDestinationHint.getText().toString());
+                mTtsUtility.speaking("已接到乘客，请前往目的地"+
+                        mBinding.textViewDriverArriveDestinationDestination.getText().toString() +
+                        mBinding.textViewDriverArriveDestinationHint.getText().toString());
                 // 设置数据
                 overlay.setData(drivingRouteLine);
                 // 在地图上绘制路线

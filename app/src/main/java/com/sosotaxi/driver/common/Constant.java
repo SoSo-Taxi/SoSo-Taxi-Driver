@@ -107,12 +107,12 @@ public class Constant {
     /**
      * 查询是否已注册URL
      */
-    public static final String IS_REGISTERED_URL = "http://122.51.162.119:8001/user/isRegistered";
+    public static final String IS_REGISTERED_URL="http://122.51.70.242:8001/user/isRegistered";
 
     /**
      * 注册URL
      */
-    public static final String REGISTER_URL = "http://122.51.162.119:8001/user/registry";
+    public static final String REGISTER_URL="http://122.51.70.242:8001/user/registry";
 
     /**
      * 登陆URL
@@ -185,12 +185,12 @@ public class Constant {
     /**
      * 收集时间
      */
-    public static final int GATHER_INTERVAL = 15;
+    public static final int GATHER_INTERVAL=5;
 
     /**
      * 打包时间
      */
-    public static final int PACK_INTERVAL = 60;
+    public static final int PACK_INTERVAL=15;
 
     /**
      *传送统计数据URL

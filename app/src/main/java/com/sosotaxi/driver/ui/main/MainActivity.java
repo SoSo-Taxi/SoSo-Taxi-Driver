@@ -270,6 +270,8 @@ public class MainActivity extends AppCompatActivity
                         }catch (Exception e){
                             e.printStackTrace();
                         }
+                        TraceHelper.stopGather();
+                        mQueryLatestPointTask.setIsExit(true);
 
                         startActivityForResult(orderIntent,Constant.ASK_AMOUNT_REQUEST);
                     } catch (JSONException e) {

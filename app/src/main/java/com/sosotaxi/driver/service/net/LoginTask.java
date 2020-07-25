@@ -1,3 +1,8 @@
+/**
+ * @Author 范承祥
+ * @CreateTime 2020/7/13
+ * @UpdateTime 2020/7/13
+ */
 package com.sosotaxi.driver.service.net;
 
 import android.os.Bundle;
@@ -8,13 +13,18 @@ import com.sosotaxi.driver.common.Constant;
 import com.sosotaxi.driver.model.User;
 
 /**
- * @Author 范承祥
- * @CreateTime 2020/7/13
- * @UpdateTime 2020/7/13
+ * 登陆任务
  */
 public class LoginTask implements Runnable {
 
+    /**
+     * 用户
+     */
     private User mUser;
+
+    /**
+     * 处理器
+     */
     private Handler mHandler;
 
     public LoginTask(User user, Handler handler){

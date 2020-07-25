@@ -1,7 +1,7 @@
 /**
  * @Author 范承祥
  * @CreateTime 2020/7/23
- * @UpdateTime 2020/7/23
+ * @UpdateTime 2020/7/25
  */
 package com.sosotaxi.driver.ui.driverOrder;
 
@@ -58,10 +58,29 @@ import java.util.List;
  */
 public class ReserveOrderFragment extends Fragment {
 
+    /**
+     * 数据绑定
+     */
     private FragmentReserveOrderBinding mBinding;
+
+    /**
+     * 订单ViewModel
+     */
     private OrderViewModel mOrderViewModel;
+
+    /**
+     * 司机ViewModel
+     */
     private DriverViewModel mDriverViewModel;
+
+    /**
+     * 司机订单连接器
+     */
     private DriverOrderClient mDriverOrderClient;
+
+    /**
+     * 消息帮手
+     */
     private MessageHelper mMessageHelper;
 
     /**
@@ -109,6 +128,7 @@ public class ReserveOrderFragment extends Fragment {
         // 不显示比例尺
         mBinding.mapViewReserveOrder.showScaleControl(false);
 
+        // 设置点击监听器
         mBinding.buttonDriverOrderReceiveReserveOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -117,16 +137,17 @@ public class ReserveOrderFragment extends Fragment {
                 if(mDriverOrderClient!=null){
 
                 }
-                Toast.makeText(getContext(), "抢单成功!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), R.string.hint_reserve_successful, Toast.LENGTH_SHORT).show();
                 // 返回首页
                 getActivity().finish();
             }
         });
 
+        // 设置点击监听器
         mBinding.buttonDriverOrderDenyReserveOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getContext(), "拒绝接单!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), R.string.hint_deny_reserve_order, Toast.LENGTH_SHORT).show();
                 // 返回首页
                 getActivity().finish();
             }
