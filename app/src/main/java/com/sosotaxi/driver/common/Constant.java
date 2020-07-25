@@ -125,6 +125,11 @@ public class Constant {
     public static final String QUERY_USER_URL = "http://122.51.70.242:8001/driver/getByName?userName=";
 
     /**
+     * 评价乘客URL
+     */
+    public static final String RATE_FOR_PASSENGER_URL ="http://122.51.70.242:8001/driver/rateForPassenger?orderId=";
+
+    /**
      * WebSocket地址
      */
     public static final String WEB_SOCKET_URI = "ws://122.51.70.242:8001/webSocket?accessToken=";
