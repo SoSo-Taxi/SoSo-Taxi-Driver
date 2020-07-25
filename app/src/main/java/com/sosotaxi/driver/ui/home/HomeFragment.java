@@ -87,7 +87,7 @@ import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
 
-public class HomeFragment extends Fragment{
+public class HomeFragment extends Fragment {
 
     private HomeViewModel mViewModel;
     private UserViewModel mUserViewModel;
@@ -120,8 +120,8 @@ public class HomeFragment extends Fragment{
 
 
     private List<String> startingPoints = new ArrayList<String>(Arrays.asList("人民艺术剧院", "天坛公园", "世贸天阶", " 三里屯"));
-    private List<String> destinations = new ArrayList<String>(Arrays.asList("天安门广场","八宝山","圆明园","故宫"));
-    private List<String> scheduleTime = new ArrayList<String>(Arrays.asList("2020年7月26日15：00","2020年7月26日20：00","2020年7月27日7：00","2020年7月27日12：00"));
+    private List<String> destinations = new ArrayList<String>(Arrays.asList("天安门广场", "八宝山", "圆明园", "故宫"));
+    private List<String> scheduleTime = new ArrayList<String>(Arrays.asList("2020年7月26日15：00", "2020年7月26日20：00", "2020年7月27日7：00", "2020年7月27日12：00"));
 
     //听单动态效果
     private CircleProgressBar mCircleProgressBar;
@@ -130,16 +130,14 @@ public class HomeFragment extends Fragment{
     private ProgressRunnable mProgressRunnable;
 
 
-
     private TextView mEndWorkTextView;
 
     private TTSUtility mTtsUtility;
 
 
-
-    public HomeFragment(){
+    public HomeFragment() {
         // 获取消息帮手
-        mMessageHelper=MessageHelper.getInstance();
+        mMessageHelper = MessageHelper.getInstance();
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -159,8 +157,6 @@ public class HomeFragment extends Fragment{
         mTtsUtility.speaking(getString(R.string.slogan));
 
 
-
-
         mOnlineTimeTextView = root.findViewById(R.id.firstpage_onlinetime_textView);
 
         mUndoneOrderQuantityTextView = root.findViewById(R.id.firstpage_undone_orderquantity_textView);
@@ -168,7 +164,7 @@ public class HomeFragment extends Fragment{
         mUndoneOrderRecycleView = root.findViewById(R.id.first_page_undone_order_recycleView);
         mUndoneOrderRecycleView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        mUndoneOrderRecycleViewAdapter = new UndoneOrderRecycleViewAdapter(getContext(),startingPoints,destinations,scheduleTime);
+        mUndoneOrderRecycleViewAdapter = new UndoneOrderRecycleViewAdapter(getContext(), startingPoints, destinations, scheduleTime);
 
         mUndoneOrderRecycleView.setAdapter(mUndoneOrderRecycleViewAdapter);
 
@@ -190,7 +186,7 @@ public class HomeFragment extends Fragment{
             @Override
             public void onClick(View v) {
                 // 开始听单
-                if(toggle || mStartOrderTextView.getText() == "开始听单"){
+                if (toggle || mStartOrderTextView.getText() == "开始听单") {
                     // 开始记录轨迹
                     TraceHelper.startTrace();
 
@@ -202,7 +198,7 @@ public class HomeFragment extends Fragment{
                     mSetOnlineTimeHandler = new Handler(new Handler.Callback() {
                         @Override
                         public boolean handleMessage(Message msg) {
-                            startTime ++;
+                            startTime++;
                             setOnlineTimeTextView();
                             return true;
                         }
@@ -213,7 +209,7 @@ public class HomeFragment extends Fragment{
                     setEndWorkTextViewVisible(true);
                     mDrawingCircleThread.start();
                     toggle = false;
-                }else {
+                } else {
                     // 停止听单
                     // 停止记录轨迹
                     TraceHelper.stopGather();
@@ -251,89 +247,91 @@ public class HomeFragment extends Fragment{
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == Activity.RESULT_OK){
-        System.out.println("onActivityResult");
-        if(resultCode==RESULT_OK){
-            System.out.println("RESULT_OK");
-            switch (requestCode){
-                case Constant.ASK_AMOUNT_REQUEST:
-                    // 获取订单金额
-                    System.out.println("ASK_AMOUNT_REQUEST");
-                    Bundle bundle=data.getExtras();
-                    double total=bundle.getDouble(Constant.EXTRA_TOTAL);
-                    System.out.println(total+"total");
-                    // TODO: 处理订单金额数据
-                    setAccountTextView(total);
-                    mReceivingOrderQuantity ++;
-                    mReceivingOrderQuantityTextView.setText(mReceivingOrderQuantity);
-                    Log.d("TOTAL",String.valueOf(total));
-                    break;
-                default:
-                    break;
+        if (resultCode == Activity.RESULT_OK) {
+            System.out.println("onActivityResult");
+            if (resultCode == RESULT_OK) {
+                System.out.println("RESULT_OK");
+                switch (requestCode) {
+                    case Constant.ASK_AMOUNT_REQUEST:
+                        // 获取订单金额
+                        System.out.println("ASK_AMOUNT_REQUEST");
+                        Bundle bundle = data.getExtras();
+                        double total = bundle.getDouble(Constant.EXTRA_TOTAL);
+                        System.out.println(total + "total");
+                        // TODO: 处理订单金额数据
+                        setAccountTextView(total);
+                        mReceivingOrderQuantity++;
+                        mReceivingOrderQuantityTextView.setText(mReceivingOrderQuantity);
+                        Log.d("TOTAL", String.valueOf(total));
+                        break;
+                    default:
+                        break;
+                }
+            } else {
+                System.out.println(resultCode);
             }
-        }else {
-            System.out.println(resultCode);
         }
     }
 
     //向服务器传统计数据
-    private void postDriverStatistics(){
+    private void postDriverStatistics() {
         Driver driver = new Driver();
         User user = mUserViewModel.getUser().getValue();
-        if (user.getUserId() == null){
-            driver.setUserId((long)18);
-        }else {
+        if (user.getUserId() == null) {
+            driver.setUserId((long) 18);
+        } else {
             driver.setUserId(user.getUserId());
         }
         driver.setAccountFlow(mAccount);
         driver.setWorkSeconds((int) endTime);
         driver.setOrderNum(mReceivingOrderQuantity);
-        new Thread(new DriverStatisticsTask(driver,mFillTextHandler)).start();
+        new Thread(new DriverStatisticsTask(driver, mFillTextHandler)).start();
     }
-    private void setAccountTextView(double total){
+
+    private void setAccountTextView(double total) {
         mAccount += total;
         BigDecimal bigDecimal = new BigDecimal(mAccount);
         double result;
         //最多五位有效数字
-        if (mAccount >=10000){
+        if (mAccount >= 10000) {
             result = 9999.9;
-        }else if (mAccount >= 1000){
-             result = bigDecimal.setScale(1, BigDecimal.ROUND_HALF_UP).doubleValue();
-        }else {
+        } else if (mAccount >= 1000) {
+            result = bigDecimal.setScale(1, BigDecimal.ROUND_HALF_UP).doubleValue();
+        } else {
             result = bigDecimal.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
         }
         mAccountTextView.setText(String.valueOf(result));
     }
 
-    private void setOnlineTimeTextView(){
-        long day=startTime/(24*60*60);
-        long hour=startTime/(60*60);
-        long min=startTime/60;
-        long s=startTime;
-        if (hour > 0){
+    private void setOnlineTimeTextView() {
+        long day = startTime / (24 * 60 * 60);
+        long hour = startTime / (60 * 60);
+        long min = startTime / 60;
+        long s = startTime;
+        if (hour > 0) {
             float m = (float) ((min - hour * 60) / 60.0);
-            float h = ((float)(Math.round((hour + m)*10)))/10;
+            float h = ((float) (Math.round((hour + m) * 10))) / 10;
             mOnlineTimeTextView.setText(h + "时");
-        }else if (min > 0){
+        } else if (min > 0) {
             mOnlineTimeTextView.setText(min + "分钟");
-        }else if (s > 0){
+        } else if (s > 0) {
             mOnlineTimeTextView.setText(s + "秒");
-        }else {
+        } else {
             mOnlineTimeTextView.setText(0 + "时");
         }
     }
 
     //更新代办行程
-    private void updateUndoneOrder(String startingPoint, String destination, String schedule){
+    private void updateUndoneOrder(String startingPoint, String destination, String schedule) {
         startingPoints.add(startingPoint);
         destinations.add(destination);
         scheduleTime.add(schedule);
-        mUndoneOrderRecycleViewAdapter = new UndoneOrderRecycleViewAdapter(getContext(),startingPoints,destinations,scheduleTime);
+        mUndoneOrderRecycleViewAdapter = new UndoneOrderRecycleViewAdapter(getContext(), startingPoints, destinations, scheduleTime);
         mUndoneOrderRecycleView.setAdapter(mUndoneOrderRecycleViewAdapter);
         mUndoneOrderQuantityTextView.setText(String.valueOf(mUndoneOrderRecycleViewAdapter.getItemCount()));
     }
 
-    private void setHearingOrderStartState(){
+    private void setHearingOrderStartState() {
         mStartOrderTextView.setText("开始听单");
         setEndWorkTextViewVisible(false);
         mProgressRunnable.setStop(true);
@@ -342,13 +340,13 @@ public class HomeFragment extends Fragment{
         //结束计时，获取在线时长
         mCalculateTimeThread.setStop(true);
         endTime = startTime - endTime;
-        Toast.makeText(getContext().getApplicationContext(),"本次在线时间"+endTime+"秒",Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext().getApplicationContext(), "本次在线时间" + endTime + "秒", Toast.LENGTH_LONG).show();
     }
 
-    private void setEndWorkTextViewVisible(boolean toggle){
-        if (toggle){
+    private void setEndWorkTextViewVisible(boolean toggle) {
+        if (toggle) {
             mEndWorkTextView.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             mEndWorkTextView.setVisibility(View.INVISIBLE);
         }
     }
@@ -359,34 +357,34 @@ public class HomeFragment extends Fragment{
 
         mViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
         // 获取用户ViewModel
-        mUserViewModel=new ViewModelProvider(getActivity()).get(UserViewModel.class);
+        mUserViewModel = new ViewModelProvider(getActivity()).get(UserViewModel.class);
         // 获取订单ViewModel
-        mOrderViewModel=new ViewModelProvider(getActivity()).get(OrderViewModel.class);
+        mOrderViewModel = new ViewModelProvider(getActivity()).get(OrderViewModel.class);
         // 获取司机ViewModel
-        mDriverViewModel=new ViewModelProvider(getActivity()).get(DriverViewModel.class);
+        mDriverViewModel = new ViewModelProvider(getActivity()).get(DriverViewModel.class);
 
-        Driver driver=new Driver();
-        DriverVo driverVo=new DriverVo();
+        Driver driver = new Driver();
+        DriverVo driverVo = new DriverVo();
         driver.setUserName(mUserViewModel.getUser().getValue().getUserName());
-        new Thread(new QueryDriverTask(driver,handler)).start();
+        new Thread(new QueryDriverTask(driver, handler)).start();
     }
 
-    private Handler handler=new Handler(new Handler.Callback() {
+    private Handler handler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
-            Bundle bundle=msg.getData();
+            Bundle bundle = msg.getData();
 
-            if(bundle.getString(Constant.EXTRA_ERROR)!=null){
+            if (bundle.getString(Constant.EXTRA_ERROR) != null) {
                 Toast.makeText(getContext(), bundle.getString(Constant.EXTRA_ERROR), Toast.LENGTH_SHORT).show();
                 return false;
             }
 
-            boolean isSuccessful=bundle.getBoolean(Constant.EXTRA_IS_SUCCESSFUL);
+            boolean isSuccessful = bundle.getBoolean(Constant.EXTRA_IS_SUCCESSFUL);
 
-            if(isSuccessful){
+            if (isSuccessful) {
                 // 设置司机信息
-                Driver driver=bundle.getParcelable(Constant.EXTRA_DRIVER);
-                DriverVo driverVo=bundle.getParcelable(Constant.EXTRA_DRIVER_VO);
+                Driver driver = bundle.getParcelable(Constant.EXTRA_DRIVER);
+                DriverVo driverVo = bundle.getParcelable(Constant.EXTRA_DRIVER_VO);
                 mDriverViewModel.getDriver().setValue(driver);
                 mDriverViewModel.getDriverVo().setValue(driverVo);
             }
@@ -396,7 +394,7 @@ public class HomeFragment extends Fragment{
 
 
     //统计在线时间
-    class CalculateTimeRunnable extends Thread{
+    class CalculateTimeRunnable extends Thread {
         private boolean isStop = false;
 
         public void setStop(boolean stop) {
@@ -405,7 +403,7 @@ public class HomeFragment extends Fragment{
 
         @Override
         public void run() {
-            while(!isStop){
+            while (!isStop) {
                 mSetOnlineTimeHandler.sendEmptyMessage(0);
                 try {
                     Thread.sleep(1000);
@@ -417,17 +415,15 @@ public class HomeFragment extends Fragment{
     }
 
 
-
     private Handler mFillTextHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
             Bundle bundle = msg.getData();
             int servicePoint = bundle.getInt("servicePoint");
-            if (servicePoint != -1){
+            if (servicePoint != -1) {
                 mServicePointTextView.setText(String.valueOf(servicePoint));
             }
             return true;
         }
     });
-
 }
