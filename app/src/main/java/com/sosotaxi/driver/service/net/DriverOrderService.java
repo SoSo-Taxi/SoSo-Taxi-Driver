@@ -10,6 +10,9 @@ import androidx.annotation.Nullable;
 
 import com.sosotaxi.driver.common.Constant;
 
+import org.java_websocket.WebSocket;
+import org.java_websocket.enums.ReadyState;
+
 import java.net.URI;
 
 /**
@@ -29,19 +32,6 @@ public class DriverOrderService extends Service {
 
     public DriverOrderClient getClient(){
         return mDriverOrderClient;
-    }
-
-    private void connect(){
-        new Thread(){
-            @Override
-            public void run() {
-                try{
-                    mDriverOrderClient.connectBlocking();
-                }catch (InterruptedException e){
-                    e.printStackTrace();
-                }
-            }
-        }.start();
     }
 
     @Nullable
@@ -70,9 +60,24 @@ public class DriverOrderService extends Service {
         }
     }
 
-    @Override
-    public boolean onUnbind(Intent intent) {
-        return super.onUnbind(intent);
-
+    /**
+     * 连接
+     */
+    private void connect(){
+        if (mDriverOrderClient == null) {
+            return;
+        }
+        if (!mDriverOrderClient.isOpen()) {
+            if (mDriverOrderClient.getReadyState().equals(ReadyState.NOT_YET_CONNECTED)) {
+                try {
+                    // 首次连接
+                    mDriverOrderClient.connect();
+                } catch (IllegalStateException e) {
+                }
+            } else if (mDriverOrderClient.getReadyState().equals(ReadyState.CLOSING) || mDriverOrderClient.getReadyState().equals(ReadyState.CLOSED)) {
+                // 断开重连
+                mDriverOrderClient.reconnect();
+            }
+        }
     }
 }

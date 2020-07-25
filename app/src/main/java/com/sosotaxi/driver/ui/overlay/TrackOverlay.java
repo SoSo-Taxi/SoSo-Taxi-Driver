@@ -94,7 +94,7 @@ public class TrackOverlay {
                 color(Color.argb(255, 65, 194, 130))
         ;
 
-        mPolyline = (Polyline) mBaiduMap.addOverlay(polylineOptions);
+        //mPolyline = (Polyline) mBaiduMap.addOverlay(polylineOptions);
         OverlayOptions markerOptions;
         markerOptions = new MarkerOptions().flat(true).anchor(0.5f, 0.5f)
                 .icon(BitmapDescriptorFactory.fromAsset("Icon_current_marker.png")).position(polylines.get(0))
@@ -174,7 +174,7 @@ public class TrackOverlay {
 
             public void run() {
 
-                while (true) {
+                //while (true) {
                     for (int i = 0; i < latlngs.size() - 1; i++) {
                         final LatLng startPoint = latlngs.get(i);
                         final LatLng endPoint = latlngs.get(i+1);
@@ -228,7 +228,7 @@ public class TrackOverlay {
                         }
                     }
                 }
-            }
+            //}
 
         }.start();
     }
