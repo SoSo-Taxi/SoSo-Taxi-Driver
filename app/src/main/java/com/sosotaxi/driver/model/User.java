@@ -152,4 +152,22 @@ public class User {
     public void setIdCardNumber(String idCardNumber) {
         this.idCardNumber = idCardNumber;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "userId=" + userId +
+                ", userName='" + userName + '\'' +
+                ", password='" + password + '\'' +
+                ", role='" + role + '\'' +
+                ", rememberMe=" + rememberMe +
+                ", token='" + token + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", gender='" + gender + '\'' +
+                ", birthYear=" + birthYear +
+                ", avatarPath='" + avatarPath + '\'' +
+                ", realName='" + realName + '\'' +
+                ", idCardNumber='" + idCardNumber + '\'' +
+                '}';
+    }
 }
