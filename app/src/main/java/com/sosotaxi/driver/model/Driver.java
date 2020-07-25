@@ -15,6 +15,12 @@ import java.io.Serializable;
  */
 public class Driver extends User implements Parcelable{
 
+
+    private long driverId;
+    private double accountFlow;
+    private int workSeconds;
+    private int orderNum;
+    private int serviceScore;
     /** 车品牌 */
     private String carBrand;
 
@@ -81,6 +87,49 @@ public class Driver extends User implements Parcelable{
             return new Driver[size];
         }
     };
+
+    @Override
+    public Long getUserId() {
+        return super.getUserId();
+    }
+
+    @Override
+    public void setUserId(Long userId) {
+        super.setUserId(userId);
+        this.driverId = userId;
+    }
+
+    public double getAccountFlow() {
+        return accountFlow;
+    }
+
+    public void setAccountFlow(double accountFlow) {
+        this.accountFlow = accountFlow;
+    }
+
+    public int getWorkSeconds() {
+        return workSeconds;
+    }
+
+    public void setWorkSeconds(int workSeconds) {
+        this.workSeconds = workSeconds;
+    }
+
+    public int getOrderNum() {
+        return orderNum;
+    }
+
+    public void setOrderNum(int orderNum) {
+        this.orderNum = orderNum;
+    }
+
+    public int getServiceScore() {
+        return serviceScore;
+    }
+
+    public void setServiceScore(int serviceScore) {
+        this.serviceScore = serviceScore;
+    }
 
     public boolean getAvailable() {
         return isAvailable;

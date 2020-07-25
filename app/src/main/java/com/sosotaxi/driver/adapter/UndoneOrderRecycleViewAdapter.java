@@ -8,6 +8,8 @@ package com.sosotaxi.driver.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,13 +21,24 @@ import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.gson.Gson;
 import com.sosotaxi.driver.R;
+import com.sosotaxi.driver.common.Constant;
+import com.sosotaxi.driver.model.Driver;
+import com.sosotaxi.driver.model.DriverVo;
+import com.sosotaxi.driver.model.Order;
+import com.sosotaxi.driver.model.message.AskForDriverBody;
+import com.sosotaxi.driver.model.message.BaseMessage;
+import com.sosotaxi.driver.model.message.MessageType;
 import com.sosotaxi.driver.ui.driverOrder.DriverOrderActivity;
 import com.sosotaxi.driver.ui.home.AdapterListener;
 import com.sosotaxi.driver.ui.home.HomeFragment;
 
 import java.util.List;
 import com.sosotaxi.driver.ui.home.HomeFragment;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
 public class UndoneOrderRecycleViewAdapter extends RecyclerView.Adapter<UndoneOrderRecycleViewAdapter.ViewHolder> {
@@ -75,10 +88,10 @@ public class UndoneOrderRecycleViewAdapter extends RecyclerView.Adapter<UndoneOr
         holder.mConstraintLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //adapterListener.setListener();
+                adapterListener.setListener();
                // Toast.makeText(mContext,"hint:跳转到接单界面",Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(mContext, DriverOrderActivity.class);
-                mContext.startActivity(intent);
+//                Intent intent = new Intent(mContext, DriverOrderActivity.class);
+//                mContext.startActivity(intent);
             }
         });
     }
@@ -111,5 +124,6 @@ public class UndoneOrderRecycleViewAdapter extends RecyclerView.Adapter<UndoneOr
             mConstraintLayout = itemView.findViewById(R.id.undone_order_constaint_layout);
         }
     }
+
 
 }
