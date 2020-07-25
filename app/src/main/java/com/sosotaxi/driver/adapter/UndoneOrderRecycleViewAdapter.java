@@ -49,7 +49,6 @@ public class UndoneOrderRecycleViewAdapter extends RecyclerView.Adapter<UndoneOr
     private List<String> mDestinations;
     private List<String> mScheduleTime;
 
-    public AdapterListener adapterListener;
 
     public UndoneOrderRecycleViewAdapter(Context context){
         this.mContext = context;
@@ -74,24 +73,17 @@ public class UndoneOrderRecycleViewAdapter extends RecyclerView.Adapter<UndoneOr
         return new ViewHolder(LayoutInflater.from(mContext).inflate(R.layout.adapter_undone_order_recycleview,parent,false));
     }
 
-    //todo:可以通过构造方法传入出发点、目的地、时间、距离等相关参数
+
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
 
-//        holder.mStartingPointTextView.setText("出发点");
-//        holder.mDestinationTextView.setText("目的地");
-//        holder.mScheduleTimeTextView.setText("预约时间");
         holder.mStartingPointTextView.setText(mStartingPoints.get(position));
         holder.mDestinationTextView.setText(mDestinations.get(position));
-        //holder.mScheduleTimeTextView.setText("预约时间");
         holder.mScheduleTimeTextView.setText(mScheduleTime.get(position));
         holder.mConstraintLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                adapterListener.setListener();
-               // Toast.makeText(mContext,"hint:跳转到接单界面",Toast.LENGTH_LONG).show();
-//                Intent intent = new Intent(mContext, DriverOrderActivity.class);
-//                mContext.startActivity(intent);
+                Toast.makeText(mContext,"还未到指定预约时间，无法查看预约订单详情",Toast.LENGTH_LONG).show();
             }
         });
     }
