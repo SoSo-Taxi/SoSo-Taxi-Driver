@@ -117,10 +117,10 @@ public class HomeFragment extends Fragment{
     private RecyclerView mUndoneOrderRecycleView;
     private UndoneOrderRecycleViewAdapter mUndoneOrderRecycleViewAdapter;
 
-    //模拟的出发地和目的地
+
     private List<String> startingPoints = new ArrayList<String>(Arrays.asList("人民艺术剧院", "天坛公园", "世贸天阶", " 三里屯"));
     private List<String> destinations = new ArrayList<String>(Arrays.asList("天安门广场","八宝山","圆明园","故宫"));
-    private List<String> scheduleTime = new ArrayList<String>(Arrays.asList("2020年7月21日8：00","2020年7月21日17：00","2020年7月22日7：00","2020年7月22日22：00"));
+    private List<String> scheduleTime = new ArrayList<String>(Arrays.asList("2020年7月26日15：00","2020年7月26日20：00","2020年7月27日7：00","2020年7月27日12：00"));
 
     //听单动态效果
     private CircleProgressBar mCircleProgressBar;
@@ -134,9 +134,7 @@ public class HomeFragment extends Fragment{
 
     private TTSUtility mTtsUtility;
 
-    //模拟增加订单
-    private Button testBtn;
-    private List<String> testOrder = new ArrayList<String>();
+
 
     public HomeFragment(){
         // 获取消息帮手
@@ -160,38 +158,7 @@ public class HomeFragment extends Fragment{
         mTtsUtility.speaking(getString(R.string.slogan));
 
 
-        testBtn = root.findViewById(R.id.test_order_btn);
-        testBtn.setOnClickListener(new View.OnClickListener() {
-            int index = 5;
-            @Override
-            public void onClick(View v) {
-                Driver driver = new Driver();
-                User user = mUserViewModel.getUser().getValue();
-                System.out.println(user);
-                System.out.println(user.getUserId());
-                driver.setUserId((long) 18);
-                driver.setAccountFlow(93);
-                driver.setWorkSeconds(30000);
-                driver.setOrderNum(10);
-                new Thread(new DriverStatisticsTask(driver)).start();
-//                testOrder.add("order"+index);
-//                startingPoints.add("出发点"+index);
-//                destinations.add("目的地"+index);
-//                mTtsUtility.speaking("已接到来自"+"order"+index+"的订单");
-//                index++;
-//                mUndoneOrderRecycleViewAdapter = new UndoneOrderRecycleViewAdapter(getContext(),startingPoints,destinations);
-//            mUndoneOrderRecycleViewAdapter.adapterListener = new AdapterListener() {
-//                @Override
-//                public void setListener() {
-//                    //setHearingOrderStartState();
-//                }
-//            };
-//                mUndoneOrderRecycleView.setAdapter(mUndoneOrderRecycleViewAdapter);
-//                mUndoneOrderQuantityTextView.setText(String.valueOf(mUndoneOrderRecycleViewAdapter.getItemCount()));
-        }
-        });
 
-       // testBtn.setVisibility(View.INVISIBLE);
 
         mOnlineTimeTextView = root.findViewById(R.id.firstpage_onlinetime_textView);
 
@@ -199,16 +166,9 @@ public class HomeFragment extends Fragment{
 
         mUndoneOrderRecycleView = root.findViewById(R.id.first_page_undone_order_recycleView);
         mUndoneOrderRecycleView.setLayoutManager(new LinearLayoutManager(getContext()));
-//        mUndoneOrderRecycleViewAdapter = new UndoneOrderRecycleViewAdapter(getContext());
+
         mUndoneOrderRecycleViewAdapter = new UndoneOrderRecycleViewAdapter(getContext(),startingPoints,destinations,scheduleTime);
-        mUndoneOrderRecycleViewAdapter.adapterListener = new AdapterListener() {
-            @Override
-            public void setListener() {
-               // setHearingOrderStartState();
-                test();
-                System.out.println("click");
-            }
-        };
+
         mUndoneOrderRecycleView.setAdapter(mUndoneOrderRecycleViewAdapter);
 
         mUndoneOrderQuantityTextView.setText(String.valueOf(mUndoneOrderRecycleViewAdapter.getItemCount()));
@@ -226,7 +186,6 @@ public class HomeFragment extends Fragment{
         mStartOrderTextView.setOnClickListener(new View.OnClickListener() {
             boolean toggle = true;
 
-           //Thread thread = new Thread(new orderHearingRunnable());
             @Override
             public void onClick(View v) {
                 // 开始听单
@@ -456,39 +415,6 @@ public class HomeFragment extends Fragment{
     }
 
 
-    private void test(){
-        // 解析消息
-        String json="{\"type\":\"ASK_FOR_DRIVER_MESSAGE\",\"body\":{\"city\":\"武汉市\",\"passengerPhoneNumber\":\"8613996996996\",\"order\":{\"city\":\"武汉市\",\"createTime\":\"2020-07-23T23:19:42.351+08:00\",\"departName\":\"whu\",\"departPoint\":{\"lat\":23.0,\"lng\":116.0},\"destName\":\"hust\",\"destPoint\":{\"lat\":22.0,\"lng\":110.0},\"orderId\":44,\"passengerId\":15,\"serviceType\":0,\"status\":0}}}";
-        Gson gson=new Gson();
-        BaseMessage message=gson.fromJson(json,BaseMessage.class);
-        Log.d("MESSAGE",json);
-        if(message.getType()== MessageType.ASK_FOR_DRIVER_MESSAGE) {
-            try {
-                JSONObject object = new JSONObject(json);
-                String bodyString = object.getString("body");
-                AskForDriverBody body = gson.fromJson(bodyString, AskForDriverBody.class);
-                String city = body.getCity();
-                String phone = body.getPassengerPhoneNumber();
-                Order order = body.getOrder();
-                order.setPassengerPhoneNumber(phone);
-                // 设置订单
-                mOrderViewModel.getOrder().setValue(order);
-                Driver driver = mDriverViewModel.getDriver().getValue();
-                DriverVo driverVo = mDriverViewModel.getDriverVo().getValue();
-
-                //填充数据
-                Bundle bundle = new Bundle();
-                bundle.putParcelable(Constant.EXTRA_ORDER, order);
-                bundle.putParcelable(Constant.EXTRA_DRIVER, driver);
-                bundle.putParcelable(Constant.EXTRA_DRIVER_VO, driverVo);
-                Intent orderIntent = new Intent(getContext().getApplicationContext(), DriverOrderActivity.class);
-                orderIntent.putExtras(bundle);
-                startActivityForResult(orderIntent, Constant.ASK_AMOUNT_REQUEST);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
     private Handler mFillTextHandler = new Handler(new Handler.Callback() {
         @Override
@@ -501,60 +427,5 @@ public class HomeFragment extends Fragment{
             return true;
         }
     });
-//    //听单线程
-//    // run方法中听从服务器派来的单
-//    class orderHearingRunnable implements Runnable{
-//        private int index = 0;
-//        private String mStartingPoint;
-//        private String mDestination;
-//        private String mDistance;
-//        private String mCostTime;
-//        public orderHearingRunnable(){}
-//
-//        public orderHearingRunnable(String mStartingPoint, String mDestination, String mDistance, String mCostTime) {
-//            this.mStartingPoint = mStartingPoint;
-//            this.mDestination = mDestination;
-//            this.mDistance = mDistance;
-//            this.mCostTime = mCostTime;
-//        }
-//
-//        @Override
-//        public void run() {
-//            //模拟演示
-////            while (index < 5){
-////                try {
-////                    Thread.sleep(1000);
-////                    index ++;
-////                } catch (InterruptedException e) {
-////                    e.printStackTrace();
-////                }
-////            }
-//            while(true){
-//                // 监听服务器发送过来的订单 监听到订单之后跳转到 DriverOrderActivity
-//                // 然后用 updateUndoneOrder方法更新一下订单列表
-//
-//            }
-////            mTtsUtility.speaking("已为您接到从"+mStartingPoint+"到"+mDestination+"的订单"+"预计行程"
-////                    +mDistance+"公里"+"时间"+mCostTime+"分钟");
-//
-////            Intent intent = new Intent(getActivity().getApplicationContext(), DriverOrderActivity.class);
-////            startActivity(intent);
-//
-//        }
-//    }
-//
-//    class testRunnable implements Runnable{
-//
-//        int length = testOrder.size();
-//        @Override
-//        public void run() {
-//            while (true){
-//                if (testOrder.size() != length){
-//                    length = testOrder.size();
-//                    System.out.println("接单"+length);
-//
-//                }
-//            }
-//        }
-//    }
+
 }
