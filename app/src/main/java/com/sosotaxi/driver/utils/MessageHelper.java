@@ -18,6 +18,9 @@ import com.sosotaxi.driver.model.message.BaseMessage;
 import com.sosotaxi.driver.model.message.MessageType;
 import com.sosotaxi.driver.service.net.DriverOrderClient;
 
+import org.java_websocket.enums.ReadyState;
+import org.java_websocket.exceptions.WebsocketNotConnectedException;
+
 import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -95,7 +98,14 @@ public class MessageHelper {
         String json= mGson.toJson(message);
         Log.d("MESSAGE",json);
         if(mClient!=null){
-            mClient.send(json);
+            try {
+                // 发送消息
+                mClient.send(json);
+            }catch (WebsocketNotConnectedException e){
+                // 断开连接则重新连接
+                connect();
+            }
+
         }
     }
 
@@ -113,5 +123,26 @@ public class MessageHelper {
      */
     public int getMessageId(){
         return atomicInteger.getAndIncrement();
+    }
+
+    /**
+     * 连接
+     */
+    private void connect() {
+        if (mClient == null) {
+            return;
+        }
+        if (!mClient.isOpen()) {
+            if (mClient.getReadyState().equals(ReadyState.NOT_YET_CONNECTED)) {
+                try {
+                    // 首次连接
+                    mClient.connect();
+                } catch (IllegalStateException e) {
+                }
+            } else if (mClient.getReadyState().equals(ReadyState.CLOSING) || mClient.getReadyState().equals(ReadyState.CLOSED)) {
+                // 断开重连
+                mClient.reconnect();
+            }
+        }
     }
 }

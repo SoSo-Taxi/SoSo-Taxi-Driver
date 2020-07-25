@@ -71,13 +71,13 @@ public class UserViewModel extends AndroidViewModel {
         // 保存用户信息
         SharedPreferences sharedPreferences=getApplication().getSharedPreferences(Constant.SHARE_PREFERENCE_LOGIN, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor=sharedPreferences.edit();
-        if(mUser.getValue().getUserName().isEmpty()==false){
+        if(mUser.getValue().getUserName()!=null&&mUser.getValue().getUserName().isEmpty()==false){
             editor.putString(Constant.USERNAME,mUser.getValue().getUserName());
         }
-        if(mUser.getValue().getPassword().isEmpty()==false){
+        if(mUser.getValue().getPassword()!=null&&mUser.getValue().getPassword().isEmpty()==false){
             editor.putString(Constant.PASSWORD,mUser.getValue().getPassword());
         }
-        if(mUser.getValue().getToken().isEmpty()==false){
+        if(mUser.getValue().getToken()!=null&&mUser.getValue().getToken().isEmpty()==false){
             editor.putString(Constant.TOKEN,mUser.getValue().getToken());
         }
         editor.apply();
