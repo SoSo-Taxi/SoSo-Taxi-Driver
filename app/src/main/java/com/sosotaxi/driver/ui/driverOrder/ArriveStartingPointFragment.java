@@ -119,11 +119,6 @@ import okhttp3.Response;
 public class ArriveStartingPointFragment extends Fragment {
 
     /**
-     * 路径
-     */
-    private List<LatLng> latlngs;
-
-    /**
      * 起始点
      */
     private BNRoutePlanNode mStartNode;
@@ -148,19 +143,29 @@ public class ArriveStartingPointFragment extends Fragment {
      */
     private TTSUtility mTtsUtility;
 
+    /**
+     * Application
+     */
     private MapApplication mMapApplication;
 
+    /**
+     * 处理器
+     */
     private Handler mHandler;
 
+    /**
+     * 消息帮手
+     */
     private MessageHelper mMessageHelper;
-
-    private Thread mQueryThread;
 
     /**
      * 订单ViewModel
      */
     private OrderViewModel mOrderViewModel;
 
+    /**
+     * 司机ViewModel
+     */
     private DriverViewModel mDriverViewModel;
 
     /**
@@ -169,8 +174,6 @@ public class ArriveStartingPointFragment extends Fragment {
     private FragmentArriveStartingPointBinding mBinding;
 
     public ArriveStartingPointFragment() {
-        // 初始化路径
-        latlngs= new LinkedList<LatLng>();
         // 获取语音播报对象
         mTtsUtility=TTSUtility.getInstance(getContext());
         // 获取控制器
@@ -337,6 +340,8 @@ public class ArriveStartingPointFragment extends Fragment {
             DriverOrderActivity activity=(DriverOrderActivity)getActivity();
             // 设置连接器
             mMessageHelper.setClient(activity.getClient());
+            // 设置地图视图
+            activity.getTrackOverlay().setBaiduMapView(mBinding.baiduMapViewDriverOrderArriveStartingPoint);
         }
     }
 
@@ -484,7 +489,9 @@ public class ArriveStartingPointFragment extends Fragment {
                 mBinding.textViewDriverOrderArriveStartingPointHint.setText(getString(R.string.hint_estimate_distance)+String.format("%.1f",distance)+getString(R.string.hint_kilometer_estimate)+timeBuffer.toString());
                 mBinding.textViewDriverOrderArriveStartingPointTime.setText(timeBuffer.toString());
                 // 语音播报信息
-                mTtsUtility.speaking(getString(R.string.hint_order_has_started)+mBinding.textViewDriverOrderArriveStartingPointDestination+mBinding.textViewDriverOrderArriveStartingPointHint.getText().toString());
+                mTtsUtility.speaking(getString(R.string.hint_order_has_started)+
+                        mBinding.textViewDriverOrderArriveStartingPointDestination.getText().toString() +
+                        mBinding.textViewDriverOrderArriveStartingPointHint.getText().toString());
                 // 设置数据
                 overlay.setData(drivingRouteLine);
                 // 在地图上绘制路线

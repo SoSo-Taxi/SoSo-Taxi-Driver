@@ -197,6 +197,11 @@ public class ReceiveOrderFragment extends Fragment {
             // 改变工具栏标题
             onToolbarListener.setTitle(getString(R.string.title_driver_order_detail));
         }
+        if(getActivity() instanceof DriverOrderActivity){
+            DriverOrderActivity activity=(DriverOrderActivity)getActivity();
+            // 设置地图视图
+            activity.getTrackOverlay().setBaiduMapView(mBinding.mapViewReceiveOrder);
+        }
 
     }
 

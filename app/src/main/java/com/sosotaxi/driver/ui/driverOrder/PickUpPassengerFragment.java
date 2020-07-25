@@ -1,7 +1,7 @@
 /**
  * @Author 范承祥
  * @CreateTime 2020/7/15
- * @UpdateTime 2020/7/24
+ * @UpdateTime 2020/7/25
  */
 package com.sosotaxi.driver.ui.driverOrder;
 
@@ -253,6 +253,11 @@ public class PickUpPassengerFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         // 获取订单ViewModel
         mOrderViewModel=new ViewModelProvider(getActivity()).get(OrderViewModel.class);
+        if(getActivity() instanceof DriverOrderActivity){
+            DriverOrderActivity activity=(DriverOrderActivity)getActivity();
+            // 设置地图视图
+            activity.getTrackOverlay().setBaiduMapView(mBinding.baiduMapViewDriverPickUpPassenger);
+        }
     }
 
     // 权限请求结果处理

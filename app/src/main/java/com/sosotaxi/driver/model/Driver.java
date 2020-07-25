@@ -11,7 +11,7 @@ import android.os.Parcelable;
 import java.io.Serializable;
 
 /**
- * 司机
+ * 司机类
  */
 public class Driver extends User implements Parcelable{
 

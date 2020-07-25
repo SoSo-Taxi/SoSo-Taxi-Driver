@@ -112,6 +112,8 @@
     <string name="hint_order_has_started">订单已开始，请前往上车点</string>
     <string name="hint_finish_order_and_confirm_bill">已到达目的地，请提醒乘客带好随身物品。请确认账单金额并发起收款。</string>
     <string name="hint_pick_up_passenger">已到达上车点，请等待乘客上车。若乘客长时间未上车，请及时联系乘客。</string>
+    <string name="hint_reserve_successful">抢单成功!</string>
+    <string name="hint_deny_reserve_order">拒绝接单!</string>
 
 
 </resources>

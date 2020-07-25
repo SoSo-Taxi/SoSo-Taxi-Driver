@@ -1,11 +1,10 @@
 /**
  * @Author 范承祥
  * @CreateTime 2020/7/19
- * @UpdateTime 2020/7/19
+ * @UpdateTime 2020/7/25
  */
 package com.sosotaxi.driver.ui.overlay;
 
-import android.graphics.Color;
 import android.os.Handler;
 
 import com.baidu.mapapi.map.BaiduMap;
@@ -15,11 +14,10 @@ import com.baidu.mapapi.map.Marker;
 import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.map.Polyline;
-import com.baidu.mapapi.map.PolylineOptions;
 import com.baidu.mapapi.model.LatLng;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * 轨迹覆盖类
@@ -38,12 +36,7 @@ public class TrackOverlay {
     /**
      * 路径
      */
-    private List<LatLng> latlngs;
-
-    /**
-     * 多边形路径
-     */
-    private Polyline mPolyline;
+    private ConcurrentLinkedQueue<LatLng> mLatestPointQueue;
 
     /**
      * 标记
@@ -62,57 +55,41 @@ public class TrackOverlay {
 
     private MapView mBaiduMapView;
 
-    public void setLatlngs(List<LatLng> latlngs) {
-        this.latlngs = latlngs;
-    }
-
-    public void setHandler(Handler handler) {
+    public TrackOverlay(Handler handler) {
+        mLatestPointQueue = new ConcurrentLinkedQueue<LatLng>();
         this.mHandler = handler;
     }
 
+    /**
+     * 设置地图视图
+     * @param baiduMapView 百度视图
+     */
     public void setBaiduMapView(MapView baiduMapView) {
         this.mBaiduMapView = baiduMapView;
-        this.mBaiduMap=baiduMapView.getMap();
-    }
+        this.mBaiduMap = baiduMapView.getMap();
 
-    /**
-     * 绘制路径
-     */
-    public void drawPolyLine() {
-        if(latlngs.size()==0){
-            return;
-        }
-
-        List<LatLng> polylines = new ArrayList<LatLng>();
-        for (int index = 0; index < latlngs.size(); index++) {
-            polylines.add(latlngs.get(index));
-        }
-
-        PolylineOptions polylineOptions = new PolylineOptions().
-                points(polylines).
-                width(25).
-                color(Color.argb(255, 65, 194, 130))
-        ;
-
-        //mPolyline = (Polyline) mBaiduMap.addOverlay(polylineOptions);
-        OverlayOptions markerOptions;
-        markerOptions = new MarkerOptions().flat(true).anchor(0.5f, 0.5f)
-                .icon(BitmapDescriptorFactory.fromAsset("Icon_current_marker.png")).position(polylines.get(0))
-                .rotate((float) getAngle(0));
+        // 设置标志
+        OverlayOptions markerOptions = new MarkerOptions().flat(true).anchor(0.5f, 0.5f)
+                .icon(BitmapDescriptorFactory.fromAsset("Icon_current_marker.png"))
+                .position(new LatLng(39,116))
+                .rotate((float)0);
         mMoveMarker = (Marker) mBaiduMap.addOverlay(markerOptions);
-
     }
 
     /**
-     * 根据点获取图标转的角度
+     * 获取地图视图
+     * @return
      */
-    private double getAngle(int startIndex) {
-        if ((startIndex + 1) >= mPolyline.getPoints().size()) {
-            throw new RuntimeException("index out of bonds");
-        }
-        LatLng startPoint = mPolyline.getPoints().get(startIndex);
-        LatLng endPoint = mPolyline.getPoints().get(startIndex + 1);
-        return getAngle(startPoint, endPoint);
+    public MapView getBaiduMapView() {
+        return mBaiduMapView;
+    }
+
+    /**
+     * 添加定位点
+     * @param point 定位点
+     */
+    public void addLatestPoint(LatLng point) {
+        mLatestPointQueue.add(point);
     }
 
     /**
@@ -156,6 +133,7 @@ public class TrackOverlay {
         return slope;
 
     }
+
     /**
      * 计算x方向每次移动的距离
      */
@@ -171,13 +149,18 @@ public class TrackOverlay {
      */
     public void moveLooper() {
         new Thread() {
-
+            @Override
             public void run() {
-
-                //while (true) {
-                    for (int i = 0; i < latlngs.size() - 1; i++) {
-                        final LatLng startPoint = latlngs.get(i);
-                        final LatLng endPoint = latlngs.get(i+1);
+                while (true) {
+                    if (mBaiduMapView == null || mLatestPointQueue.isEmpty()) {
+                        continue;
+                    }
+                    if (mLatestPointQueue.size() == 1) {
+                        final LatLng startPoint = mLatestPointQueue.peek();
+                        mMoveMarker.setPosition(startPoint);
+                    } else {
+                        final LatLng startPoint = mLatestPointQueue.poll();
+                        final LatLng endPoint = mLatestPointQueue.peek();
                         mMoveMarker.setPosition(startPoint);
                         mHandler.post(new Runnable() {
                             @Override
@@ -219,8 +202,6 @@ public class TrackOverlay {
                                 }
                             });
                             try {
-                                List<LatLng> tempLatlngs=latlngs.subList(i,latlngs.size());
-                                mPolyline.setPoints(tempLatlngs);
                                 Thread.sleep(TIME_INTERVAL);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
@@ -228,8 +209,7 @@ public class TrackOverlay {
                         }
                     }
                 }
-            //}
-
+            }
         }.start();
     }
 }

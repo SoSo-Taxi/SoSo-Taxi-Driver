@@ -1,7 +1,7 @@
 /**
  * @Author 范承祥
  * @CreateTime 2020/7/22
- * @UpdateTime 2020/7/23
+ * @UpdateTime 2020/7/25
  */
 package com.sosotaxi.driver.service.net;
 
@@ -50,10 +50,18 @@ public class QueryLatestPointTask implements Runnable {
         }
     }
 
+    /**
+     * 查询任务是否退出
+     * @return 是否退出任务
+     */
     public Boolean siExit() {
         return mIsExit;
     }
 
+    /**
+     * 设置退出标志位
+     * @param isExit 退出标志位
+     */
     public void setIsExit(boolean isExit) {
         this.mIsExit = isExit;
     }

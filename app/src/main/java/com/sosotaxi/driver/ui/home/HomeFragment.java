@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -49,6 +50,7 @@ import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.search.geocode.GeoCoder;
+import com.google.gson.Gson;
 import com.sosotaxi.driver.R;
 
 import com.sosotaxi.driver.adapter.UndoneOrderRecycleViewAdapter;
@@ -59,6 +61,8 @@ import com.sosotaxi.driver.common.ProgressRunnable;
 import com.sosotaxi.driver.common.TTSUtility;
 import com.sosotaxi.driver.model.Driver;
 import com.sosotaxi.driver.model.DriverVo;
+import com.sosotaxi.driver.model.Order;
+import com.sosotaxi.driver.model.message.AskForDriverBody;
 import com.sosotaxi.driver.model.message.BaseMessage;
 import com.sosotaxi.driver.model.message.MessageType;
 import com.sosotaxi.driver.model.message.UpdateDriverBody;
@@ -69,6 +73,9 @@ import com.sosotaxi.driver.utils.TraceHelper;
 import com.sosotaxi.driver.viewModel.DriverViewModel;
 import com.sosotaxi.driver.viewModel.OrderViewModel;
 import com.sosotaxi.driver.viewModel.UserViewModel;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
@@ -240,7 +247,7 @@ public class HomeFragment extends Fragment{
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode==RESULT_OK){
+        if(resultCode == Activity.RESULT_OK){
             switch (requestCode){
                 case Constant.ASK_AMOUNT_REQUEST:
                     // 获取订单金额

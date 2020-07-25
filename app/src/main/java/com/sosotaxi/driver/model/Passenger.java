@@ -1,12 +1,15 @@
+/**
+ * @Author 范承祥
+ * @CreateTime 2020/7/23
+ * @UpdateTime 2020/7/25
+ */
 package com.sosotaxi.driver.model;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
- * @Author 范承祥
- * @CreateTime 2020/7/23
- * @UpdateTime 2020/7/23
+ * 乘客类
  */
 public class Passenger {
     /** 用户id */
