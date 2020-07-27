@@ -3,25 +3,46 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.sosotaxi.driver">
     <!-- 访问网络，进行地图相关业务数据请求，包括地图数据，路线规划，POI检索等 -->
-    <uses-permission android:name="android.permission.INTERNET" /> <!-- 获取网络状态，根据网络状态切换进行数据请求网络转换 -->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- 这个权限用于进行网络定位 -->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- 这个权限用于访问GPS定位 -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- 用于访问WIFI网络状态，用于判断网络状态 -->
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> <!-- 写入扩展存储，向扩展卡写入数据，用于离线数据的写入 -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- 用于ugc事件上报拍照录像 -->
-    <uses-permission android:name="android.permission.CAMERA" /> <!-- 用于ugc事件上报录音 -->
-    <uses-permission android:name="android.permission.RECORD_AUDIO" /> <!-- 用于导航中省电设置 -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- 获取网络状态，根据网络状态切换进行数据请求网络转换 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- 这个权限用于进行网络定位 -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!-- 这个权限用于访问GPS定位 -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!-- 用于访问WIFI网络状态，用于判断网络状态 -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <!-- 写入扩展存储，向扩展卡写入数据，用于离线数据的写入 -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!-- 用于ugc事件上报拍照录像 -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <!-- 用于ugc事件上报录音 -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!-- 用于导航中省电设置 -->
     <uses-permission
         android:name="android.permission.WRITE_SETTINGS"
-        tools:ignore="ProtectedPermissions" /> <!-- 用于短信联系乘客 -->
-    <uses-permission android:name="android.permission.SEND_SMS" /> <!-- 用于电话联系乘客 -->
-    <uses-permission android:name="android.permission.CALL_PHONE" /> <!-- Android O之后开启前台服务需要申请该权限 -->
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" /> <!-- Android Q之后，后台定位需要申请该权限 -->
+        tools:ignore="ProtectedPermissions" />
+    <!-- 用于短信联系乘客 -->
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <!-- 用于电话联系乘客 -->
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <!-- Android O之后开启前台服务需要申请该权限 -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <!-- Android Q之后，后台定位需要申请该权限 -->
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+
+    <!--允许程序改变网络连接状态 -->
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/>
+    <!--读取手机信息权限 -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <!--读取联系人权限，上传联系人需要用到此权限 -->
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
+    <!--外存储读权限，构建语法需要用到此权限 -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
     <application
         android:usesCleartextTraffic="true"
-    android:name=".application.MapApplication"
+        android:name=".application.MapApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -30,7 +51,6 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".ui.driverOrder.DriverOrderActivity"
-            android:label="搜搜车主"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
@@ -76,7 +96,7 @@
         </activity>
         <activity
             android:name=".ui.login.LoginActivity"
-            android:label="@string/title_activity_login"
+            android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -108,31 +128,4 @@
             android:name="org.apache.http.legacy"
             android:required="false" />
     </application>
-
-    <!--连接网络权限，用于执行云端语音能力 -->
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <!--获取手机录音机使用权限，听写、识别、语义理解需要用到此权限 -->
-    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
-    <!--读取网络信息状态 -->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <!--获取当前wifi状态 -->
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <!--允许程序改变网络连接状态 -->
-    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/>
-    <!--读取手机信息权限 -->
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-    <!--读取联系人权限，上传联系人需要用到此权限 -->
-    <uses-permission android:name="android.permission.READ_CONTACTS"/>
-    <!--外存储写权限，构建语法需要用到此权限 -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <!--外存储读权限，构建语法需要用到此权限 -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <!--配置权限，用来记录应用配置信息 -->
-    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
-    <!--手机定位信息，用来为语义等功能提供定位，提供更精准的服务-->
-    <!--定位信息是敏感信息，可通过Setting.setLocationEnable(false)关闭定位请求 -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <!--如需使用人脸识别，还要添加：摄相头权限，拍照需要用到 -->
-    <uses-permission android:name="android.permission.CAMERA" />
-
 </manifest>

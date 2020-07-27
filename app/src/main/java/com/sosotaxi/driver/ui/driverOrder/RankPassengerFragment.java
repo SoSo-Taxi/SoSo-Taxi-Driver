@@ -35,6 +35,7 @@ import com.sosotaxi.driver.service.net.RateForPassengerTask;
 import com.sosotaxi.driver.ui.main.MainActivity;
 import com.sosotaxi.driver.ui.widget.OnSlideListener;
 import com.sosotaxi.driver.ui.widget.SlideButton;
+import com.sosotaxi.driver.viewModel.DriverViewModel;
 import com.sosotaxi.driver.viewModel.OrderViewModel;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -78,6 +79,10 @@ public class RankPassengerFragment extends Fragment {
         mBinding= DataBindingUtil.inflate(inflater,R.layout.fragment_rank_passenger, container, false);
         mBinding.setViewModel(mOrderViewModel);
         mBinding.setLifecycleOwner(getActivity());
+
+        // 显示尾号
+        String phone=mOrderViewModel.getOrder().getValue().getPassengerPhoneNumber();
+        mBinding.textViewDriverOrderRankPassengerNumber.setText(phone.substring(phone.length()-4));
 
         // 获取账单总额
         final Bundle bundle=getArguments();
