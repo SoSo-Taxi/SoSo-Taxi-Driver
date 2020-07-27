@@ -9,10 +9,12 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -50,6 +52,8 @@ import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.search.geocode.GeoCoder;
+import com.baidu.navisdk.adapter.BNRoutePlanNode;
+import com.baidu.navisdk.adapter.BaiduNaviManagerFactory;
 import com.google.gson.Gson;
 import com.sosotaxi.driver.R;
 
@@ -61,6 +65,7 @@ import com.sosotaxi.driver.common.ProgressRunnable;
 import com.sosotaxi.driver.common.TTSUtility;
 import com.sosotaxi.driver.model.Driver;
 import com.sosotaxi.driver.model.DriverVo;
+import com.sosotaxi.driver.model.LocationPoint;
 import com.sosotaxi.driver.model.Order;
 import com.sosotaxi.driver.model.User;
 import com.sosotaxi.driver.model.message.AskForDriverBody;
@@ -70,7 +75,10 @@ import com.sosotaxi.driver.model.message.UpdateDriverBody;
 import com.sosotaxi.driver.service.net.DriverStatisticsTask;
 import com.sosotaxi.driver.service.net.QueryDriverTask;
 import com.sosotaxi.driver.ui.driverOrder.DriverOrderActivity;
+import com.sosotaxi.driver.utils.ContactHelper;
 import com.sosotaxi.driver.utils.MessageHelper;
+import com.sosotaxi.driver.utils.NavigationHelper;
+import com.sosotaxi.driver.utils.PermissionHelper;
 import com.sosotaxi.driver.utils.TraceHelper;
 import com.sosotaxi.driver.viewModel.DriverViewModel;
 import com.sosotaxi.driver.viewModel.OrderViewModel;
@@ -134,6 +142,8 @@ public class HomeFragment extends Fragment {
 
     private TTSUtility mTtsUtility;
 
+    private boolean mToggle;
+
 
     public HomeFragment() {
         // 获取消息帮手
@@ -179,45 +189,21 @@ public class HomeFragment extends Fragment {
         mProgressRunnable = new ProgressRunnable(mCircleProgressBar);
         mDrawingCircleThread = new Thread(mProgressRunnable);
 
+        mToggle = true;
+
         // 开始听单听单按钮
         mStartOrderTextView.setOnClickListener(new View.OnClickListener() {
-            boolean toggle = true;
-
             @Override
             public void onClick(View v) {
-                // 开始听单
-                if (toggle || mStartOrderTextView.getText() == "开始听单") {
-                    // 开始记录轨迹
-                    TraceHelper.startTrace();
-
-                    mStartOrderTextView.setText("听单中");
-                    mTtsUtility.speaking("正在为您接受附近的订单");//为您接受附近的订单
-
-
-                    //开始计时
-                    mSetOnlineTimeHandler = new Handler(new Handler.Callback() {
-                        @Override
-                        public boolean handleMessage(Message msg) {
-                            startTime++;
-                            setOnlineTimeTextView();
-                            return true;
-                        }
-                    });
-                    mCalculateTimeThread = new CalculateTimeRunnable();
-                    mCalculateTimeThread.start();
-
-                    setEndWorkTextViewVisible(true);
-                    mDrawingCircleThread.start();
-                    toggle = false;
-                } else {
-                    // 停止听单
-                    // 停止记录轨迹
-                    TraceHelper.stopGather();
-
-                    TTSUtility.getInstance(getActivity().getApplicationContext()).speaking("停止听单");
-                    setHearingOrderStartState();
-                    toggle = true;
+                // 检查权限
+                if (Build.VERSION.SDK_INT >= 23) {
+                    if (PermissionHelper.hasBaseAuth(getContext(), Constant.AUTH_ARRAY_TRACK)==false) {
+                        // 未获得则请求权限
+                        requestPermissions(Constant.AUTH_ARRAY_TRACK, Constant.PERMISSION_TRACK_REQUEST);
+                        return;
+                    }
                 }
+                toggleListening();
             }
         });
 
@@ -270,6 +256,21 @@ public class HomeFragment extends Fragment {
             } else {
                 System.out.println(resultCode);
             }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode){
+            case Constant.PERMISSION_TRACK_REQUEST:
+                if(PermissionHelper.hasBaseAuth(getContext(),Constant.AUTH_ARRAY_TRACK)==false){
+                    // 未获得权限则提示用户权限作用
+                    Toast.makeText(getContext(), R.string.hint_permission_track, Toast.LENGTH_SHORT).show();
+                    break;
+                }
+
+                toggleListening();
+                break;
         }
     }
 
@@ -411,6 +412,42 @@ public class HomeFragment extends Fragment {
                     e.printStackTrace();
                 }
             }
+        }
+    }
+
+    private void toggleListening(){
+        // 开始听单
+        if (mToggle || mStartOrderTextView.getText() == "开始听单") {
+            // 开始记录轨迹
+            TraceHelper.startTrace();
+
+            mStartOrderTextView.setText("听单中");
+            mTtsUtility.speaking("正在为您接受附近的订单");//为您接受附近的订单
+
+
+            //开始计时
+            mSetOnlineTimeHandler = new Handler(new Handler.Callback() {
+                @Override
+                public boolean handleMessage(Message msg) {
+                    startTime++;
+                    setOnlineTimeTextView();
+                    return true;
+                }
+            });
+            mCalculateTimeThread = new CalculateTimeRunnable();
+            mCalculateTimeThread.start();
+
+            setEndWorkTextViewVisible(true);
+            mDrawingCircleThread.start();
+            mToggle = false;
+        } else {
+            // 停止听单
+            // 停止记录轨迹
+            TraceHelper.stopGather();
+
+            TTSUtility.getInstance(getActivity().getApplicationContext()).speaking("停止听单");
+            setHearingOrderStartState();
+            mToggle = true;
         }
     }
 

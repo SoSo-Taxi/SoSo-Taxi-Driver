@@ -50,6 +50,9 @@ public class User {
     }
 
     public void setUserName(String userName) {
+        if(userName==null||userName.isEmpty()){
+            return;
+        }
         phoneNumber=userName;
         // 去除加号
         if(userName.startsWith("+")){

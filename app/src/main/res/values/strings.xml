@@ -114,6 +114,7 @@
     <string name="hint_pick_up_passenger">已到达上车点，请等待乘客上车。若乘客长时间未上车，请及时联系乘客。</string>
     <string name="hint_reserve_successful">抢单成功!</string>
     <string name="hint_deny_reserve_order">拒绝接单!</string>
+    <string name="hint_permission_track">请授予此权限用于定位服务</string>
 
 
 </resources>

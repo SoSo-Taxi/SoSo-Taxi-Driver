@@ -41,24 +41,6 @@ android {
             jniLibs.srcDir 'libs'
         }
     }
-
-    packagingOptions {
-        exclude 'assets/cfg/a/DVDirectory.cfg'
-        exclude 'assets/cfg/a/DVHotcity.cfg'
-        exclude 'assets/cfg/a/DVHotMap.cfg'
-        exclude 'assets/cfg/a/DVSDirectory.cfg'
-        exclude 'assets/cfg/a/DVStreet.cfg'
-        exclude 'assets/cfg/a/DVVersion.cfg'
-        exclude 'assets/cfg/a/mode_1/map.sdkrs'
-        exclude 'assets/cfg/a/mode_1/map.sdkrs'
-        exclude 'assets/cfg/a/mode_1/map.sty'
-        exclude 'assets/cfg/a/mode_1/reduct.sdkrs'
-        exclude 'assets/cfg/a/mode_1/reduct.sty'
-        exclude 'assets/cfg/a/mode_1/traffic.sdkrs'
-        exclude 'assets/cfg/a/mode_1/traffic.sty'
-        exclude 'assets/cfg/idrres/DVIndoor.cfg'
-        exclude 'assets/cfg/idrres/baseindoormap.sty'
-    }
 }
 
 dependencies {

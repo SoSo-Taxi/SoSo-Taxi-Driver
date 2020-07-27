@@ -40,6 +40,11 @@ public class Constant {
     public static final int ASK_AMOUNT_REQUEST = 4;
 
     /**
+     * 鹰眼轨迹权限请求
+     */
+    public static final int PERMISSION_TRACK_REQUEST = 5;
+
+    /**
      * 区号EXTRA
      */
     public static final String EXTRA_AREA_CODE = "com.sosotaxi.driver.ui.login.EXTRA_AREA_CODE";
@@ -170,6 +175,15 @@ public class Constant {
     public static final String[] AUTH_ARRAY_NAVIGATION = {
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.ACCESS_FINE_LOCATION,
+    };
+
+    /**
+     * 鹰眼权限列表
+     */
+    public static final String[] AUTH_ARRAY_TRACK = {
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
     };
 
     /**
