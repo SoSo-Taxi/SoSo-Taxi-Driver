@@ -15,6 +15,7 @@ import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.map.Polyline;
 import com.baidu.mapapi.model.LatLng;
+import com.sosotaxi.driver.common.Constant;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -26,7 +27,7 @@ public class TrackOverlay {
     /**
      * 间隔时间
      */
-    private static final int TIME_INTERVAL = 100;
+    private static final int TIME_INTERVAL = Constant.GATHER_INTERVAL*100;
 
     /**
      * 图标移动距离
@@ -71,8 +72,9 @@ public class TrackOverlay {
         // 设置标志
         OverlayOptions markerOptions = new MarkerOptions().flat(true).anchor(0.5f, 0.5f)
                 .icon(BitmapDescriptorFactory.fromAsset("Icon_current_marker.png"))
-                .position(new LatLng(39,116))
-                .rotate((float)0);
+                .position(new LatLng(39.892204,116.54157))
+                .rotate((float)0)
+                .zIndex(20);
         mMoveMarker = (Marker) mBaiduMap.addOverlay(markerOptions);
     }
 

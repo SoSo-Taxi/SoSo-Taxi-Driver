@@ -103,6 +103,15 @@ public class TraceHelper {
     }
 
     /**
+     * 设置轨迹监听器
+     * @param onTraceListener 轨迹监听器
+     */
+    public static void setOnTraceListener(OnTraceListener onTraceListener){
+        // 设置监听器
+        sTraceClient.setOnTraceListener(onTraceListener);
+    }
+
+    /**
      * 获取轨迹连接器实例
      * @return 轨迹连接器对象
      */

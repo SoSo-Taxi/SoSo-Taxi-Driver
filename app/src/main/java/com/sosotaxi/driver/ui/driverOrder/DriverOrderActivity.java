@@ -147,14 +147,13 @@ public class DriverOrderActivity extends AppCompatActivity implements OnToolbarL
 
         mTextViewTitle = findViewById(R.id.textViewDriverOrderToolbarTitle);
 
-        // 初始化轨迹记录
-        TraceHelper.initTrace(mUserViewModel.getUser().getValue().getUserName(), Constant.GATHER_INTERVAL, Constant.PACK_INTERVAL, onTraceListener);
-        // 开始记录轨迹
-        TraceHelper.startTrace();
-
         // 创建路径对象
         mTrackOverlay = new TrackOverlay(new Handler(Looper.getMainLooper()));
         mTrackOverlay.moveLooper();
+
+        // 开始上传定位
+        mQueryLatestPointTask = new QueryLatestPointTask(Constant.GATHER_INTERVAL * 1000, mUserViewModel.getUser().getValue().getUserName(), onTrackListener);
+        new Thread(mQueryLatestPointTask).start();
 
         // 跳转到达上车地点界面
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -298,16 +297,17 @@ public class DriverOrderActivity extends AppCompatActivity implements OnToolbarL
         // 停止服务回调
         @Override
         public void onStopTraceCallback(int status, String message) {
+
         }
 
         // 开启采集回调
         @Override
         public void onStartGatherCallback(int status, String message) {
+            if(status!=0){
+                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+                return;
+            }
             Toast.makeText(getApplicationContext(), "开始收集", Toast.LENGTH_SHORT).show();
-            // 开始上传定位
-            mQueryLatestPointTask = new QueryLatestPointTask(Constant.GATHER_INTERVAL * 1000, mUserViewModel.getUser().getValue().getUserName(), onTrackListener);
-            new Thread(mQueryLatestPointTask).start();
-
         }
 
         // 停止采集回调
@@ -356,7 +356,6 @@ public class DriverOrderActivity extends AppCompatActivity implements OnToolbarL
             driver.setCurrentPoint(new LocationPoint(location));
             UpdateDriverBody body = new UpdateDriverBody();
             body.setMessageId(mMessageHelper.getMessageId());
-            body.setDispatched(true);
             body.setStartListening(true);
             body.setServiceType(driver.getServiceType());
             body.setLatitude(location.getLatitude());
