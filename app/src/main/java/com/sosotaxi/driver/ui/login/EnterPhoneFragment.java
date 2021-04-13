@@ -136,7 +136,7 @@ public class EnterPhoneFragment extends Fragment {
                 case Constant.SELECT_AREA_CODE_REQUEST:
                     int areaCode=data.getIntExtra(Constant.EXTRA_AREA_CODE,86);
                     String areaCodeString="+"+areaCode+" ▼";
-                    mBinding.editTextEnterPhone.setText(areaCodeString);
+                    mBinding.textViewAreaCode.setText(areaCodeString);
                     break;
             }
         }
